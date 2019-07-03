@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">WatchTower</string>
+    <string name="title_camera">相机</string>
+    <string name="title_gallery">文件管理</string>
+    <string name="title_settings">设置</string>
+    <string name="need_permission">需要存储权限</string>
+</resources>

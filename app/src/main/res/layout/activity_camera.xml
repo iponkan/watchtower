@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:orientation="horizontal">
+
+    <SurfaceView
+        android:id="@+id/Sur_Player"
+        android:layout_width="480dp"
+        android:layout_height="270dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="#0000ff00" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_Test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+
+        </LinearLayout>
+
+        <com.hitqz.robot.commonlib.view.AzimuthCircle
+            android:id="@+id/azimuth_circle"
+            android:layout_width="148dp"
+            android:layout_height="148dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:onClick="circlePressed"
+            app:circleColor="@color/circleColor"
+            app:drawBottom="@drawable/icon_arrow_down_orange"
+            app:drawLeft="@drawable/icon_arrow_left_orange"
+            app:drawRight="@drawable/icon_arrow_right_orange"
+            app:drawTop="@drawable/icon_arrow_up_orange"
+            app:shadowColor="@color/shadowColor">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/ok_tv"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:background="@drawable/shape_shadow_circle_button_orange"
+                android:elevation="1dp"
+                android:gravity="center"
+                android:onClick="okClick"
+                android:text="OK"
+                app:textAllCaps="true" />
+
+        </com.hitqz.robot.commonlib.view.AzimuthCircle>
+    </LinearLayout>
+
+
+</LinearLayout>
