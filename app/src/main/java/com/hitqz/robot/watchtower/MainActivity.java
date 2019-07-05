@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.player.PlayerActivity;
 
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void go2Gallery(View view) {
 
-        List<String> fileList = HCSdkManager.getInstance(this).findFile();
+        List<FileInfo> fileList = HCSdkManager.getInstance(this).findFile();
         if (fileList != null && fileList.size() > 0) {
             PlayerActivity.go2Player(MainActivity.this, fileList.get(0));
         } else {

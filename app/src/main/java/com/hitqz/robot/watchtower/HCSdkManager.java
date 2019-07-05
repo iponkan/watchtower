@@ -16,6 +16,8 @@ import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.PlaybackCallBack;
 import com.hikvision.netsdk.PlaybackControlCommand;
 import com.hikvision.netsdk.RealPlayCallBack;
+import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
 import com.hitqz.robot.watchtower.player.PlayerCallback;
 import com.hitqz.robot.watchtower.util.CameraUtil;
@@ -345,24 +347,24 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                // Log.e(TAG, "inputData failed with: " +
-                // Player.getInstance().getLastError(m_iPort));
-                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
-                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                        break;
-                    }
-
-                    if (i % 100 == 0) {
-                        Log.e(TAG, "inputData failed with: " + Player.getInstance().getLastError(m_iPort) + ", i:" + i);
-                    }
-
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-
-                    }
-                }
+                Log.e(TAG, "inputData failed with: " +
+                        Player.getInstance().getLastError(m_iPort));
+//                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
+//                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
+//                        break;
+//                    }
+//
+////                    if (i % 100 == 0) {
+////                        Log.e(TAG, "inputData failed with: " + Player.getInstance().getLastError(m_iPort) + ", i:" + i);
+////                    }
+//
+//                    try {
+//                        Thread.sleep(10);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//
+//                    }
+//                }
             }
 
         }
@@ -385,7 +387,9 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public static final int STATE_STOP = 3;
     private int playState = STATE_IDLE;
 
-    public void playBack(String fileName) {
+    public void playBack(FileInfo fi) {
+
+        fileInfo = fi;
         if (surfaceView == null || surfaceView.get() == null) {
             Log.e(TAG, "must call setSurfaceView before preview");
             return;
@@ -393,9 +397,9 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
         Surface surface = surfaceView.get().getHolder().getSurface();
         if (!surface.isValid()) {
-            playbackRunnable = new PlaybackRunnable(fileName);
+            playbackRunnable = new PlaybackRunnable(fi.fileName);
         } else {
-            playBackInternal(fileName);
+            playBackInternal(fi.fileName);
         }
 
     }
@@ -410,15 +414,14 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 Log.i(TAG, "Please stop preview first");
                 return;
             }
-            PlaybackCallBack fPlaybackCallBack = getPlayerbackPlayerCbf();
 
             m_iPlaybackID = HCNetSDK.getInstance().NET_DVR_PlayBackByName(m_iLogID, fileName);
             if (m_iPlaybackID >= 0) {
+                PlaybackCallBack fPlaybackCallBack = getPlayerbackPlayerCbf();
                 if (!HCNetSDK.getInstance().NET_DVR_SetPlayDataCallBack(m_iPlaybackID, fPlaybackCallBack)) {
                     Log.e(TAG, "Set playback callback failed!");
                     return;
                 }
-//                NET_DVR_PLAYBACK_INFO struPlaybackInfo = null;
                 if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
                         PlaybackControlCommand.NET_DVR_PLAYSTART, null, 0, null)) {
                     Log.e(TAG, "net sdk playback start failed!");
@@ -427,31 +430,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 m_bStopPlayback = false;
 
                 notifyPlayStart();
-
-                Thread thread = new Thread() {
-                    public void run() {
-                        int nProgress = -1;
-//                        float secondProgress = -2;
-                        while (true) {
-                            nProgress =
-                                    HCNetSDK.getInstance().NET_DVR_GetPlayBackPos(m_iPlaybackID);
-//                            secondProgress = Player.getInstance().getPlayPos(m_iPort);
-                            Log.i(TAG, "NET_DVR_GetPlayBackPos:" + nProgress);
-//                            Log.i(TAG, "NET_DVR_GetPlayBackPos secondProgress:" + secondProgress);
-                            if (nProgress <
-                                    0 || nProgress >= 100) {
-                                break;
-                            }
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) { // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                };
-                thread.start();
 
             } else {
                 Log.i(TAG, "NET_DVR_PlayBackByName failed, error code: " +
@@ -482,6 +460,37 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         notifyPlayStart();
     }
 
+    public static byte[] int2byte(int s) {
+        byte[] arr = new byte[60];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (byte) ((s >> i * 8) & 0xff);
+        }
+        return arr;
+    }
+
+    public int getPlayedFrames() {
+        return Player.getInstance().getPlayedFrames(m_iPort);
+    }
+
+    public void playbackSeekTo(float percent) {
+
+        // 需要把缓冲流清掉，不然播放器在这个时候会继续播放缓冲内容
+//        Player.getInstance().resetSourceBuffer(m_iPort);
+
+        int progress = (int) (percent * 100);
+
+        byte[] bytes = int2byte(progress);
+
+        if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
+                12, bytes, 0, null)) {
+            Log.e(TAG, "NET_DVR_PlayBackControl_V40 failed, error code: " +
+                    HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            Log.i(TAG, "NET_DVR_PlayBackControl_V40 success");
+        }
+
+    }
+
     public void stopPlayback() {
         m_bStopPlayback = true;
         if (!HCNetSDK.getInstance().NET_DVR_StopPlayBack(m_iPlaybackID)) {
@@ -497,12 +506,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     }
 
 
-    public List<String> findFile() {
+    public List<FileInfo> findFile() {
         if (m_iLogID < 0) {
             Log.e(TAG, "please login on a device first");
             return null;
         }
-        List<String> fileList = new ArrayList<>();
+        List<FileInfo> fileList = new ArrayList<>();
         CameraUtil.test_FindFile(m_iLogID, fileList);
         return fileList;
     }
@@ -511,6 +520,23 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         stopSinglePreview();
         stopPlayback();
         logout();
+    }
+
+    public int getPlayBackTime() {
+        int progress = Player.getInstance().getPlayedTime(m_iPort);
+        Log.i(TAG, "Player getPlayedTime====" + Player.getInstance().getPlayedTime(m_iPort));
+        return progress;
+    }
+
+    private FileInfo fileInfo;
+
+    public int getPlaybackDuration() {
+        if (fileInfo != null) {
+            int duration = TimeStruct.getDuration(fileInfo.startTime, fileInfo.stopTime);
+            Log.i(TAG, "duration ==== " + duration);
+            return duration;
+        }
+        return 0;
     }
 
     class PlaybackRunnable implements Runnable {
@@ -582,6 +608,30 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public boolean isPause() {
         return playState == STATE_PAUSE;
+    }
+
+    public void Test_GetFileByName(String fileName) {
+        int nDownloadHandle = HCNetSDK.getInstance().NET_DVR_GetFileByName(m_iLogID, fileName, "/sdcard/RecordFile.mp4");
+        if (-1 == nDownloadHandle) {
+            System.out.println("NET_DVR_GetFileByName failed! error:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            return;
+        }
+        HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(nDownloadHandle, PlaybackControlCommand.NET_DVR_PLAYSTART, null, 0, null);
+        int nProgress = -1;
+        while (true) {
+            nProgress = HCNetSDK.getInstance().NET_DVR_GetDownloadPos(nDownloadHandle);
+            System.out.println("NET_DVR_GetDownloadPos:" + nProgress);
+            if (nProgress < 0 || nProgress >= 100) {
+                break;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        HCNetSDK.getInstance().NET_DVR_StopGetFile(nDownloadHandle);
     }
 
 }

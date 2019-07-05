@@ -15,7 +15,13 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.commonlib.view.AzimuthCircle;
 
 import com.hitqz.robot.watchtower.HCSdkManager;
+import com.hitqz.robot.watchtower.MainActivity;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.player.PlayerActivity;
+import com.hitqz.robot.watchtower.util.CameraUtil;
+
+import java.util.List;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -81,7 +87,11 @@ public class CameraActivity extends AppCompatActivity {
         m_oTestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                List<FileInfo> fileList = hcSdkManager.findFile();
+                if (fileList != null && fileList.size() > 0) {
+                    hcSdkManager.Test_GetFileByName(fileList.get(0).fileName);
+                    ToastUtils.showToastShort(CameraActivity.this, "下载完成");
+                }
             }
         });
 

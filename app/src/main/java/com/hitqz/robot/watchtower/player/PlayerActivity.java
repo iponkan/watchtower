@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -14,8 +15,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.bean.FileInfo;
+
+import static com.hitqz.robot.watchtower.util.TimeUtil.formatTimeS;
 
 public class PlayerActivity extends AppCompatActivity implements PlayerCallback, View.OnClickListener
         , SeekBar.OnSeekBarChangeListener {
@@ -31,11 +36,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     private TextView tvCurrent;
     private TextView tvDuration;
 
-    private String filePath;
+    private FileInfo fileInfo;
+    private int duration;
 
-    public static void go2Player(Activity context, String filePath) {
+    private Handler handler = new Handler();
+
+    public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
-        intent.putExtra(EXTRA_PATH, filePath);
+        intent.putExtra(EXTRA_PATH, fileInfo);
         context.startActivity(intent);
     }
 
@@ -44,12 +52,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_palyer);
 
-        filePath = getIntent().getStringExtra(EXTRA_PATH);
-        Log.i(TAG, "播放文件名：" + filePath);
+        fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
+        Log.i(TAG, "播放文件名：" + fileInfo);
         surfaceView = findViewById(R.id.sv_player);
         hcSdkManager = HCSdkManager.getInstance(this);
         hcSdkManager.setSurfaceView(surfaceView);
-        hcSdkManager.playBack(filePath);
+        hcSdkManager.playBack(fileInfo);
+        duration = hcSdkManager.getPlaybackDuration();
         hcSdkManager.addPlayerCallBack(this);
 
         ivPlay = findViewById(R.id.iv_play);
@@ -60,9 +69,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
         tvCurrent = findViewById(R.id.tv_current_time);
         tvDuration = findViewById(R.id.tv_duration_time);
+        tvDuration.setText(formatTimeS(duration));
         sbTime = findViewById(R.id.sb_time);
         sbTime.setOnSeekBarChangeListener(this);
+        sbTime.setMax(duration);
+
+        progressHandler = new ProgressHandler();
     }
+
+    ProgressHandler progressHandler;
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -86,21 +102,32 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             hcSdkManager.stopPlayback();
             hcSdkManager.removePlayerCallBack(this);
         }
+        if (progressHandler != null) {
+            progressHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     @Override
     public void onPlayStart() {
         ivPlay.setVisibility(View.GONE);
+        progressHandler.sendEmptyMessage(UPDATE);
     }
 
     @Override
     public void onPlayPause() {
         ivPlay.setVisibility(View.VISIBLE);
+        progressHandler.removeMessages(UPDATE);
     }
 
     @Override
     public void onPlayStop() {
-        ivPlay.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
+            }
+        });
+
     }
 
     @Override
@@ -129,8 +156,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         }
     }
 
-    private Handler handler = new Handler();
-
     private void fadeOutPlayButton() {
         handler.postDelayed(new Runnable() {
             @Override
@@ -142,7 +167,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+//        if (fromUser) {
+//            hcSdkManager.playbackSeekTo(progress);
+//        }
     }
 
     @Override
@@ -150,8 +177,55 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     }
 
+    private int seekProgress = -1;
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
+        hcSdkManager.playbackSeekTo(seekBar.getProgress() / (duration * 1.0f));
+        seekProgress = seekBar.getProgress();
+        progressHandler.removeMessages(UPDATE);
+        progressHandler.sendEmptyMessage(SEEKING);
     }
+
+    public static final int UPDATE = 0x01;
+    public static final int SEEKING = 0x02;
+
+    class ProgressHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case UPDATE:
+                    int current = hcSdkManager.getPlayBackTime();
+                    Log.d(TAG, "seekProgress;" + seekProgress);
+                    Log.d(TAG, "current;" + current);
+                    if (seekProgress != -1) {
+                        if (Math.abs(current - seekProgress) < 100) {
+                            ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
+                            seekProgress = -1;
+                        }
+                    }
+                    sbTime.setProgress(current);
+                    tvCurrent.setText(formatTimeS(current));
+                    progressHandler.sendEmptyMessageDelayed(UPDATE, 1000);
+                    break;
+                case SEEKING:
+                    int playBackTime = hcSdkManager.getPlayBackTime();
+                    Log.d(TAG, "seekProgress;" + seekProgress);
+                    Log.d(TAG, "current;" + playBackTime);
+                    if (seekProgress != -1) {
+                        if (Math.abs(playBackTime - seekProgress) < 100) {
+                            ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
+                            seekProgress = -1;
+                            progressHandler.sendEmptyMessageDelayed(UPDATE, 1000);
+                        } else {
+                            progressHandler.sendEmptyMessageDelayed(SEEKING, 1000);
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+
 }

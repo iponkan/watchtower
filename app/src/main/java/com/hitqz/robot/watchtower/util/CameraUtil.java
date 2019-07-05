@@ -9,6 +9,8 @@ import com.hikvision.netsdk.NET_DVR_COMPRESSION_INFO_V30;
 import com.hikvision.netsdk.NET_DVR_FILECOND;
 import com.hikvision.netsdk.NET_DVR_FINDDATA_V30;
 import com.hikvision.netsdk.PlaybackControlCommand;
+import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.orhanobut.logger.Logger;
 
 import java.util.List;
@@ -31,7 +33,7 @@ public class CameraUtil {
     }
 
     // lChannel为1
-    public static void test_FindFile(int iUserID, List<String> list) {
+    public static void test_FindFile(int iUserID, List<FileInfo> list) {
         int iFindHandle = -1;
         NET_DVR_FILECOND lpSearchInfo = new NET_DVR_FILECOND();
         lpSearchInfo.lChannel = 1;
@@ -55,7 +57,12 @@ public class CameraUtil {
             findNext = HCNetSDK.getInstance().NET_DVR_FindNextFile_V30(iFindHandle, struFindData);
             if (findNext == HCNetSDK.NET_DVR_FILE_SUCCESS) {
                 String fileName = CommonMethod.toValidString(new String(struFindData.sFileName));
-                list.add(fileName);
+                FileInfo fileInfo = new FileInfo();
+                fileInfo.fileName = fileName;
+                fileInfo.startTime = TimeStruct.cloneFrom(struFindData.struStartTime);
+                fileInfo.stopTime = TimeStruct.cloneFrom(struFindData.struStopTime);
+                fileInfo.fileSize = struFindData.dwFileSize;
+                list.add(fileInfo);
                 Log.i(TAG, "~~~~~Find File" + fileName);
                 Log.i(TAG, "~~~~~File Size" + struFindData.dwFileSize);
                 Log.i(TAG, "~~~~~File Time,from" + struFindData.struStartTime.ToString());
