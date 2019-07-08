@@ -36,7 +36,7 @@
 
         </LinearLayout>
 
-        <com.hitqz.robot.commonlib.view.AzimuthCircle
+        <com.hitqz.robot.commonlib.view.SteerView
             android:id="@+id/azimuth_circle"
             android:layout_width="148dp"
             android:layout_height="148dp"
@@ -54,18 +54,7 @@
             app:drawTop="@drawable/icon_arrow_up_orange"
             app:shadowColor="@color/shadowColor">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/ok_tv"
-                android:layout_width="66dp"
-                android:layout_height="66dp"
-                android:background="@drawable/shape_shadow_circle_button_orange"
-                android:elevation="1dp"
-                android:gravity="center"
-                android:onClick="okClick"
-                android:text="OK"
-                app:textAllCaps="true" />
-
-        </com.hitqz.robot.commonlib.view.AzimuthCircle>
+        </com.hitqz.robot.commonlib.view.SteerView>
     </LinearLayout>
 
 

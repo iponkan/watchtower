@@ -5,21 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.ScreenUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
-import com.hitqz.robot.commonlib.view.AzimuthCircle;
 
+import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.HCSdkManager;
-import com.hitqz.robot.watchtower.MainActivity;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
-import com.hitqz.robot.watchtower.player.PlayerActivity;
-import com.hitqz.robot.watchtower.util.CameraUtil;
 
 import java.util.List;
 
@@ -27,20 +22,16 @@ import java.util.List;
 public class CameraActivity extends AppCompatActivity {
 
     public void circlePressed(View view) {
-        AzimuthCircle azimuthCircle = (AzimuthCircle) view;
-        if (azimuthCircle.getPressDirection() == AzimuthCircle.LEFT_PRESS) {
+        SteerView azimuthCircle = (SteerView) view;
+        if (azimuthCircle.getPressDirection() == SteerView.LEFT_PRESS) {
             Toast.makeText(this, "LEFT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == AzimuthCircle.TOP_PRESS) {
+        } else if (azimuthCircle.getPressDirection() == SteerView.TOP_PRESS) {
             Toast.makeText(this, "TOP_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == AzimuthCircle.RIGHT_PRESS) {
+        } else if (azimuthCircle.getPressDirection() == SteerView.RIGHT_PRESS) {
             Toast.makeText(this, "RIGHT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == AzimuthCircle.BOTTOM_PRESS) {
+        } else if (azimuthCircle.getPressDirection() == SteerView.BOTTOM_PRESS) {
             Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void okClick(View view) {
-        Toast.makeText(this, "OK_PRESS", Toast.LENGTH_SHORT).show();
     }
 
     private Button m_oTestBtn = null;
