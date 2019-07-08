@@ -47,12 +47,12 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:onClick="circlePressed"
-            app:circleColor="@color/circleColor"
-            app:drawBottom="@drawable/icon_arrow_down_orange"
-            app:drawLeft="@drawable/icon_arrow_left_orange"
-            app:drawRight="@drawable/icon_arrow_right_orange"
-            app:drawTop="@drawable/icon_arrow_up_orange"
-            app:shadowColor="@color/shadowColor">
+            app:bottomImg="@drawable/icon_arrow_down_orange"
+            app:leftImg="@drawable/icon_arrow_left_orange"
+            app:ovalColor="@color/circleColor"
+            app:pressColor="@color/shadowColor"
+            app:rightImg="@drawable/icon_arrow_right_orange"
+            app:topImg="@drawable/icon_arrow_up_orange">
 
         </com.hitqz.robot.commonlib.view.SteerView>
     </LinearLayout>

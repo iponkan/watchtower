@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import com.hitqz.robot.commonlib.R;
 
 /**
- * AzimuthCircle for IR Control or others
+ * SteerView for IR Control or others
  */
 public class SteerView extends View {
     public static final int LEFT_PRESS = 1;
@@ -31,8 +31,8 @@ public class SteerView extends View {
 
     private static final String TAG = SteerView.class.getSimpleName();
 
-    private int circleColor = -1;
-    private int shadowColor = -1;
+    private int ovalColor = -1;
+    private int pressColor = -1;
 
     private Drawable drawLeft = null;
     private Drawable drawRight = null;
@@ -61,13 +61,13 @@ public class SteerView extends View {
     }
 
     private void getAzimuthCircleAttrs(AttributeSet attrs) {
-        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.AzimuthCircle);
-        circleColor = typedArray.getResourceId(R.styleable.AzimuthCircle_circleColor, -1);
-        shadowColor = typedArray.getResourceId(R.styleable.AzimuthCircle_shadowColor, -1);
-        drawLeft = typedArray.getDrawable(R.styleable.AzimuthCircle_drawLeft);
-        drawRight = typedArray.getDrawable(R.styleable.AzimuthCircle_drawRight);
-        drawTop = typedArray.getDrawable(R.styleable.AzimuthCircle_drawTop);
-        drawBottom = typedArray.getDrawable(R.styleable.AzimuthCircle_drawBottom);
+        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.SteerView);
+        ovalColor = typedArray.getResourceId(R.styleable.SteerView_ovalColor, -1);
+        pressColor = typedArray.getResourceId(R.styleable.SteerView_pressColor, -1);
+        drawLeft = typedArray.getDrawable(R.styleable.SteerView_leftImg);
+        drawRight = typedArray.getDrawable(R.styleable.SteerView_rightImg);
+        drawTop = typedArray.getDrawable(R.styleable.SteerView_topImg);
+        drawBottom = typedArray.getDrawable(R.styleable.SteerView_bottomImg);
     }
 
     private int defaultParentSize;
@@ -240,7 +240,7 @@ public class SteerView extends View {
     private RectF rectF = null;
 
     private void drawCircle(Canvas canvas) {
-        if (circleColor <= 0 || shadowColor <= 0) {
+        if (ovalColor <= 0 || pressColor <= 0) {
             return;
         }
 
@@ -256,29 +256,23 @@ public class SteerView extends View {
             circlePaint.setStyle(Paint.Style.FILL);
         }
 
-        int color = makeAlpha(3 * 16 + 2 * 16, getResources().getColor(circleColor));
         int angle = -1;
 
         Log.d(TAG, "pressDirection===" + pressDirection);
 
-        if (pressDirection == NONE_PRESS) {
-            color = makeAlpha(3 * 16 + 2 * 16, getResources().getColor(circleColor));
-        } else {
-            int d = getPressDirection();
-            switch (d) {
-                case TOP_PRESS:
-                    angle = 180;
-                    break;
-                case RIGHT_PRESS:
-                    angle = -90;
-                    break;
-                case BOTTOM_PRESS:
-                    angle = 0;
-                    break;
-                case LEFT_PRESS:
-                    angle = 90;
-                    break;
-            }
+        switch (pressDirection) {
+            case TOP_PRESS:
+                angle = 180;
+                break;
+            case RIGHT_PRESS:
+                angle = -90;
+                break;
+            case BOTTOM_PRESS:
+                angle = 0;
+                break;
+            case LEFT_PRESS:
+                angle = 90;
+                break;
         }
 
         if (rectF == null) {
@@ -287,10 +281,10 @@ public class SteerView extends View {
 
         for (int i = -90; i < 270; i = i + 90) {
             if (i != angle) {
-                circlePaint.setColor(color);
+                circlePaint.setColor(makeAlpha(160, getResources().getColor(ovalColor)));
                 canvas.drawArc(rectF, i, 90, true, circlePaint);
             } else {
-                circlePaint.setColor(Color.WHITE);
+                circlePaint.setColor(makeAlpha(80, getResources().getColor(pressColor)));
                 canvas.drawArc(rectF, i, 90, true, circlePaint);
             }
         }

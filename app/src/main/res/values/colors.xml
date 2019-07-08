@@ -3,6 +3,6 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="shadowColor">#cccccc</color>
-    <color name="circleColor">#eea334</color>
+    <color name="shadowColor">#3F51B5</color>
+    <color name="circleColor">#3F51B5</color>
 </resources>
