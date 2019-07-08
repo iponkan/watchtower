@@ -11,8 +11,6 @@
         android:layout_width="480dp"
         android:layout_height="270dp"
         android:layout_gravity="bottom"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
         android:background="#0000ff00" />
 
     <LinearLayout
@@ -50,11 +48,51 @@
             app:bottomImg="@drawable/icon_arrow_down_orange"
             app:leftImg="@drawable/icon_arrow_left_orange"
             app:ovalColor="@color/circleColor"
-            app:pressColor="@color/shadowColor"
+            app:pressColor="@color/pressColor"
             app:rightImg="@drawable/icon_arrow_right_orange"
             app:topImg="@drawable/icon_arrow_up_orange">
 
         </com.hitqz.robot.commonlib.view.SteerView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.hitqz.robot.commonlib.view.RCImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:src="@drawable/camera_plus_selector"
+                app:round_corner="15dp" />
+
+            <com.hitqz.robot.commonlib.view.RCRelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/camera_focus_selector"
+                android:clickable="true"
+                app:clip_background="true"
+                app:round_corner="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="聚焦"
+                    android:textColor="@android:color/black"
+                    android:textSize="30dp" />
+            </com.hitqz.robot.commonlib.view.RCRelativeLayout>
+
+            <com.hitqz.robot.commonlib.view.RCImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:src="@drawable/camera_plus_selector"
+                app:round_corner="15dp" />
+        </LinearLayout>
     </LinearLayout>
 
 
