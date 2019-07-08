@@ -9,4 +9,12 @@
         <attr name="drawBottom" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="SteerView">
+        <attr name="ovalColor" format="reference" />
+        <attr name="pressColor" format="reference" />
+        <attr name="leftImg" format="reference" />
+        <attr name="rightImg" format="reference" />
+        <attr name="topImg" format="reference" />
+        <attr name="bottomImg" format="reference" />
+    </declare-styleable>
 </resources>
