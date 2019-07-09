@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@color/colorPrimary"
+    tools:parentTag="android.widget.FrameLayout"
+    tools:showIn="@layout/activity_camera">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/fl_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/camera_plus_selector" />
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/tv_title_bar_back_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="相机设置"
+            android:textColor="@android:color/white"
+            android:textSize="28dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_title_bar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="hhh"
+        android:textColor="@android:color/white"
+        android:textSize="28dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</merge>
