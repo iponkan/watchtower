@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 
@@ -36,6 +37,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private Button m_oTestBtn = null;
     private SurfaceView m_osurfaceView = null;
+    private ProductionView productionView;
 
 
     @Override
@@ -63,6 +65,15 @@ public class CameraActivity extends AppCompatActivity {
 
         m_oTestBtn = findViewById(R.id.btn_Test);
         m_osurfaceView = findViewById(R.id.Sur_Player);
+        productionView = findViewById(R.id.pv_camera);
+
+        int width = SizeUtils.dp2px(480);
+        int height = SizeUtils.dp2px(270);
+        float centerWidth = getResources().getDimension(R.dimen.fr_center_width);
+        ProductionManager productionManager = new ProductionManager(width, height, centerWidth);
+
+        productionView.setParentSize(width, height);
+        productionView.setProductionManager(productionManager);
 
         if (!hcSdkManager.isLogin()) {
             boolean result = hcSdkManager.login();

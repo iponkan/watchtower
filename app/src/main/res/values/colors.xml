@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="pressColor">#3F51B5</color>
     <color name="circleColor">#3F51B5</color>
+    <color name="color_438eff">#438EFF</color>
+    <color name="fr_storage_photo">#FFCC01</color>
 </resources>

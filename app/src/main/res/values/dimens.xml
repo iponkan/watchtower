@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="fr_director_production_lw">2dp</dimen>
+    <dimen name="fr_director_center_lw">1dp</dimen>
+    <dimen name="fr_center_width">60dp</dimen>
+    <dimen name="fr_director_center_radius">4dp</dimen>
+</resources>

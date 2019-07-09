@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    android:orientation="horizontal">
+    android:focusableInTouchMode="true">
 
     <SurfaceView
         android:id="@+id/Sur_Player"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_gravity="bottom"
         android:background="#0000ff00" />
+
+    <com.hitqz.robot.watchtower.camera.ProductionView
+        android:id="@+id/pv_camera"
+        android:layout_width="480dp"
+        android:layout_height="270dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_toRightOf="@id/Sur_Player"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -96,4 +100,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>
