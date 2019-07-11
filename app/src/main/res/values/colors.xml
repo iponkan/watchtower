@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#3388ff</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="pressColor">#3F51B5</color>
-    <color name="circleColor">#3F51B5</color>
+    <color name="pressColor">#09c86b</color>
+    <color name="circleColor">#00de72</color>
     <color name="color_438eff">#438EFF</color>
     <color name="fr_storage_photo">#FFCC01</color>
 </resources>

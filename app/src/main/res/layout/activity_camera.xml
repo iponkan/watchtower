@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/common_bg"
     android:focusableInTouchMode="true">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
@@ -13,30 +14,36 @@
     </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 
     <SurfaceView
-        android:id="@+id/Sur_Player"
-        android:layout_width="480dp"
-        android:layout_height="270dp"
+        android:id="@+id/sv_hot_camera"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
         android:layout_below="@id/common_title_bar"
         android:background="#0000ff00" />
 
     <com.hitqz.robot.watchtower.camera.ProductionView
         android:id="@+id/pv_camera"
-        android:layout_width="480dp"
-        android:layout_height="270dp"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
         android:layout_below="@id/common_title_bar" />
+
+    <SurfaceView
+        android:id="@+id/sv_normal_camera"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_below="@id/sv_hot_camera"
+        android:background="#0000ff00" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/common_title_bar"
-        android:layout_toRightOf="@id/Sur_Player"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_below="@id/sv_normal_camera"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/btn_Test"
@@ -48,65 +55,98 @@
 
         </LinearLayout>
 
-        <com.hitqz.robot.commonlib.view.SteerView
-            android:id="@+id/azimuth_circle"
-            android:layout_width="148dp"
-            android:layout_height="148dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:onClick="circlePressed"
-            app:bottomImg="@drawable/icon_arrow_down_orange"
-            app:leftImg="@drawable/icon_arrow_left_orange"
-            app:ovalColor="@color/circleColor"
-            app:pressColor="@color/pressColor"
-            app:rightImg="@drawable/icon_arrow_right_orange"
-            app:topImg="@drawable/icon_arrow_up_orange">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="left">
 
-        </com.hitqz.robot.commonlib.view.SteerView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.hitqz.robot.commonlib.view.RCImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:clickable="true"
-                android:src="@drawable/camera_plus_selector"
-                app:round_corner="15dp" />
-
-            <com.hitqz.robot.commonlib.view.RCRelativeLayout
+            <TextView
+                android:id="@+id/tv_camera_steer"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:background="@drawable/camera_focus_selector"
-                android:clickable="true"
-                app:clip_background="true"
-                app:round_corner="15dp">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="角度调整"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:text="聚焦"
-                    android:textColor="@android:color/black"
-                    android:textSize="30dp" />
-            </com.hitqz.robot.commonlib.view.RCRelativeLayout>
+            <com.hitqz.robot.commonlib.view.SteerView
+                android:id="@+id/azimuth_circle"
+                android:layout_width="148dp"
+                android:layout_height="148dp"
+                android:layout_centerVertical="true"
+                android:onClick="circlePressed"
+                app:bottomImg="@drawable/icon_arrow_down"
+                app:leftImg="@drawable/icon_arrow_left"
+                app:ovalColor="@color/circleColor"
+                app:pressColor="@color/pressColor"
+                app:rightImg="@drawable/icon_arrow_right"
+                app:topImg="@drawable/icon_arrow_up">
 
-            <com.hitqz.robot.commonlib.view.RCImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:clickable="true"
-                android:src="@drawable/camera_plus_selector"
-                app:round_corner="15dp" />
-        </LinearLayout>
+            </com.hitqz.robot.commonlib.view.SteerView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right">
+
+            <TextView
+                android:id="@+id/tv_car_steer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="移动调整"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
+
+            <com.hitqz.robot.commonlib.view.SteerView
+                android:id="@+id/sv_car"
+                android:layout_width="148dp"
+                android:layout_height="148dp"
+                android:layout_centerVertical="true"
+                android:onClick="circlePressed"
+                app:bottomImg="@drawable/icon_arrow_down"
+                app:leftImg="@drawable/icon_arrow_left"
+                app:ovalColor="@color/circleColor"
+                app:pressColor="@color/pressColor"
+                app:rightImg="@drawable/icon_arrow_right"
+                app:topImg="@drawable/icon_arrow_up">
+
+            </com.hitqz.robot.commonlib.view.SteerView>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/sv_normal_camera"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@drawable/camera_plus_selector" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@drawable/camera_focus_selector" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@drawable/camera_minus_selector" />
     </LinearLayout>
 
 

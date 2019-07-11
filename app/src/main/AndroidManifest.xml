@@ -16,20 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/FullScreenTheme">
         <activity
-            android:name=".GalleryActivity"
-            android:screenOrientation="landscape"></activity>
+            android:name=".GalleryActivity"></activity>
         <activity
-            android:name=".SettingActivity"
-            android:screenOrientation="landscape" />
+            android:name=".SettingActivity"/>
         <activity
-            android:name=".player.PlayerActivity"
-            android:screenOrientation="landscape" />
+            android:name=".player.PlayerActivity" />
         <activity
             android:name=".camera.CameraActivity"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="landscape">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

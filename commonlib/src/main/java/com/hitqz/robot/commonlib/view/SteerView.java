@@ -194,7 +194,7 @@ public class SteerView extends View {
     }
 
     private void drawDirectImage(Canvas canvas) {
-        int painDistance = dp2px(getContext(), 12);
+        int painDistance = dp2px(getContext(), 15);
 
         if (drawLeft != null) {
             drawLeft.setBounds(painDistance, getMeasuredWidth() / 2 - drawLeft.getIntrinsicHeight() / 2, drawLeft.getIntrinsicWidth() + painDistance, getMeasuredWidth() / 2 + drawLeft.getIntrinsicHeight() / 2);
@@ -281,10 +281,10 @@ public class SteerView extends View {
 
         for (int i = -90; i < 270; i = i + 90) {
             if (i != angle) {
-                circlePaint.setColor(makeAlpha(160, getResources().getColor(ovalColor)));
+                circlePaint.setColor(getResources().getColor(ovalColor));
                 canvas.drawArc(rectF, i, 90, true, circlePaint);
             } else {
-                circlePaint.setColor(makeAlpha(80, getResources().getColor(pressColor)));
+                circlePaint.setColor(getResources().getColor(pressColor));
                 canvas.drawArc(rectF, i, 90, true, circlePaint);
             }
         }
@@ -295,7 +295,7 @@ public class SteerView extends View {
             crossPaint.setAntiAlias(true);
             crossPaint.setStrokeWidth(paintWidth);
             crossPaint.setStyle(Paint.Style.STROKE);
-            crossPaint.setColor(Color.WHITE);
+            crossPaint.setColor(Color.parseColor("#3388ff"));
         }
 
         canvas.drawLine(centerPoint, 0, centerPoint, getMeasuredHeight(), crossPaint);

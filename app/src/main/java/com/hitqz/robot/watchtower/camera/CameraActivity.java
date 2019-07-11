@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
@@ -15,10 +17,7 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
-
-import java.util.List;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -39,7 +38,8 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private Button m_oTestBtn = null;
-    private SurfaceView m_osurfaceView = null;
+    private SurfaceView hotSurfaceView = null;
+    private SurfaceView normalSurfaceView;
     private ProductionView productionView;
 
 
@@ -51,72 +51,99 @@ public class CameraActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
     }
 
-    private HCSdkManager hcSdkManager;
-
+    private HCSdkManager hotHCSdkManager;
+    private HCSdkManager normalHCSdkManager;
+    ProductionManager productionManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-        if (!hcSdkManager.isInit()) {
-            ToastUtils.showToastShort(this, "摄像头Sdk未初始化");
-            finish();
+        hotHCSdkManager = HCSdkManager.getHotHCSdkManager(this);
+        if (!hotHCSdkManager.isInit()) {
+            ToastUtils.showToastShort(this, "热成像摄像头Sdk未初始化");
+            return;
+        }
+
+        normalHCSdkManager = HCSdkManager.getNormalHCSdkManager(this);
+        if (!normalHCSdkManager.isInit()) {
+            ToastUtils.showToastShort(this, "高清摄像头Sdk未初始化");
             return;
         }
 
         m_oTestBtn = findViewById(R.id.btn_Test);
-        m_osurfaceView = findViewById(R.id.Sur_Player);
+        hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
+        normalSurfaceView = findViewById(R.id.sv_normal_camera);
 
         commonTitleBar = findViewById(R.id.common_title_bar);
         commonTitleBar.setBackText("相机设置");
 
-        int width = SizeUtils.dp2px(480);
-        int height = SizeUtils.dp2px(270);
-        float centerWidth = getResources().getDimension(R.dimen.fr_center_width);
-        ProductionManager productionManager = new ProductionManager(width, height, centerWidth);
+        resetSize(hotSurfaceView, productionView, normalSurfaceView);
 
-        productionView.setParentSize(width, height);
-        productionView.setProductionManager(productionManager);
-
-        if (!hcSdkManager.isLogin()) {
-            boolean result = hcSdkManager.login();
-            if (!result) {
-                ToastUtils.showToastShort(this, "登录失败");
-            }
-        }
-
-        hcSdkManager.setSurfaceView(m_osurfaceView);
-
-        hcSdkManager.startSinglePreview();
+        hotHCSdkManager.setSurfaceView(hotSurfaceView);
+        hotHCSdkManager.startSinglePreview();
+        normalHCSdkManager.setSurfaceView(normalSurfaceView);
+        normalHCSdkManager.startSinglePreview();
 
         m_oTestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<FileInfo> fileList = hcSdkManager.findFile();
-                if (fileList != null && fileList.size() > 0) {
-                    hcSdkManager.Test_GetFileByName(fileList.get(0).fileName);
-                    ToastUtils.showToastShort(CameraActivity.this, "下载完成");
-                }
+//                List<FileInfo> fileList = hotHCSdkManager.findFile();
+//                if (fileList != null && fileList.size() > 0) {
+//                    hotHCSdkManager.Test_GetFileByName(fileList.get(0).fileName);
+//                    ToastUtils.showToastShort(CameraActivity.this, "下载完成");
+//                }
             }
         });
 
     }
 
+    private void resetSize(View... views) {
+
+        int margin = SizeUtils.dp2px(20);
+
+        int width = ScreenUtils.getScreenWidth() - 2 * margin;
+        int height = (int) (width / 16f * 9);
+
+        for (View view : views) {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.width = width;
+            layoutParams.height = height;
+            layoutParams.leftMargin = margin;
+            layoutParams.rightMargin = margin;
+            layoutParams.topMargin = margin;
+
+            view.setLayoutParams(layoutParams);
+        }
+
+
+        float centerWidth = getResources().getDimension(R.dimen.fr_center_width);
+        productionManager = new ProductionManager(width, height, centerWidth);
+
+        productionView.setParentSize(width, height);
+        productionView.setProductionManager(productionManager);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        hcSdkManager.setSurfaceView(m_osurfaceView);
+        hotHCSdkManager.setSurfaceView(hotSurfaceView);
+        normalHCSdkManager.setSurfaceView(normalSurfaceView);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (hcSdkManager != null) {
-            hcSdkManager.stopSinglePreview();
-            hcSdkManager.stopPlayback();
+        if (hotHCSdkManager != null) {
+            hotHCSdkManager.stopSinglePreview();
+            hotHCSdkManager.stopPlayback();
+        }
+
+        if (normalHCSdkManager != null) {
+            normalHCSdkManager.stopSinglePreview();
+            normalHCSdkManager.stopPlayback();
         }
     }
 }

@@ -43,11 +43,12 @@ public class CommonTitleBar extends FrameLayout implements View.OnClickListener 
         vpBack.setOnClickListener(this);
         tvTitle = findViewById(R.id.tv_title_bar_title);
         tvBackText = findViewById(R.id.tv_title_bar_back_text);
+        tvBackText.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (vpBack == v) {
+        if (vpBack == v || tvBackText == v) {
             if (context instanceof Activity) {
                 ((Activity) context).finish();
             }
