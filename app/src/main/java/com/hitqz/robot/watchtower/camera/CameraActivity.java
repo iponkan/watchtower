@@ -16,11 +16,14 @@ import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.List;
 
 
 public class CameraActivity extends AppCompatActivity {
+
+    private CommonTitleBar commonTitleBar;
 
     public void circlePressed(View view) {
         SteerView azimuthCircle = (SteerView) view;
@@ -56,7 +59,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        hcSdkManager = HCSdkManager.getInstance(this);
+        hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         if (!hcSdkManager.isInit()) {
             ToastUtils.showToastShort(this, "摄像头Sdk未初始化");
             finish();
@@ -66,6 +69,9 @@ public class CameraActivity extends AppCompatActivity {
         m_oTestBtn = findViewById(R.id.btn_Test);
         m_osurfaceView = findViewById(R.id.Sur_Player);
         productionView = findViewById(R.id.pv_camera);
+
+        commonTitleBar = findViewById(R.id.common_title_bar);
+        commonTitleBar.setBackText("相机设置");
 
         int width = SizeUtils.dp2px(480);
         int height = SizeUtils.dp2px(270);

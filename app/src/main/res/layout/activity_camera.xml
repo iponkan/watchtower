@@ -6,7 +6,7 @@
     android:focusableInTouchMode="true">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
-        android:id="@+id/camera_title_bar"
+        android:id="@+id/common_title_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
@@ -16,19 +16,19 @@
         android:id="@+id/Sur_Player"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@id/camera_title_bar"
+        android:layout_below="@id/common_title_bar"
         android:background="#0000ff00" />
 
     <com.hitqz.robot.watchtower.camera.ProductionView
         android:id="@+id/pv_camera"
         android:layout_width="480dp"
         android:layout_height="270dp"
-        android:layout_below="@id/camera_title_bar" />
+        android:layout_below="@id/common_title_bar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/camera_title_bar"
+        android:layout_below="@id/common_title_bar"
         android:layout_toRightOf="@id/Sur_Player"
         android:gravity="center_horizontal"
         android:orientation="vertical">

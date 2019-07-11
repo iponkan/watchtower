@@ -32,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="相机设置"
             android:textColor="@android:color/white"
-            android:textSize="28dp" />
+            android:textSize="28dp"
+            tools:text="相机设置" />
     </LinearLayout>
 
     <TextView

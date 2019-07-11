@@ -7,16 +7,16 @@ import android.os.Bundle;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
-public class SettingActivity extends AppCompatActivity {
+public class GalleryActivity extends AppCompatActivity {
 
     private CommonTitleBar commonTitleBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        setContentView(R.layout.activity_gallery);
         commonTitleBar = findViewById(R.id.common_title_bar);
-        commonTitleBar.setBackText("设置");
+        commonTitleBar.setBackText("视频库");
     }
 
     @Override

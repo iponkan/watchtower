@@ -20,6 +20,7 @@ public class CommonTitleBar extends FrameLayout implements View.OnClickListener 
     private ViewGroup vpBack;
     private Context context;
     private TextView tvTitle;
+    private TextView tvBackText;
 
     public CommonTitleBar(@NonNull Context context) {
         this(context, null);
@@ -41,6 +42,7 @@ public class CommonTitleBar extends FrameLayout implements View.OnClickListener 
         vpBack = findViewById(R.id.fl_back);
         vpBack.setOnClickListener(this);
         tvTitle = findViewById(R.id.tv_title_bar_title);
+        tvBackText = findViewById(R.id.tv_title_bar_back_text);
     }
 
     @Override
@@ -54,5 +56,9 @@ public class CommonTitleBar extends FrameLayout implements View.OnClickListener 
 
     public void setTitle(String title) {
         tvTitle.setText(title);
+    }
+
+    public void setBackText(String backText) {
+        tvBackText.setText(backText);
     }
 }

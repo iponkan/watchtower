@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.blankj.utilcode.util.NetworkUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
-import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
-import com.hitqz.robot.watchtower.player.PlayerActivity;
-
-import java.util.List;
 
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -45,12 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void go2Gallery(View view) {
 
-        List<FileInfo> fileList = HCSdkManager.getInstance(this).findFile();
-        if (fileList != null && fileList.size() > 0) {
-            PlayerActivity.go2Player(MainActivity.this, fileList.get(0));
-        } else {
-            ToastUtils.showToastShort(this, "没有录像文件");
-        }
+//        List<FileInfo> fileList = HCSdkManager.getInstance(this).findFile();
+//        if (fileList != null && fileList.size() > 0) {
+//            PlayerActivity.go2Player(MainActivity.this, fileList.get(0));
+//        } else {
+//            ToastUtils.showToastShort(this, "没有录像文件");
+//        }
+
+        Intent intent = new Intent(this, GalleryActivity.class);
+        startActivity(intent);
     }
 
     public void go2Setting(View view) {
@@ -70,14 +70,33 @@ public class MainActivity extends AppCompatActivity {
                     RC_STORAGE_PERM,
                     STORAGE_PERMISSION);
         } else {
-            boolean initResult = HCSdkManager.getInstance(this).init();
-            if (initResult) {
-                boolean result = HCSdkManager.getInstance(this).login();
-                if (!result) {
-                    ToastUtils.showToastShort(this, "登录失败");
+            if (!NetworkUtils.isConnected()) {
+                ToastUtils.showToastShort(this, "网络未连接");
+            } else {
+                // 高清摄像头初始化
+                HCSdkManager normalSdkManager = HCSdkManager.getNormalHCSdkManager(this);
+                boolean initResult = normalSdkManager.init();
+                if (initResult) {
+                    boolean result = normalSdkManager.login();
+                    if (!result) {
+                        ToastUtils.showToastShort(this, "高清摄像头登录失败");
+                    }
+                } else {
+                    ToastUtils.showToastShort(this, "高清摄像头初始化失败");
+                }
+
+                // 热成像摄像头初始化
+                HCSdkManager hotSdkManager = HCSdkManager.getHotHCSdkManager(this);
+                boolean ir = hotSdkManager.init();
+                if (ir) {
+                    boolean result = hotSdkManager.login();
+                    if (!result) {
+                        ToastUtils.showToastShort(this, "热成像摄像头登录失败");
+                    }
+                } else {
+                    ToastUtils.showToastShort(this, "热成像摄像头初始化失败");
                 }
             }
-
         }
     }
 

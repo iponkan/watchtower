@@ -15,7 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/FullScreenTheme">
-        <activity android:name=".SettingActivity"></activity>
+        <activity
+            android:name=".GalleryActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity
+            android:name=".SettingActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".player.PlayerActivity"
             android:screenOrientation="landscape" />

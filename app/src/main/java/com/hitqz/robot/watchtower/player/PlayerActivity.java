@@ -55,7 +55,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
         Log.i(TAG, "播放文件名：" + fileInfo);
         surfaceView = findViewById(R.id.sv_player);
-        hcSdkManager = HCSdkManager.getInstance(this);
+        hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
         hcSdkManager.playBack(fileInfo);
         duration = hcSdkManager.getPlaybackDuration();

@@ -28,27 +28,37 @@ import org.MediaPlayer.PlayM4.Player;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HCSdkManager implements SurfaceHolder.Callback {
     public static final String TAG = "HCSdkManager";
+    private LoginInfo loginInfo;
 
-    private static HCSdkManager singleton;
+    private static HashMap<LoginInfo, HCSdkManager> hcSdkManagers = new HashMap<>();
+
     private Context applicationContext;
 
-    private HCSdkManager(Context context) {
+    private HCSdkManager(Context context, LoginInfo li) {
         this.applicationContext = context.getApplicationContext();
+        this.loginInfo = li;
     }
 
-    public static HCSdkManager getInstance(Context context) {
-        if (singleton == null) {
-            synchronized (HCSdkManager.class) {
-                if (singleton == null) {
-                    singleton = new HCSdkManager(context);
-                }
-            }
+    public static HCSdkManager getHCSdkManager(Context context, LoginInfo loginInfo) {
+        HCSdkManager hcSdkManager = hcSdkManagers.get(loginInfo);
+        if (hcSdkManager == null) {
+            hcSdkManager = new HCSdkManager(context, loginInfo);
+            hcSdkManagers.put(loginInfo, hcSdkManager);
         }
-        return singleton;
+        return hcSdkManager;
+    }
+
+    public static HCSdkManager getNormalHCSdkManager(Context context) {
+        return HCSdkManager.getHCSdkManager(context, LoginInfo.getNormalLogInfo());
+    }
+
+    public static HCSdkManager getHotHCSdkManager(Context context) {
+        return HCSdkManager.getHCSdkManager(context, LoginInfo.getHotLogInfo());
     }
 
     // @Override
@@ -116,10 +126,10 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     private int loginNormalDevice() {
         // get instance
         m_oNetDvrDeviceInfoV30 = new NET_DVR_DEVICEINFO_V30();
-        String strIP = LoginInfo.m_oIPAddr;
-        int nPort = Integer.parseInt(LoginInfo.m_oPort);
-        String strUser = LoginInfo.m_oUser;
-        String strPsd = LoginInfo.m_oPsd;
+        String strIP = loginInfo.m_oIPAddr;
+        int nPort = Integer.parseInt(loginInfo.m_oPort);
+        String strUser = loginInfo.m_oUser;
+        String strPsd = loginInfo.m_oPsd;
         // call NET_DVR_Login_v30 to login on, port 8000 as default
         int iLogID = HCNetSDK.getInstance().NET_DVR_Login_V30(strIP, nPort,
                 strUser, strPsd, m_oNetDvrDeviceInfoV30);
