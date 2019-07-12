@@ -33,39 +33,24 @@
         android:layout_below="@id/sv_hot_camera"
         android:background="#0000ff00" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sv_normal_camera"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/btn_Test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Test"
-                android:textColor="#ff000000"
-                android:typeface="sans" />
-
-        </LinearLayout>
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="left">
+            android:layout_gravity="left"
+            android:layout_marginLeft="20dp">
 
             <TextView
                 android:id="@+id/tv_camera_steer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+
+                android:layout_marginTop="20dp"
                 android:text="角度调整"
                 android:textColor="@android:color/white"
                 android:textSize="20dp" />
@@ -74,7 +59,8 @@
                 android:id="@+id/azimuth_circle"
                 android:layout_width="148dp"
                 android:layout_height="148dp"
-                android:layout_centerVertical="true"
+                android:layout_below="@id/tv_camera_steer"
+                android:layout_marginTop="20dp"
                 android:onClick="circlePressed"
                 app:bottomImg="@drawable/icon_arrow_down"
                 app:leftImg="@drawable/icon_arrow_left"
@@ -89,14 +75,14 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="right">
+            android:layout_marginRight="20dp"
+            android:layout_gravity="right">
 
             <TextView
                 android:id="@+id/tv_car_steer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
                 android:text="移动调整"
                 android:textColor="@android:color/white"
                 android:textSize="20dp" />
@@ -105,7 +91,8 @@
                 android:id="@+id/sv_car"
                 android:layout_width="148dp"
                 android:layout_height="148dp"
-                android:layout_centerVertical="true"
+                android:layout_below="@id/tv_car_steer"
+                android:layout_marginTop="20dp"
                 android:onClick="circlePressed"
                 app:bottomImg="@drawable/icon_arrow_down"
                 app:leftImg="@drawable/icon_arrow_left"
@@ -116,35 +103,36 @@
 
             </com.hitqz.robot.commonlib.view.SteerView>
         </RelativeLayout>
-    </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/sv_normal_camera"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
         android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
             android:clickable="true"
             android:src="@drawable/camera_plus_selector" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:clickable="true"
             android:src="@drawable/camera_focus_selector" />
 
         <ImageView
+            android:id="@+id/iv_camera_minus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
             android:clickable="true"
             android:src="@drawable/camera_minus_selector" />
     </LinearLayout>

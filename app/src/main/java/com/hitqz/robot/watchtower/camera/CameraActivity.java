@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -37,7 +37,7 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private Button m_oTestBtn = null;
+    private ImageView ivMinus = null;
     private SurfaceView hotSurfaceView = null;
     private SurfaceView normalSurfaceView;
     private ProductionView productionView;
@@ -72,7 +72,7 @@ public class CameraActivity extends AppCompatActivity {
             return;
         }
 
-        m_oTestBtn = findViewById(R.id.btn_Test);
+        ivMinus = findViewById(R.id.iv_camera_minus);
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
         normalSurfaceView = findViewById(R.id.sv_normal_camera);
@@ -87,14 +87,11 @@ public class CameraActivity extends AppCompatActivity {
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
         normalHCSdkManager.startSinglePreview();
 
-        m_oTestBtn.setOnClickListener(new View.OnClickListener() {
+        ivMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                List<FileInfo> fileList = hotHCSdkManager.findFile();
-//                if (fileList != null && fileList.size() > 0) {
-//                    hotHCSdkManager.Test_GetFileByName(fileList.get(0).fileName);
-//                    ToastUtils.showToastShort(CameraActivity.this, "下载完成");
-//                }
+                hotHCSdkManager.test_ScreenCtrl();
+//                JNATest.jnaTest.Test_Login_V40();
             }
         });
 
