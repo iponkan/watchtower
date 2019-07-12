@@ -15,6 +15,7 @@ import com.hikvision.netsdk.NET_DVR_CONFIG;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.NET_SDK_CALLBACK_TYPE;
+import com.hikvision.netsdk.PTZCommand;
 import com.hikvision.netsdk.PlaybackCallBack;
 import com.hikvision.netsdk.PlaybackControlCommand;
 import com.hikvision.netsdk.RealPlayCallBack;
@@ -924,6 +925,44 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void focusFar() {
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 0)) {
+            System.out.println("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            System.out.println("PTZControl  PAN_LEFT 0 succ");
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 1)) {
+            System.out.println("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            System.out.println("PTZControl  PAN_LEFT 1 succ");
+        }
+    }
+
+    public void focusNear() {
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_NEAR, 0)) {
+            System.out.println("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            System.out.println("PTZControl  PAN_LEFT 0 succ");
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_NEAR, 1)) {
+            System.out.println("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            System.out.println("PTZControl  PAN_LEFT 1 succ");
         }
     }
 }

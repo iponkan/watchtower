@@ -39,6 +39,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private ImageView ivMinus = null;
     private ImageView ivPlus = null;
+    private ImageView ivFocus = null;
     private SurfaceView hotSurfaceView = null;
     private SurfaceView normalSurfaceView;
     private ProductionView productionView;
@@ -66,6 +67,7 @@ public class CameraActivity extends AppCompatActivity {
 
         ivPlus = findViewById(R.id.iv_camera_plus);
         ivMinus = findViewById(R.id.iv_camera_minus);
+        ivFocus = findViewById(R.id.iv_camera_focus);
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
         normalSurfaceView = findViewById(R.id.sv_normal_camera);
@@ -94,6 +96,12 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
+        ivFocus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hotHCSdkManager.focusNear();
+            }
+        });
     }
 
     private void resetSize(View... views) {
