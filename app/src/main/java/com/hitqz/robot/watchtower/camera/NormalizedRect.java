@@ -11,7 +11,7 @@ public class NormalizedRect {
     public RectF mRectF;
 
     public Production mProduction;
-    public float mRatio = 1.0f;
+    public float mRatio = 1.0f;// 默认初始态，这个状态不会去绘制，只有设置了框选区域(此时ratio不为1)才会绘制
 
     public NormalizedRect(float screenWidth, float screenheight) {
         mScreenWidth = screenWidth;

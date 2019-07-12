@@ -28,8 +28,8 @@ public class ProductionView extends View {
     public static final String TAG = ProductionView.class.getSimpleName();
 
     public static final float DEFAULT_RATIO = 1f / 3;
-    private static final float MIN_SCALE = DEFAULT_RATIO;
-    private static final float MAX_SCALE = 1.0f;
+    private static final float MIN_SCALE = 0.1f;
+    private static final float MAX_SCALE = 0.6f;
 
     private NormalizedRect mBorderRect;
     private ArrayList<RectF> mCenterRectFs = new ArrayList<>();
@@ -61,10 +61,12 @@ public class ProductionView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(mBorderRect.mRectF, mPaint);
-        for (int i = 0; i < mCenterRectFs.size(); i++) {
-            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
+        if (mBorderRect.mRatio < 1.0f) {
+            canvas.drawRect(mBorderRect.mRectF, mPaint);
         }
+//        for (int i = 0; i < mCenterRectFs.size(); i++) {
+//            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
+//        }
 
     }
 
@@ -342,5 +344,23 @@ public class ProductionView extends View {
             i = 0;
         }
         return i;
+    }
+
+    public void zoomIn() {
+        if (mBorderRect.mRatio == 1.0f) {
+            return;
+        }
+        float finalRatio = Math.min(MAX_SCALE, mBorderRect.mRatio * 1.1f);
+        mBorderRect.setRatio(finalRatio);
+        invalidate();
+    }
+
+    public void zoomOut() {
+        if (mBorderRect.mRatio == 1.0f) {
+            return;
+        }
+        float finalRatio = Math.max(MIN_SCALE, mBorderRect.mRatio * 0.9f);
+        mBorderRect.setRatio(finalRatio);
+        invalidate();
     }
 }

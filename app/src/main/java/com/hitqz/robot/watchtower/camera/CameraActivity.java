@@ -38,6 +38,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private ImageView ivMinus = null;
+    private ImageView ivPlus = null;
     private SurfaceView hotSurfaceView = null;
     private SurfaceView normalSurfaceView;
     private ProductionView productionView;
@@ -72,6 +73,7 @@ public class CameraActivity extends AppCompatActivity {
             return;
         }
 
+        ivPlus = findViewById(R.id.iv_camera_plus);
         ivMinus = findViewById(R.id.iv_camera_minus);
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
@@ -87,11 +89,17 @@ public class CameraActivity extends AppCompatActivity {
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
         normalHCSdkManager.startSinglePreview();
 
+        ivPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productionView.zoomIn();
+            }
+        });
+
         ivMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hotHCSdkManager.test_ScreenCtrl();
-//                JNATest.jnaTest.Test_Login_V40();
+                productionView.zoomOut();
             }
         });
 
@@ -99,18 +107,20 @@ public class CameraActivity extends AppCompatActivity {
 
     private void resetSize(View... views) {
 
-        int margin = SizeUtils.dp2px(20);
+        int leftMargin = SizeUtils.dp2px(40);
+        int rightMargin = SizeUtils.dp2px(40);
+        int topMargin = SizeUtils.dp2px(10);
 
-        int width = ScreenUtils.getScreenWidth() - 2 * margin;
+        int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
         int height = (int) (width / 16f * 9);
 
         for (View view : views) {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
             layoutParams.width = width;
             layoutParams.height = height;
-            layoutParams.leftMargin = margin;
-            layoutParams.rightMargin = margin;
-            layoutParams.topMargin = margin;
+            layoutParams.leftMargin = leftMargin;
+            layoutParams.rightMargin = rightMargin;
+            layoutParams.topMargin = topMargin;
 
             view.setLayoutParams(layoutParams);
         }

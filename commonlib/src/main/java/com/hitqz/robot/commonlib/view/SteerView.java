@@ -194,7 +194,7 @@ public class SteerView extends View {
     }
 
     private void drawDirectImage(Canvas canvas) {
-        int painDistance = dp2px(getContext(), 15);
+        int painDistance = dp2px(getContext(), 12);
 
         if (drawLeft != null) {
             drawLeft.setBounds(painDistance, getMeasuredWidth() / 2 - drawLeft.getIntrinsicHeight() / 2, drawLeft.getIntrinsicWidth() + painDistance, getMeasuredWidth() / 2 + drawLeft.getIntrinsicHeight() / 2);
