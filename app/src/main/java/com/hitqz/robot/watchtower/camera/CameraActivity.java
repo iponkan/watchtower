@@ -42,16 +42,6 @@ public class CameraActivity extends AppCompatActivity {
     private SurfaceView hotSurfaceView = null;
     private SurfaceView normalSurfaceView;
     private ProductionView productionView;
-
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
-            FullScreenUtil.initFullScreen(this);
-        }
-        super.onWindowFocusChanged(hasFocus);
-    }
-
     private HCSdkManager hotHCSdkManager;
     private HCSdkManager normalHCSdkManager;
     ProductionManager productionManager;
@@ -59,6 +49,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_camera);
 
         hotHCSdkManager = HCSdkManager.getHotHCSdkManager(this);
@@ -131,6 +122,12 @@ public class CameraActivity extends AppCompatActivity {
 
         productionView.setParentSize(width, height);
         productionView.setProductionManager(productionManager);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
 
     @Override

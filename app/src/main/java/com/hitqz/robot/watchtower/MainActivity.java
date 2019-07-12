@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public void go2Camera(View view) {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     public void go2Gallery(View view) {
@@ -51,11 +52,13 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, GalleryActivity.class);
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     public void go2Setting(View view) {
         Intent intent = new Intent(this, SettingActivity.class);
         startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private static final int RC_STORAGE_PERM = 123;

@@ -14,16 +14,16 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
         commonTitleBar = findViewById(R.id.common_title_bar);
         commonTitleBar.setBackText("视频库");
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            FullScreenUtil.initFullScreen(this);
-        }
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0, 0);
     }
+
 }

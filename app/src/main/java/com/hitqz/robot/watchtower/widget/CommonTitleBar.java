@@ -37,7 +37,7 @@ public class CommonTitleBar extends FrameLayout implements View.OnClickListener 
 
     private void init(Context context) {
         this.context = context;
-        setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+//        setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         LayoutInflater.from(context).inflate(R.layout.layout_title_bar, this, true);
         vpBack = findViewById(R.id.fl_back);
         vpBack.setOnClickListener(this);

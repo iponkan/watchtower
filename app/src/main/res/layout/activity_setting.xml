@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/common_bg"
     android:orientation="vertical"
+
     tools:context=".SettingActivity">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
