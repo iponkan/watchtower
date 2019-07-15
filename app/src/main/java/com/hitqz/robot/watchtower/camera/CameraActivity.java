@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
@@ -17,7 +18,10 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
+
+import java.util.Set;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -40,6 +44,7 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView ivMinus = null;
     private ImageView ivPlus = null;
     private ImageView ivFocus = null;
+    private ImageView ivConfirm = null;
     private SurfaceView hotSurfaceView = null;
     private SurfaceView normalSurfaceView;
     private ProductionView productionView;
@@ -68,6 +73,15 @@ public class CameraActivity extends AppCompatActivity {
         ivPlus = findViewById(R.id.iv_camera_plus);
         ivMinus = findViewById(R.id.iv_camera_minus);
         ivFocus = findViewById(R.id.iv_camera_focus);
+        ivConfirm = findViewById(R.id.iv_camera_confirm);
+        ivConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Set<String> strings = SPUtils.getInstance("jianhuo").getStringSet("record");
+                strings.add(DonghuoRecord.commonBuild());
+                SPUtils.getInstance("jianhuo").put("record", strings);
+            }
+        });
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
         normalSurfaceView = findViewById(R.id.sv_normal_camera);
