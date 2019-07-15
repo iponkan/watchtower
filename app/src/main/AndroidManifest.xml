@@ -15,17 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/FullScreenTheme">
-        <activity
-            android:name=".GalleryActivity"></activity>
-        <activity
-            android:name=".SettingActivity"/>
-        <activity
-            android:name=".player.PlayerActivity" />
+        <activity android:name=".gallery.VideoListActivity"></activity>
+        <activity android:name=".gallery.GalleryActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".player.PlayerActivity" />
         <activity
             android:name=".camera.CameraActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

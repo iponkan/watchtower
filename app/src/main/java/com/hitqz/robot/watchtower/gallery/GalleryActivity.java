@@ -1,10 +1,11 @@
-package com.hitqz.robot.watchtower;
+package com.hitqz.robot.watchtower.gallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 public class GalleryActivity extends AppCompatActivity {
@@ -18,6 +19,8 @@ public class GalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
         commonTitleBar = findViewById(R.id.common_title_bar);
         commonTitleBar.setBackText("视频库");
+
+        VideoListActivity.go2VideoList(this);
     }
 
     @Override
