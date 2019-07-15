@@ -15,13 +15,11 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
-import com.hitqz.robot.watchtower.util.CameraUtil;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener {
 
