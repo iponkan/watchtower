@@ -49,7 +49,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:src="@color/colorPrimary" />
+        android:src="@drawable/top_img_02" />
 </merge>

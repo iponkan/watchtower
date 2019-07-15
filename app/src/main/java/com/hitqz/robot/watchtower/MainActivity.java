@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.NetworkUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
+import com.hitqz.robot.watchtower.widget.DhpDialog;
 
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     RC_STORAGE_PERM,
                     STORAGE_PERMISSION);
         } else {
+            DhpDialog.showDhpDialog(this);
             if (!NetworkUtils.isConnected()) {
                 ToastUtils.showToastShort(this, "网络未连接");
             } else {
