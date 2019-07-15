@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingRight="20dp">
+    android:layout_height="wrap_content">
 
     <com.hitqz.robot.commonlib.view.RCRelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         android:background="@color/item_background"
         android:orientation="vertical"
         app:clip_background="true"
@@ -23,7 +22,7 @@
             android:layout_marginLeft="20dp"
             android:text="监火作业"
             android:textColor="@android:color/white"
-            android:textSize="28dp" />
+            android:textSize="20dp" />
 
     </com.hitqz.robot.commonlib.view.RCRelativeLayout>
 </FrameLayout>

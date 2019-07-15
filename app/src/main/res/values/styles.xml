@@ -15,6 +15,13 @@
         //(此时，activity布局会扩展到状态栏底部（Z轴方向）)
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
+
+        <item name="android:selectableItemBackground">@null</item>
+        <item name="android:selectableItemBackgroundBorderless">@null</item>
+
+        <!-- 设置自定义水波纹颜色(包括了listivew的item按下颜色) -->
+        <!-- The color applied to framework control highlights (ex. ripples, list selectors). -->
+         <item name="android:colorControlHighlight">#000000</item>
     </style>
 
     <!--自定义dialog背景全透明无边框theme -->
