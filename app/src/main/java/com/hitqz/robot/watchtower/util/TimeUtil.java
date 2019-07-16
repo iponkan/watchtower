@@ -36,7 +36,7 @@ public class TimeUtil {
     }
 
     public static NET_DVR_TIME plusSeconds(@NonNull TimeStruct timeStruct, int seconds) {
-//        int current = timeStruct.toSeconds() + seconds;
+//        int current = timeStruct.toMillSeconds() + seconds;
 //        Date date = new Date(current * 1000);
         NET_DVR_TIME net_dvr_time = new NET_DVR_TIME();
 //        net_dvr_time.dwYear = date.getYear();

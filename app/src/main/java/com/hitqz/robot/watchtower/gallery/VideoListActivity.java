@@ -17,8 +17,6 @@ import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener {
@@ -67,10 +65,8 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         activity.startActivity(intent);
     }
 
-    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
-
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-        ToastUtils.showToastShort(this, FORMATTER.format(view.getDate()));
+        ToastUtils.showToastShort(this, "" + year + " " + month + " " + dayOfMonth);
     }
 }

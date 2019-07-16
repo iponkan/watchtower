@@ -9,19 +9,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 
 import com.hitqz.robot.commonlib.view.SteerView;
+import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
-
-import java.util.Set;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -77,9 +74,7 @@ public class CameraActivity extends AppCompatActivity {
         ivConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Set<String> strings = SPUtils.getInstance("jianhuo").getStringSet("record");
-                strings.add(DonghuoRecord.commonBuild());
-                SPUtils.getInstance("jianhuo").put("record", strings);
+                DonghuoRecordManager.getInstance().addTimePoint();
             }
         });
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
@@ -113,8 +108,10 @@ public class CameraActivity extends AppCompatActivity {
         ivFocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hotHCSdkManager.focusNear();
+//                hotHCSdkManager.focusNear();
+                DonghuoRecordManager.getInstance().clearRecods();
             }
+
         });
     }
 

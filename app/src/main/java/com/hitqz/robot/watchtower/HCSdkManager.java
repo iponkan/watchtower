@@ -549,7 +549,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public int getPlaybackDuration() {
         if (fileInfo != null) {
-            int duration = TimeStruct.getDuration(fileInfo.startTime, fileInfo.stopTime);
+            int duration = TimeStruct.getDurationSeconds(fileInfo.startTime, fileInfo.stopTime);
             Log.i(TAG, "duration ==== " + duration);
             return duration;
         }

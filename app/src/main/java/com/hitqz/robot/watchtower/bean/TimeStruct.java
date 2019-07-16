@@ -83,6 +83,17 @@ public class TimeStruct implements Parcelable {
         return struct;
     }
 
+    public NET_DVR_TIME toNET_DVR_TIME() {
+        NET_DVR_TIME struct = new NET_DVR_TIME();
+        struct.dwYear = this.dwYear;
+        struct.dwDay = this.dwDay;
+        struct.dwHour = this.dwHour;
+        struct.dwMinute = this.dwMinute;
+        struct.dwMonth = this.dwMonth;
+        struct.dwSecond = this.dwSecond;
+        return struct;
+    }
+
     @Override
     public String toString() {
         return this.dwYear + "/" + this.dwMonth + "/" + this.dwDay + " " + this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
@@ -91,7 +102,7 @@ public class TimeStruct implements Parcelable {
     public static final String TAG = "TimeStruct";
 
 
-    public static int getDuration(@NonNull TimeStruct startTime, @NonNull TimeStruct stopTime) {
+    public static int getDurationSeconds(@NonNull TimeStruct startTime, @NonNull TimeStruct stopTime) {
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
         try {
 
@@ -114,7 +125,7 @@ public class TimeStruct implements Parcelable {
         return 0;
     }
 
-    public int toSeconds() {
+    public int toMillSeconds() {
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
         try {
             Date date = formatter.parse(toString());
@@ -123,5 +134,28 @@ public class TimeStruct implements Parcelable {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static TimeStruct fromMillSeconds(long num) {
+        Date date = new Date(num);
+        TimeStruct struct = new TimeStruct();
+        struct.dwYear = date.getYear();
+        struct.dwDay = date.getDay();
+        struct.dwHour = date.getHours();
+        struct.dwMinute = date.getMinutes();
+        struct.dwMonth = date.getMonth();
+        struct.dwSecond = date.getSeconds();
+        return struct;
+    }
+
+    public static TimeStruct farFeature() {
+        TimeStruct struct = new TimeStruct();
+        struct.dwYear = 2069;
+        struct.dwMonth = 12;
+        struct.dwDay = 31;
+        struct.dwHour = 24;
+        struct.dwMinute = 0;
+        struct.dwSecond = 0;
+        return struct;
     }
 }
