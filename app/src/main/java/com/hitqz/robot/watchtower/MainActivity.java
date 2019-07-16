@@ -44,17 +44,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void go2Gallery(View view) {
-
-//        List<FileInfo> fileList = HCSdkManager.getInstance(this).findFile();
-//        if (fileList != null && fileList.size() > 0) {
-//            PlayerActivity.go2Player(MainActivity.this, fileList.get(0));
-//        } else {
-//            ToastUtils.showToastShort(this, "没有录像文件");
-//        }
-
-        Intent intent = new Intent(this, GalleryActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        GalleryActivity.go2Gallery(this);
     }
 
     public void go2Setting(View view) {

@@ -56,8 +56,9 @@ public class GalleryActivity extends AppCompatActivity {
 
 
     public static void go2Gallery(Activity activity) {
-        Intent intent = new Intent(activity, VideoListActivity.class);
+        Intent intent = new Intent(activity, GalleryActivity.class);
         activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
     }
 
 }

@@ -3,6 +3,7 @@ package com.hitqz.robot.watchtower.gallery;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,14 @@ import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.ArrayList;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener {
 
     private CommonTitleBar commonTitleBar;
@@ -28,6 +37,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     CalendarPopWindow calendarPopWindow;
     View serchView;
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +47,38 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         commonTitleBar.setBackText("视频库");
         listView = findViewById(R.id.lv_videolist);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-        ArrayList<FileInfo> videoList = (ArrayList<FileInfo>) hcSdkManager.findFile();
-        videoAdapter = new VideoAdapter(videoList, this);
-        listView.setAdapter(videoAdapter);
+        Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
+                ArrayList<FileInfo> videoList = (ArrayList<FileInfo>) hcSdkManager.findFile();
+                emitter.onNext(videoList);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ArrayList<FileInfo>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<FileInfo> fileInfos) {
+                        videoAdapter = new VideoAdapter(fileInfos, VideoListActivity.this);
+                        listView.setAdapter(videoAdapter);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+
         serchView = findViewById(R.id.rl_select_date);
         serchView.setOnClickListener(new View.OnClickListener() {
             @Override
