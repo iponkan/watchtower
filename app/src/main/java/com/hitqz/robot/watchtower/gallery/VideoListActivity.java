@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.ListView;
 
+import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -36,6 +37,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     HCSdkManager hcSdkManager;
     CalendarPopWindow calendarPopWindow;
     View serchView;
+    LoadingView loadingView;
 
     @SuppressLint("CheckResult")
     @Override
@@ -46,6 +48,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         commonTitleBar = findViewById(R.id.common_title_bar);
         commonTitleBar.setBackText("视频库");
         listView = findViewById(R.id.lv_videolist);
+        loadingView = findViewById(R.id.loadingView);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
@@ -58,11 +61,12 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
                 .subscribe(new Observer<ArrayList<FileInfo>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        showDialog();
                     }
 
                     @Override
                     public void onNext(ArrayList<FileInfo> fileInfos) {
+                        dismissDialog();
                         videoAdapter = new VideoAdapter(fileInfos, VideoListActivity.this);
                         listView.setAdapter(videoAdapter);
                     }
@@ -107,5 +111,13 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
         ToastUtils.showToastShort(this, "" + year + " " + month + " " + dayOfMonth);
+    }
+
+    private void showDialog() {
+        loadingView.start();
+    }
+
+    private void dismissDialog() {
+        loadingView.stop();
     }
 }

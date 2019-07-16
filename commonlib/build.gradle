@@ -67,4 +67,6 @@ dependencies {
 
     api 'com.github.prolificinteractive:material-calendarview:2.0.1'
 
+    api 'com.samigehi:loadingview:1.1'
+
 }
