@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/common_bg"
     android:orientation="vertical"
-    tools:context=".SettingActivity"
-    android:background="@drawable/common_bg">
+    tools:context=".SettingActivity">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
         android:id="@+id/common_title_bar"
@@ -14,4 +14,20 @@
         android:layout_height="50dp">
 
     </com.hitqz.robot.watchtower.widget.CommonTitleBar>
+
+    <ListView
+        android:id="@+id/lv_records"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginRight="20dp"
+        android:divider="#00000000"
+        android:dividerHeight="18dp"
+        android:fadeScrollbars="false"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none">
+
+    </ListView>
+
 </LinearLayout>

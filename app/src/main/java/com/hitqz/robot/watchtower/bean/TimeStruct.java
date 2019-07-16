@@ -139,7 +139,7 @@ public class TimeStruct implements Parcelable {
     public static TimeStruct fromMillSeconds(long num) {
         Date date = new Date(num);
         TimeStruct struct = new TimeStruct();
-        struct.dwYear = date.getYear();
+        struct.dwYear = date.getYear() + 1900;
         struct.dwDay = date.getDay();
         struct.dwHour = date.getHours();
         struct.dwMinute = date.getMinutes();
