@@ -13,6 +13,7 @@ import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CameraUtil {
@@ -33,23 +34,26 @@ public class CameraUtil {
     }
 
     // lChannel为1
-    public static void test_FindFile(int iUserID, List<FileInfo> list) {
+    public static List<FileInfo> findFile(int iUserID, TimeStruct start, TimeStruct stop) {
+        List<FileInfo> list = new ArrayList<>();
         int iFindHandle = -1;
         NET_DVR_FILECOND lpSearchInfo = new NET_DVR_FILECOND();
         lpSearchInfo.lChannel = 1;
         lpSearchInfo.dwFileType = 0xff;
         lpSearchInfo.dwIsLocked = 0xff;
         lpSearchInfo.dwUseCardNo = 0;
-        lpSearchInfo.struStartTime.dwYear = 2019;
-        lpSearchInfo.struStartTime.dwMonth = 6;
-        lpSearchInfo.struStartTime.dwDay = 26;
-        lpSearchInfo.struStopTime.dwYear = 2019;
-        lpSearchInfo.struStopTime.dwMonth = 11;
-        lpSearchInfo.struStopTime.dwDay = 27;
+        lpSearchInfo.struStartTime = start.toNET_DVR_TIME();
+        lpSearchInfo.struStopTime = stop.toNET_DVR_TIME();
+//        lpSearchInfo.struStartTime.dwYear = 2019;
+//        lpSearchInfo.struStartTime.dwMonth = 6;
+//        lpSearchInfo.struStartTime.dwDay = 26;
+//        lpSearchInfo.struStopTime.dwYear = 2019;
+//        lpSearchInfo.struStopTime.dwMonth = 11;
+//        lpSearchInfo.struStopTime.dwDay = 27;
         iFindHandle = HCNetSDK.getInstance().NET_DVR_FindFile_V30(iUserID, lpSearchInfo);
         if (iFindHandle == -1) {
             Logger.e("NET_DVR_FindFile_V30 failed,Error:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
-            return;
+            return list;
         }
         int findNext = 0;
         NET_DVR_FINDDATA_V30 struFindData = new NET_DVR_FINDDATA_V30();
@@ -81,6 +85,7 @@ public class CameraUtil {
             }
         }
         HCNetSDK.getInstance().NET_DVR_FindClose_V30(iFindHandle);
+        return list;
     }
 
     public static void test_PlayBackByName(int iUserID, String fileName, Surface surface) {

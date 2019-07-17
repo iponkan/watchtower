@@ -523,13 +523,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     }
 
 
-    public List<FileInfo> findFile() {
+    public List<FileInfo> findFile(TimeStruct startTime, TimeStruct stopTime) {
         if (m_iLogID < 0) {
             Log.e(TAG, "please login on a device first");
-            return null;
+            return new ArrayList<>();
         }
-        List<FileInfo> fileList = new ArrayList<>();
-        CameraUtil.test_FindFile(m_iLogID, fileList);
+        List<FileInfo> fileList = CameraUtil.findFile(m_iLogID, startTime, stopTime);
         return fileList;
     }
 

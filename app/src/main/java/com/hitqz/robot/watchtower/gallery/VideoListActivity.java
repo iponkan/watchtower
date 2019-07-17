@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CalendarView;
@@ -20,6 +21,7 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.bean.TimeRange;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
@@ -46,6 +48,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     ArrayList<FileInfo> videoList;
     TextView selectDate;
     DonghuoRecord donghuoRecord;
+    private Handler handler = new Handler();
 
     @SuppressLint("CheckResult")
     @Override
@@ -55,6 +58,9 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         setContentView(R.layout.activity_video_list);
         commonTitleBar = findViewById(R.id.common_title_bar);
         donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
+        // debug
+        donghuoRecord = DonghuoRecord.getHH();
+        timeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
         commonTitleBar.setTitle(donghuoRecord.toString());
         listView = findViewById(R.id.lv_videolist);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,7 +74,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile();
+                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(donghuoRecord.struStartTime, donghuoRecord.struStopTime);
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())
@@ -104,9 +110,9 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
             public void onClick(View v) {
                 if (calendarPopWindow == null) {
                     calendarPopWindow = new CalendarPopWindow(VideoListActivity.this, VideoListActivity.this);
-                    calendarPopWindow.showPopupWindow(serchView, donghuoRecord.struStartTime.toMillSeconds());
+                    calendarPopWindow.showPopupWindow(serchView, timeRange.struStartTime.toMillSeconds());
                 } else {
-                    calendarPopWindow.showPopupWindow(serchView, donghuoRecord.struStartTime.toMillSeconds());
+                    calendarPopWindow.showPopupWindow(serchView, timeRange.struStartTime.toMillSeconds());
                 }
             }
         });
@@ -128,9 +134,57 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         activity.startActivity(intent);
     }
 
+    TimeRange timeRange;
+
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-        ToastUtils.showToastShort(this, "" + year + " " + month + " " + dayOfMonth);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                calendarPopWindow.dismiss();
+
+            }
+        }, 300);
+        ToastUtils.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
+
+        timeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth);
+
+        selectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
+
+        Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
+            @Override
+            public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
+                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(timeRange.struStartTime, timeRange.struStopTime);
+                emitter.onNext(videoList);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ArrayList<FileInfo>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        videoList.clear();
+                        videoAdapter.notifyDataSetChanged();
+                        showDialog();
+                    }
+
+                    @Override
+                    public void onNext(ArrayList<FileInfo> fileInfos) {
+                        dismissDialog();
+                        videoAdapter = new VideoAdapter(fileInfos, VideoListActivity.this);
+                        listView.setAdapter(videoAdapter);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void showDialog() {

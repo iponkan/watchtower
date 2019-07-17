@@ -99,6 +99,10 @@ public class TimeStruct implements Parcelable {
         return this.dwYear + "/" + this.dwMonth + "/" + this.dwDay + " " + this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
     }
 
+    public String toHMS() {
+        return this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
+    }
+
     public static final String TAG = "TimeStruct";
 
 
@@ -143,7 +147,7 @@ public class TimeStruct implements Parcelable {
         struct.dwDay = date.getDay();
         struct.dwHour = date.getHours();
         struct.dwMinute = date.getMinutes();
-        struct.dwMonth = date.getMonth();
+        struct.dwMonth = date.getMonth() + 1;
         struct.dwSecond = date.getSeconds();
         return struct;
     }

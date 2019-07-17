@@ -41,7 +41,11 @@ public class VideoAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(mContext).inflate(R.layout.item_list_video, parent, false);
         TextView tv = convertView.findViewById(R.id.tv_fileName);
-        tv.setText(mData.get(position).fileName);
+        FileInfo fileInfo = mData.get(position);
+        if (fileInfo != null) {
+            tv.setText(fileInfo.startTime.toHMS() + "～" + fileInfo.stopTime.toHMS());
+        }
+
         return convertView;
     }
 }

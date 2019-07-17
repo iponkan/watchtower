@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * 记录一次动火作业的时间
  */
@@ -58,4 +61,29 @@ public class DonghuoRecord implements Parcelable {
             return new DonghuoRecord[size];
         }
     };
+
+    public static DonghuoRecord getHH() {
+        DonghuoRecord donghuoRecord = new DonghuoRecord();
+        TimeStruct start = new TimeStruct();
+        start.dwYear = 2019;
+        start.dwMonth = 7;
+        start.dwDay = 2;
+        start.dwHour = 0;
+        start.dwMinute = 0;
+        start.dwSecond = 0;
+
+        TimeStruct stop = new TimeStruct();
+        stop.dwYear = 2019;
+        stop.dwMonth = 7;
+        stop.dwDay = 3;
+        stop.dwHour = 0;
+        stop.dwMinute = 0;
+        stop.dwSecond = 0;
+
+        donghuoRecord.struStartTime = start;
+        donghuoRecord.struStopTime = stop;
+        return donghuoRecord;
+    }
+
+
 }
