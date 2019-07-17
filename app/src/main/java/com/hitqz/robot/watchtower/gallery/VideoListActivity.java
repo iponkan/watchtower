@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
@@ -19,6 +20,7 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
@@ -42,6 +44,8 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     View serchView;
     LoadingView loadingView;
     ArrayList<FileInfo> videoList;
+    TextView selectDate;
+    DonghuoRecord donghuoRecord;
 
     @SuppressLint("CheckResult")
     @Override
@@ -50,8 +54,8 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_video_list);
         commonTitleBar = findViewById(R.id.common_title_bar);
-        String name = getIntent().getStringExtra(EXTRA_NAME);
-        commonTitleBar.setTitle(name);
+        donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
+        commonTitleBar.setTitle(donghuoRecord.toString());
         listView = findViewById(R.id.lv_videolist);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -100,12 +104,14 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
             public void onClick(View v) {
                 if (calendarPopWindow == null) {
                     calendarPopWindow = new CalendarPopWindow(VideoListActivity.this, VideoListActivity.this);
-                    calendarPopWindow.showPopupWindow(serchView);
+                    calendarPopWindow.showPopupWindow(serchView, donghuoRecord.struStartTime.toMillSeconds());
                 } else {
-                    calendarPopWindow.showPopupWindow(serchView);
+                    calendarPopWindow.showPopupWindow(serchView, donghuoRecord.struStartTime.toMillSeconds());
                 }
             }
         });
+        selectDate = findViewById(R.id.tv_select_date);
+        selectDate.setText(getSelectDate(donghuoRecord.struStartTime));
     }
 
     @Override
@@ -116,7 +122,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
     public static final String EXTRA_NAME = "EXTRA_NAME";
 
-    public static void go2VideoList(Activity activity, String donghuoRecord) {
+    public static void go2VideoList(Activity activity, DonghuoRecord donghuoRecord) {
         Intent intent = new Intent(activity, VideoListActivity.class);
         intent.putExtra(EXTRA_NAME, donghuoRecord);
         activity.startActivity(intent);
@@ -133,5 +139,9 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
     private void dismissDialog() {
         loadingView.stop();
+    }
+
+    private String getSelectDate(TimeStruct timeStruct) {
+        return timeStruct.dwYear + "." + timeStruct.dwMonth + "." + timeStruct.dwDay;
     }
 }

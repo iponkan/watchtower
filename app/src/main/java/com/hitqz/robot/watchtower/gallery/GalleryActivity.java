@@ -37,7 +37,7 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position).toString());
+                VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position));
             }
         });
     }

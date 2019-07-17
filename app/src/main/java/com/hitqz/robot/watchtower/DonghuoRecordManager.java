@@ -55,8 +55,8 @@ public class DonghuoRecordManager {
             DonghuoRecord donghuoRecord = new DonghuoRecord();
             TimeStruct start = TimeStruct.fromMillSeconds(Long.parseLong(list.get(0)));
             TimeStruct stop = TimeStruct.farFeature();
-            donghuoRecord.struStartTime = start.toNET_DVR_TIME();
-            donghuoRecord.struStopTime = stop.toNET_DVR_TIME();
+            donghuoRecord.struStartTime = start;
+            donghuoRecord.struStopTime = stop;
             donghuoRecords = new ArrayList<>();
             donghuoRecords.add(donghuoRecord);
         } else if (list.size() > 1) {
@@ -65,8 +65,8 @@ public class DonghuoRecordManager {
                 DonghuoRecord donghuoRecord = new DonghuoRecord();
                 TimeStruct start = TimeStruct.fromMillSeconds(Long.parseLong(list.get(i)));
                 TimeStruct stop = TimeStruct.fromMillSeconds(Long.parseLong(list.get(i + 1)));
-                donghuoRecord.struStartTime = start.toNET_DVR_TIME();
-                donghuoRecord.struStopTime = stop.toNET_DVR_TIME();
+                donghuoRecord.struStartTime = start;
+                donghuoRecord.struStopTime = stop;
                 donghuoRecords.add(donghuoRecord);
             }
         }

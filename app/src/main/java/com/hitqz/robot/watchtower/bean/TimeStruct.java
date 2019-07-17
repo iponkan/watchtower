@@ -125,11 +125,11 @@ public class TimeStruct implements Parcelable {
         return 0;
     }
 
-    public int toMillSeconds() {
+    public long toMillSeconds() {
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
         try {
             Date date = formatter.parse(toString());
-            return (int) (date.getTime() / 1000);
+            return date.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
         }

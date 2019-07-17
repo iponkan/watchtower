@@ -69,10 +69,11 @@ public class CalendarPopWindow extends PopupWindow {
      *
      * @param parent
      */
-    public void showPopupWindow(View parent) {
+    public void showPopupWindow(View parent, long time) {
         if (!this.isShowing()) {
             // 以下拉方式显示popupwindow
             this.showAsDropDown(parent);
+            calendarView.setDate(time);
         } else {
             this.dismiss();
         }

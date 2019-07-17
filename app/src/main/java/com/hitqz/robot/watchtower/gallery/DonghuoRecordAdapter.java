@@ -43,9 +43,9 @@ public class DonghuoRecordAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(mContext).inflate(R.layout.item_list_video, parent, false);
         TextView tv = convertView.findViewById(R.id.tv_fileName);
-        NET_DVR_TIME net_dvr_time = mData.get(position).struStartTime;
+        TimeStruct timeStruct = mData.get(position).struStartTime;
 
-        tv.setText(" " + (position + 1) + ". " + TimeStruct.cloneFrom(net_dvr_time));
+        tv.setText(" " + (position + 1) + ". " + timeStruct);
         return convertView;
     }
 }
