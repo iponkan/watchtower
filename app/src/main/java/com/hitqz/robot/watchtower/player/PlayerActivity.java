@@ -10,15 +10,18 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import static com.hitqz.robot.watchtower.util.TimeUtil.formatTimeS;
 
@@ -41,6 +44,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     private Handler handler = new Handler();
 
+    CommonTitleBar commonTitleBar;
+
     public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
         intent.putExtra(EXTRA_PATH, fileInfo);
@@ -50,11 +55,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_palyer);
+        commonTitleBar = findViewById(R.id.player_ctb);
 
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
         Log.i(TAG, "播放文件名：" + fileInfo);
+        commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
         surfaceView = findViewById(R.id.sv_player);
+
+        int width = ScreenUtils.getScreenWidth();
+        int height = (int) ((width / 16f) * 9);
+        ViewGroup.LayoutParams layoutParams = surfaceView.getLayoutParams();
+        layoutParams.height = height;
+        surfaceView.setLayoutParams(layoutParams);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
         hcSdkManager.playBack(fileInfo);
@@ -78,15 +92,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     }
 
     ProgressHandler progressHandler;
-
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            FullScreenUtil.initFullScreen(this);
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -145,11 +150,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             }
         } else if (surfaceView == v) {
             if (hcSdkManager.isPlaying()) {
-                ivPlay.setImageResource(R.drawable.bt_pause);
+                ivPlay.setImageResource(R.drawable.icon_pause);
                 ivPlay.setVisibility(View.VISIBLE);
                 fadeOutPlayButton();
             } else if (hcSdkManager.isPause()) {
-                ivPlay.setImageResource(R.drawable.bt_play);
+                ivPlay.setImageResource(R.drawable.icon_play);
                 ivPlay.setVisibility(View.VISIBLE);
                 fadeOutPlayButton();
             }

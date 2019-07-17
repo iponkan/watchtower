@@ -1,5 +1,7 @@
 package com.hitqz.robot.watchtower.bean;
 
+import androidx.annotation.NonNull;
+
 import com.hikvision.netsdk.NET_DVR_TIME;
 
 /**
@@ -16,4 +18,10 @@ public class DonghuoRecord {
      */
     public NET_DVR_TIME struStopTime = new NET_DVR_TIME();
     public String name;
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "动火记录:" + struStartTime.ToString() + "～" + struStopTime.ToString();
+    }
 }

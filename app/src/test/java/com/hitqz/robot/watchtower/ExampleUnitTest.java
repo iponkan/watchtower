@@ -2,12 +2,6 @@ package com.hitqz.robot.watchtower;
 
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -17,63 +11,102 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        int[] ints = twoSum(new int[]{2, 7, 11, 15}, 9);
-        System.out.println(" " + ints[0] + " " + ints[1]);
+        ListNode l1 = new ListNode(5);
+//        l1.next = new ListNode(1);
+//        l1.next.next = new ListNode(1);
+//        l1.next.next.next = new ListNode(1);
+//        l1.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next.next.next.next.next = new ListNode(1);
+//        l1.next.next.next.next.next.next.next.next.next.next = new ListNode(1);
+
+        ListNode l2 = new ListNode(5);
+//        l2.next = new ListNode(1);
+//        l2.next.next = new ListNode(1);
+//        l2.next.next.next = new ListNode(1);
+//        l2.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next.next.next.next.next = new ListNode(1);
+//        l2.next.next.next.next.next.next.next.next.next.next = new ListNode(1);
+
+        ListNode listNode = addTwoNumbers(l1, l2);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        System.out.println(printListNode(listNode, stringBuilder));
     }
 
-    public int[] twoSum(int[] nums, int target) {
-        HashMap<Integer, Integer> integers = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            integers.put(nums[i], i);
-        }
-        for (int i = 0; i < nums.length - 1; i++) {
-            int j = target - nums[i];
-            if (integers.containsKey(j) && integers.get(j) != i) {
-                return new int[]{i, integers.get(j)};
-            }
-        }
+    private String printListNode(ListNode listNode, StringBuilder stringBuilder) {
 
-        throw new IllegalArgumentException("No two sum solution");
+        stringBuilder.append(" ");
+        stringBuilder.append(listNode.val);
+
+        if (listNode.next != null) {
+            printListNode(listNode.next, stringBuilder);
+        }
+        return stringBuilder.toString();
+
     }
 
-    public int[] twoSum2(int[] nums, int target) {
-        int[] indexs = new int[2];
-        HashMap<Integer, Integer> integers = new HashMap<>();
-        for (int i = 0; i < nums.length; i++) {
-            integers.put(i, nums[i]);
+    public class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode(int x) {
+            val = x;
         }
-
-
-        here:
-
-        for (int i = 0; i < nums.length - 1; i++) {
-            for (Map.Entry<Integer, Integer> entry : integers.entrySet()) {
-                if (entry.getValue() == target - nums[i] && entry.getKey() != i) {
-                    indexs[0] = i;
-                    indexs[1] = entry.getKey();
-                    break here;
-                }
-            }
-        }
-
-        return indexs;
     }
 
-    public int[] twoSum3(int[] nums, int target) {
-        int[] indexs = new int[2];
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
-        here:
-
-        for (int i = 0; i < nums.length; i++) {
-            for (int j = i + 1; j < nums.length; j++) {
-                if (nums[j] == target - nums[i]) {
-                    indexs[0] = i;
-                    indexs[1] = j;
-                    break here;
-                }
-            }
+        boolean jin = false;
+        int val = l1.val + l2.val;
+        if (val >= 10) {
+            val = val % 10;
+            jin = true;
         }
 
-        return indexs;
+        ListNode listNode = new ListNode(val);
+
+        if (l1.next != null || l2.next != null || jin) {
+            listNode.next = add(l1.next, l2.next, jin);
+            return listNode;
+        }
+        return listNode;
+    }
+
+    private ListNode add(ListNode l1, ListNode l2, boolean jin) {
+        int val = (l1 == null ? 0 : l1.val) + (l2 == null ? 0 : l2.val) + (jin ? 1 : 0);
+        if (val >= 10) {
+            val = val % 10;
+            jin = true;
+        } else {
+            jin = false;
+        }
+
+        ListNode next = new ListNode(val);
+
+        ListNode l1Next = null;
+        if (l1 != null) {
+            l1Next = l1.next;
+        }
+
+        ListNode l2Next = null;
+        if (l2 != null) {
+            l2Next = l2.next;
+        }
+
+
+        if (l1Next != null || l2Next != null || jin) {
+            next.next = add(l1Next, l2Next, jin);
+            return next;
+        } else {
+            return next;
+        }
     }
 }

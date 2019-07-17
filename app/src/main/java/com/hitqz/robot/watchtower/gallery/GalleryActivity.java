@@ -13,13 +13,10 @@ import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
-import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
-
-    private CommonTitleBar commonTitleBar;
 
     ListView listView;
 
@@ -29,12 +26,9 @@ public class GalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
-        commonTitleBar = findViewById(R.id.common_title_bar);
-        commonTitleBar.setBackText("视频库");
 
         DonghuoRecordManager.getInstance().initRecords();
         List<DonghuoRecord> donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
-
 
         listView = findViewById(R.id.lv_records);
         DonghuoRecordAdapter donghuoRecordAdapter = new DonghuoRecordAdapter(donghuoRecords, this);
@@ -43,7 +37,7 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                VideoListActivity.go2VideoList(GalleryActivity.this);
+                VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position).toString());
             }
         });
     }

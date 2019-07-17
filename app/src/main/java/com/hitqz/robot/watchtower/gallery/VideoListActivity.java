@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
 
@@ -16,7 +17,9 @@ import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.FileInfo;
+import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.ArrayList;
@@ -38,6 +41,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     CalendarPopWindow calendarPopWindow;
     View serchView;
     LoadingView loadingView;
+    ArrayList<FileInfo> videoList;
 
     @SuppressLint("CheckResult")
     @Override
@@ -46,14 +50,21 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_video_list);
         commonTitleBar = findViewById(R.id.common_title_bar);
-        commonTitleBar.setBackText("视频库");
+        String name = getIntent().getStringExtra(EXTRA_NAME);
+        commonTitleBar.setTitle(name);
         listView = findViewById(R.id.lv_videolist);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PlayerActivity.go2Player(VideoListActivity.this, videoList.get(position));
+            }
+        });
         loadingView = findViewById(R.id.loadingView);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                ArrayList<FileInfo> videoList = (ArrayList<FileInfo>) hcSdkManager.findFile();
+                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile();
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())
@@ -103,8 +114,11 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         overridePendingTransition(0, 0);
     }
 
-    public static void go2VideoList(Activity activity) {
+    public static final String EXTRA_NAME = "EXTRA_NAME";
+
+    public static void go2VideoList(Activity activity, String donghuoRecord) {
         Intent intent = new Intent(activity, VideoListActivity.class);
+        intent.putExtra(EXTRA_NAME, donghuoRecord);
         activity.startActivity(intent);
     }
 

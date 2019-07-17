@@ -18,12 +18,9 @@ import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 
 public class CameraActivity extends AppCompatActivity {
-
-    private CommonTitleBar commonTitleBar;
 
     public void circlePressed(View view) {
         SteerView azimuthCircle = (SteerView) view;
@@ -80,9 +77,6 @@ public class CameraActivity extends AppCompatActivity {
         hotSurfaceView = findViewById(R.id.sv_hot_camera);
         productionView = findViewById(R.id.pv_camera);
         normalSurfaceView = findViewById(R.id.sv_normal_camera);
-
-        commonTitleBar = findViewById(R.id.common_title_bar);
-        commonTitleBar.setBackText("相机设置");
 
         resetSize(hotSurfaceView, productionView, normalSurfaceView);
 

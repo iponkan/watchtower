@@ -12,7 +12,8 @@
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
         android:id="@+id/common_title_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        app:titleText="设置">
 
     </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 

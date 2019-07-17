@@ -1,51 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/common_bg"
     tools:context=".player.PlayerActivity">
 
-    <SurfaceView
-        android:id="@+id/sv_player"
+    <com.hitqz.robot.watchtower.widget.CommonTitleBar
+        android:id="@+id/player_ctb"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#0000ff00" />
+        android:layout_height="50dp">
 
-    <ImageView
-        android:id="@+id/iv_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/bt_play" />
+    </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 
-
-    <TextView
-        android:id="@+id/tv_current_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="00:00:00" />
-
-    <TextView
-        android:id="@+id/tv_duration_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="01:00:00" />
-
-    <SeekBar
-        android:id="@+id/sb_time"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_toLeftOf="@id/tv_duration_time"
-        android:layout_toRightOf="@id/tv_current_time" />
+        android:layout_height="270dp"
+        android:layout_centerInParent="true">
+
+        <SurfaceView
+            android:id="@+id/sv_player"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#0000ff00" />
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_play" />
+
+
+        <TextView
+            android:id="@+id/tv_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="00:00:00" />
+
+        <TextView
+            android:id="@+id/tv_duration_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="01:00:00" />
+
+        <SeekBar
+            android:id="@+id/sb_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toLeftOf="@id/tv_duration_time"
+            android:layout_toRightOf="@id/tv_current_time" />
+    </RelativeLayout>
+
+
 </RelativeLayout>
