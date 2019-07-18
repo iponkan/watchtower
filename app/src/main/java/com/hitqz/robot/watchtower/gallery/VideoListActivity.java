@@ -27,6 +27,7 @@ import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -50,6 +51,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     DonghuoRecord donghuoRecord;
     Handler handler = new Handler();
     TimeRange dayTimeRange;
+    TextView tvEmpty;
 
     @SuppressLint("CheckResult")
     @Override
@@ -59,6 +61,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         setContentView(R.layout.activity_video_list);
 
         commonTitleBar = findViewById(R.id.common_title_bar);
+        tvEmpty = findViewById(R.id.tv_empty_video);
         donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
         // debug
         donghuoRecord = DonghuoRecord.getHH();
@@ -74,37 +77,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         });
         loadingView = findViewById(R.id.loadingView);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-        Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
-            @Override
-            public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
-                emitter.onNext(videoList);
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ArrayList<FileInfo>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        showDialog();
-                    }
-
-                    @Override
-                    public void onNext(ArrayList<FileInfo> fileInfos) {
-                        dismissDialog();
-                        videoAdapter = new VideoAdapter(fileInfos, VideoListActivity.this);
-                        listView.setAdapter(videoAdapter);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+        findFile();
 
 
         searchView = findViewById(R.id.rl_select_date);
@@ -152,6 +125,23 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
         selectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
 
+        findFile();
+
+    }
+
+    private void showDialog() {
+        loadingView.start();
+    }
+
+    private void dismissDialog() {
+        loadingView.stop();
+    }
+
+    private String getSelectDate(TimeStruct timeStruct) {
+        return timeStruct.dwYear + "." + timeStruct.dwMonth + "." + timeStruct.dwDay;
+    }
+
+    private void findFile() {
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
@@ -163,14 +153,21 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
                 .subscribe(new Observer<ArrayList<FileInfo>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        videoList.clear();
-                        videoAdapter.notifyDataSetChanged();
+                        if (videoList != null) {
+                            videoList.clear();
+                            videoAdapter.notifyDataSetChanged();
+                            tvEmpty.setVisibility(View.GONE);
+                        }
                         showDialog();
                     }
 
                     @Override
                     public void onNext(ArrayList<FileInfo> fileInfos) {
                         dismissDialog();
+
+                        if (fileInfos == null || fileInfos.size() == 0) {
+                            tvEmpty.setVisibility(View.VISIBLE);
+                        }
                         videoAdapter = new VideoAdapter(fileInfos, VideoListActivity.this);
                         listView.setAdapter(videoAdapter);
                     }
@@ -185,17 +182,5 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
                     }
                 });
-    }
-
-    private void showDialog() {
-        loadingView.start();
-    }
-
-    private void dismissDialog() {
-        loadingView.stop();
-    }
-
-    private String getSelectDate(TimeStruct timeStruct) {
-        return timeStruct.dwYear + "." + timeStruct.dwMonth + "." + timeStruct.dwDay;
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
@@ -19,16 +20,22 @@ import java.util.List;
 public class GalleryActivity extends AppCompatActivity {
 
     ListView listView;
-
+    TextView tvEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
+        tvEmpty = findViewById(R.id.tv_empty_record);
 
         DonghuoRecordManager.getInstance().initRecords();
         List<DonghuoRecord> donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
+        if (donghuoRecords == null || donghuoRecords.size() == 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
+        }
 
         listView = findViewById(R.id.lv_records);
         DonghuoRecordAdapter donghuoRecordAdapter = new DonghuoRecordAdapter(donghuoRecords, this);

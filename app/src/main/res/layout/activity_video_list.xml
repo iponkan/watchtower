@@ -40,9 +40,9 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_search"
             android:paddingRight="10dp"
-            android:text="2019.6.15"
             android:textColor="@android:color/white"
-            android:textSize="22dp" />
+            android:textSize="22dp"
+            tools:text="2019.6.15" />
 
     </com.hitqz.robot.commonlib.view.RCRelativeLayout>
 
@@ -52,12 +52,12 @@
         android:layout_height="match_parent"
         android:layout_below="@id/rl_select_date"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="18dp"
         android:layout_marginRight="20dp"
         android:divider="#00000000"
         android:dividerHeight="18dp"
         android:fadeScrollbars="false"
         android:listSelector="@android:color/transparent"
-        android:layout_marginTop="18dp"
         android:paddingBottom="18dp"
         android:scrollbars="none">
 
@@ -73,5 +73,16 @@
         app:lv_external_radius="24dp"
         app:lv_internal_radius="4dp"
         app:lv_start_color="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tv_empty_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="该日期下没有录像哦"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </RelativeLayout>
