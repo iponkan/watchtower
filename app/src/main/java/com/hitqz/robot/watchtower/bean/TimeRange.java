@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower.bean;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class TimeRange {
 
@@ -14,26 +15,31 @@ public class TimeRange {
         int year = timeStruct.dwYear;
         int month = timeStruct.dwMonth;
         int day = timeStruct.dwDay;
-        return getDayTimeRange(year, month, day);
+        int hour = timeStruct.dwHour;
+        int min = timeStruct.dwMinute;
+        int sec = timeStruct.dwSecond;
+        return getDayTimeRange(year, month, day, hour, min, sec);
     }
 
-    public static TimeRange getDayTimeRange(int year, int month, int day) {
+    public static TimeRange getDayTimeRange(int year, int month, int day, int hour, int min, int sec) {
         TimeRange timeRange = new TimeRange();
         TimeStruct start = new TimeStruct();
         start.dwYear = year;
         start.dwMonth = month;
         start.dwDay = day;
-        start.dwHour = 0;
-        start.dwMinute = 0;
-        start.dwSecond = 0;
+        start.dwHour = hour;
+        start.dwMinute = min;
+        start.dwSecond = sec;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, day);
+        Date date = start.toDate();
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
         calendar.add(Calendar.DATE, 1);
-        Date date = calendar.getTime();
+        Date stopDate = calendar.getTime();
 
 
-        TimeStruct stop = TimeStruct.fromMillSeconds(date.getTime());
+        TimeStruct stop = TimeStruct.fromMillSeconds(stopDate.getTime());
 
         timeRange.struStartTime = start;
         timeRange.struStopTime = stop;

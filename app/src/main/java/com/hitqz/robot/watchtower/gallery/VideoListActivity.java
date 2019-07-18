@@ -38,17 +38,18 @@ import io.reactivex.schedulers.Schedulers;
 
 public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener {
 
-    private CommonTitleBar commonTitleBar;
-    private ListView listView;
+    CommonTitleBar commonTitleBar;
+    ListView listView;
     VideoAdapter videoAdapter;
     HCSdkManager hcSdkManager;
     CalendarPopWindow calendarPopWindow;
-    View serchView;
+    View searchView;
     LoadingView loadingView;
     ArrayList<FileInfo> videoList;
     TextView selectDate;
     DonghuoRecord donghuoRecord;
-    private Handler handler = new Handler();
+    Handler handler = new Handler();
+    TimeRange dayTimeRange;
 
     @SuppressLint("CheckResult")
     @Override
@@ -56,11 +57,13 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_video_list);
+
         commonTitleBar = findViewById(R.id.common_title_bar);
         donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
         // debug
         donghuoRecord = DonghuoRecord.getHH();
-        timeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
+
+        dayTimeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
         commonTitleBar.setTitle(donghuoRecord.toString());
         listView = findViewById(R.id.lv_videolist);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,7 +77,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(donghuoRecord.struStartTime, donghuoRecord.struStopTime);
+                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())
@@ -104,16 +107,15 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
                 });
 
 
-        serchView = findViewById(R.id.rl_select_date);
-        serchView.setOnClickListener(new View.OnClickListener() {
+        searchView = findViewById(R.id.rl_select_date);
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (calendarPopWindow == null) {
                     calendarPopWindow = new CalendarPopWindow(VideoListActivity.this, VideoListActivity.this);
-                    calendarPopWindow.showPopupWindow(serchView, timeRange.struStartTime.toMillSeconds());
-                } else {
-                    calendarPopWindow.showPopupWindow(serchView, timeRange.struStartTime.toMillSeconds());
+//                    calendarPopWindow.setRange(donghuoRecord.struStartTime.toMillSeconds(), donghuoRecord.struStopTime.toMillSeconds());
                 }
+                calendarPopWindow.showPopupWindow(searchView, dayTimeRange.struStartTime.toMillSeconds());
             }
         });
         selectDate = findViewById(R.id.tv_select_date);
@@ -134,8 +136,6 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         activity.startActivity(intent);
     }
 
-    TimeRange timeRange;
-
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
@@ -148,14 +148,14 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         }, 300);
         ToastUtils.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
 
-        timeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth);
+        dayTimeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
 
         selectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
 
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(timeRange.struStartTime, timeRange.struStopTime);
+                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())

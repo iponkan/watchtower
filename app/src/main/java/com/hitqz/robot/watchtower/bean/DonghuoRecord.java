@@ -74,7 +74,7 @@ public class DonghuoRecord implements Parcelable {
 
         TimeStruct stop = new TimeStruct();
         stop.dwYear = 2019;
-        stop.dwMonth = 7;
+        stop.dwMonth = 8;
         stop.dwDay = 3;
         stop.dwHour = 0;
         stop.dwMinute = 0;

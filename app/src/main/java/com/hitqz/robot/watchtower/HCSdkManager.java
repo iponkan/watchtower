@@ -1,7 +1,6 @@
 package com.hitqz.robot.watchtower;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -11,19 +10,15 @@ import androidx.annotation.NonNull;
 
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
-import com.hikvision.netsdk.NET_DVR_CONFIG;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
-import com.hikvision.netsdk.NET_SDK_CALLBACK_TYPE;
 import com.hikvision.netsdk.PTZCommand;
 import com.hikvision.netsdk.PlaybackCallBack;
 import com.hikvision.netsdk.PlaybackControlCommand;
 import com.hikvision.netsdk.RealPlayCallBack;
-import com.hikvision.netsdk.RemoteConfigCallback;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
-import com.hitqz.robot.watchtower.hcnetw.NET_DVR_REALTIME_THERMOMETRY_COND;
 import com.hitqz.robot.watchtower.hcnetw.NET_DVR_THERMOMETRY_BASICPARAM;
 import com.hitqz.robot.watchtower.hcnetw.NET_DVR_THERMOMETRY_COND;
 import com.hitqz.robot.watchtower.player.PlayerCallback;
@@ -486,10 +481,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         return arr;
     }
 
-    public int getPlayedFrames() {
-        return Player.getInstance().getPlayedFrames(m_iPort);
-    }
-
     public void playbackSeekTo(float percent) {
 
         // 需要把缓冲流清掉，不然播放器在这个时候会继续播放缓冲内容
@@ -667,14 +658,14 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         }
     }
 
-    public void test_ScreenCtrl() {
-        RemoteConfigCallback fRemoteConfigCallback = getRemoteConfigCbf();
-        int lHandle = HCNetSDK.getInstance().NET_DVR_StartRemoteConfig(m_iLogID, 3629, null, fRemoteConfigCallback, null);
-        if (lHandle < 0) {
-            Log.e(TAG, "NET_DVR_StartRemoteConfig NET_DVR_START_SCREEN_CRTL failed" + HCNetSDK.getInstance().NET_DVR_GetLastError());
-            return;
-        }
-        Log.i(TAG, "NET_DVR_StartRemoteConfig NET_DVR_START_SCREEN_CRTL succeed");
+//    public void test_ScreenCtrl() {
+//        RemoteConfigCallback fRemoteConfigCallback = getRemoteConfigCbf();
+//        int lHandle = HCNetSDK.getInstance().NET_DVR_StartRemoteConfig(m_iLogID, 3629, null, fRemoteConfigCallback, null);
+//        if (lHandle < 0) {
+//            Log.e(TAG, "NET_DVR_StartRemoteConfig NET_DVR_START_SCREEN_CRTL failed" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+//            return;
+//        }
+//        Log.i(TAG, "NET_DVR_StartRemoteConfig NET_DVR_START_SCREEN_CRTL succeed");
 //        try {
 //            Thread.sleep(100);
 //        } catch (InterruptedException e) {
@@ -903,30 +894,30 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 //        }
 //        Log.i(TAG, "NET_DVR_StopRemoteConfig NET_DVR_START_SCREEN_CRTL succeed");
 
-    }
+//    }
 
-    private RemoteConfigCallback getRemoteConfigCbf() {
-        RemoteConfigCallback cbf = new RemoteConfigCallback() {
-            public void fRemoteConfigCallback(int dwType, NET_DVR_CONFIG oConfig, byte[] pUserData) {
-                processRemoteConfigData(dwType, oConfig, pUserData);
-            }
-        };
-        return cbf;
-    }
-
-    public void processRemoteConfigData(int dwType, NET_DVR_CONFIG oConfig, byte[] pUserData) {
-        if (oConfig == null) {
-            return;
-        }
-        switch (dwType) {
-            case NET_SDK_CALLBACK_TYPE.NET_SDK_CALLBACK_TYPE_DATA:
-                NET_DVR_REALTIME_THERMOMETRY_COND oScreenRespone = (NET_DVR_REALTIME_THERMOMETRY_COND) oConfig;
-                Log.i(TAG, "Response parameter callback succeed");
-                break;
-            default:
-                break;
-        }
-    }
+//    private RemoteConfigCallback getRemoteConfigCbf() {
+//        RemoteConfigCallback cbf = new RemoteConfigCallback() {
+//            public void fRemoteConfigCallback(int dwType, NET_DVR_CONFIG oConfig, byte[] pUserData) {
+//                processRemoteConfigData(dwType, oConfig, pUserData);
+//            }
+//        };
+//        return cbf;
+//    }
+//
+//    public void processRemoteConfigData(int dwType, NET_DVR_CONFIG oConfig, byte[] pUserData) {
+//        if (oConfig == null) {
+//            return;
+//        }
+//        switch (dwType) {
+//            case NET_SDK_CALLBACK_TYPE.NET_SDK_CALLBACK_TYPE_DATA:
+//                NET_DVR_REALTIME_THERMOMETRY_COND oScreenRespone = (NET_DVR_REALTIME_THERMOMETRY_COND) oConfig;
+//                Log.i(TAG, "Response parameter callback succeed");
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     public void focusFar() {
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 0)) {

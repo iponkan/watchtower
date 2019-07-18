@@ -71,10 +71,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         surfaceView.setLayoutParams(layoutParams);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
-        hcSdkManager.playBack(fileInfo);
         duration = hcSdkManager.getPlaybackDuration();
-        hcSdkManager.addPlayerCallBack(this);
-
         ivPlay = findViewById(R.id.iv_play);
 
         ivPlay.setOnClickListener(this);
@@ -96,17 +93,25 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     protected void onResume() {
         super.onResume();
+        if (hcSdkManager != null) {
+            hcSdkManager.playBack(fileInfo);
+            hcSdkManager.addPlayerCallBack(this);
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (hcSdkManager != null) {
+            hcSdkManager.stopPlayback();
+            hcSdkManager.removePlayerCallBack(this);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, TAG + " onDestroy");
-        if (hcSdkManager != null) {
-            hcSdkManager.stopPlayback();
-            hcSdkManager.removePlayerCallBack(this);
-        }
         if (progressHandler != null) {
             progressHandler.removeCallbacksAndMessages(null);
         }
@@ -172,9 +177,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//        if (fromUser) {
-//            hcSdkManager.playbackSeekTo(progress);
-//        }
+
     }
 
     @Override

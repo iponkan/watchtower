@@ -162,4 +162,15 @@ public class TimeStruct implements Parcelable {
         struct.dwSecond = 0;
         return struct;
     }
+
+    public Date toDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
+        try {
+            Date date = formatter.parse(toString());
+            return date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

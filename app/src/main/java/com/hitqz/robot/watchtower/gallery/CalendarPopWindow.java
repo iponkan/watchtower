@@ -63,6 +63,11 @@ public class CalendarPopWindow extends PopupWindow {
         calendarView.setOnDateChangeListener(dateChangeListener);
     }
 
+    public void setRange(long start, long stop) {
+        calendarView.setMinDate(start);
+        calendarView.setMinDate(stop);
+    }
+
     /**
      * 显示popupWindow的方式设置，当然可以有别的方式。
      * 一会会列出其他方法
@@ -74,6 +79,7 @@ public class CalendarPopWindow extends PopupWindow {
             // 以下拉方式显示popupwindow
             this.showAsDropDown(parent);
             calendarView.setDate(time);
+            calendarView.setMinDate(0);
         } else {
             this.dismiss();
         }
