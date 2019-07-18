@@ -64,11 +64,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
         surfaceView = findViewById(R.id.sv_player);
 
+        ViewGroup playLayout = findViewById(R.id.rl_player);
         int width = ScreenUtils.getScreenWidth();
         int height = (int) ((width / 16f) * 9);
-        ViewGroup.LayoutParams layoutParams = surfaceView.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = playLayout.getLayoutParams();
         layoutParams.height = height;
-        surfaceView.setLayoutParams(layoutParams);
+        playLayout.setLayoutParams(layoutParams);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
         duration = hcSdkManager.getPlaybackDuration();

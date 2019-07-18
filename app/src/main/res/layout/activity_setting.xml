@@ -18,15 +18,22 @@
     </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2" />
+
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="一级报警："
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -34,6 +41,7 @@
         <EditText
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
@@ -44,6 +52,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
             android:text="℃"
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -53,11 +63,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="二级报警："
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -65,16 +77,19 @@
         <EditText
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
-            android:text="100"
+            android:text="200"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
             android:text="℃"
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -84,11 +99,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="三级报警："
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -96,16 +113,19 @@
         <EditText
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
-            android:text="100"
+            android:text="300"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
             android:text="℃"
             android:textColor="@android:color/white"
             android:textSize="22dp" />
@@ -115,6 +135,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
         android:clickable="true"
         android:src="@drawable/camera_ok_selector" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3" />
 </LinearLayout>
