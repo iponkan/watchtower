@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -41,8 +43,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     private FileInfo fileInfo;
     private int duration;
-
-    private Handler handler = new Handler();
 
     CommonTitleBar commonTitleBar;
 
@@ -168,12 +168,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     }
 
     private void fadeOutPlayButton() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ivPlay.setVisibility(View.GONE);
-            }
-        }, 1000);
+        progressHandler.removeMessages(FADE_OUT_BUTTON);
+        progressHandler.sendEmptyMessageDelayed(FADE_OUT_BUTTON, 2000);
     }
 
     @Override
@@ -198,6 +194,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     public static final int UPDATE = 0x01;
     public static final int SEEKING = 0x02;
+    public static final int FADE_OUT_BUTTON = 0x03;
 
     class ProgressHandler extends Handler {
         @Override
@@ -232,9 +229,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
                         }
                     }
                     break;
+                case FADE_OUT_BUTTON:
+                    ivPlay.setVisibility(View.GONE);
+                    break;
             }
         }
     }
-
 
 }
