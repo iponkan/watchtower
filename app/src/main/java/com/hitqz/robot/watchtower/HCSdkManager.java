@@ -70,7 +70,8 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     // @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        holder.setFormat(PixelFormat.TRANSLUCENT);
+        // 去掉没影响，会触发surface重建
+//        holder.setFormat(PixelFormat.TRANSLUCENT);
         Log.i(TAG, "surface is created");
         Surface surface = holder.getSurface();
         if (surface.isValid()) {

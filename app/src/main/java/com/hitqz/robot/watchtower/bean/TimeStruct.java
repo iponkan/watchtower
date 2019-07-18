@@ -110,16 +110,16 @@ public class TimeStruct implements Parcelable {
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
         try {
 
-            Log.i(TAG, "startTime.toString()=============" + startTime.toString());
-            Log.i(TAG, "stopTime.toString()=============" + stopTime.toString());
+//            Log.i(TAG, "startTime.toString()=============" + startTime.toString());
+//            Log.i(TAG, "stopTime.toString()=============" + stopTime.toString());
 
             Date startDate = formatter.parse(startTime.toString());
             Date stopDate = formatter.parse(stopTime.toString());
 
             int startSeconds = (int) (startDate.getTime() / 1000);
             int stopSeconds = (int) (stopDate.getTime() / 1000);
-            Log.i(TAG, "startSeconds=============" + startSeconds);
-            Log.i(TAG, "stopSeconds=============" + stopSeconds);
+//            Log.i(TAG, "startSeconds=============" + startSeconds);
+//            Log.i(TAG, "stopSeconds=============" + stopSeconds);
 
 
             return stopSeconds - startSeconds;

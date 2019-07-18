@@ -81,9 +81,7 @@ public class CameraActivity extends AppCompatActivity {
         resetSize(hotSurfaceView, productionView, normalSurfaceView);
 
         hotHCSdkManager.setSurfaceView(hotSurfaceView);
-        hotHCSdkManager.startSinglePreview();
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
-        normalHCSdkManager.startSinglePreview();
 
         ivPlus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,8 +100,9 @@ public class CameraActivity extends AppCompatActivity {
         ivFocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                hotHCSdkManager.focusNear();
-                DonghuoRecordManager.getInstance().clearRecods();
+                hotHCSdkManager.focusNear();
+                // test
+//                DonghuoRecordManager.getInstance().clearRecods();
             }
 
         });
@@ -141,26 +140,30 @@ public class CameraActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         overridePendingTransition(0, 0);
+        if (hotHCSdkManager != null) {
+            hotHCSdkManager.stopSinglePreview();
+        }
+
+        if (normalHCSdkManager != null) {
+            normalHCSdkManager.stopSinglePreview();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        hotHCSdkManager.setSurfaceView(hotSurfaceView);
-        normalHCSdkManager.setSurfaceView(normalSurfaceView);
+        if (hotHCSdkManager != null) {
+            hotHCSdkManager.startSinglePreview();
+        }
+        if (normalHCSdkManager != null) {
+            normalHCSdkManager.startSinglePreview();
+            normalHCSdkManager.stopPlayback();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (hotHCSdkManager != null) {
-            hotHCSdkManager.stopSinglePreview();
-            hotHCSdkManager.stopPlayback();
-        }
 
-        if (normalHCSdkManager != null) {
-            normalHCSdkManager.stopSinglePreview();
-            normalHCSdkManager.stopPlayback();
-        }
     }
 }
