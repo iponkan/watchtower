@@ -113,7 +113,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
             public void onClick(View v) {
                 if (calendarPopWindow == null) {
                     calendarPopWindow = new CalendarPopWindow(VideoListActivity.this, VideoListActivity.this);
-//                    calendarPopWindow.setRange(donghuoRecord.struStartTime.toMillSeconds(), donghuoRecord.struStopTime.toMillSeconds());
+                    calendarPopWindow.setRange(donghuoRecord.struStartTime.toMillSeconds(), donghuoRecord.struStopTime.toMillSeconds());
                 }
                 calendarPopWindow.showPopupWindow(searchView, dayTimeRange.struStartTime.toMillSeconds());
             }

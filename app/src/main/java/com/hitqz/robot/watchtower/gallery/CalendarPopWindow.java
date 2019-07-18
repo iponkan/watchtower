@@ -65,7 +65,7 @@ public class CalendarPopWindow extends PopupWindow {
 
     public void setRange(long start, long stop) {
         calendarView.setMinDate(start);
-        calendarView.setMinDate(stop);
+        calendarView.setMaxDate(stop);
     }
 
     /**
@@ -79,7 +79,6 @@ public class CalendarPopWindow extends PopupWindow {
             // 以下拉方式显示popupwindow
             this.showAsDropDown(parent);
             calendarView.setDate(time);
-            calendarView.setMinDate(0);
         } else {
             this.dismiss();
         }
