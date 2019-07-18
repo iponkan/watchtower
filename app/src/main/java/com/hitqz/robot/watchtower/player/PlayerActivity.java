@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -135,7 +133,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
             }
         });
 

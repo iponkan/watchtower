@@ -27,7 +27,6 @@ import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -119,7 +118,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
             }
         }, 300);
-        ToastUtils.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
+//        ToastUtils.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
 
         dayTimeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
 
