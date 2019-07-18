@@ -72,7 +72,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         playLayout.setLayoutParams(layoutParams);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
-        duration = hcSdkManager.getPlaybackDuration();
+        duration = hcSdkManager.getPlaybackDuration(fileInfo);
         ivPlay = findViewById(R.id.iv_play);
 
         ivPlay.setOnClickListener(this);
