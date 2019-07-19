@@ -8,4 +8,6 @@ public interface PlayerCallback {
     void onPlayStop();
 
     void onPlaying(int progress);
+
+    void onSeekComplete();
 }

@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 
 import com.hikvision.netsdk.ExceptionCallBack;
 import com.hikvision.netsdk.HCNetSDK;
-import com.hikvision.netsdk.NET_DVR_COMPRESSION_INFO_V30;
 import com.hikvision.netsdk.NET_DVR_DEVICEINFO_V30;
 import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
 import com.hikvision.netsdk.PTZCommand;
@@ -20,14 +19,13 @@ import com.hikvision.netsdk.RealPlayCallBack;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
-import com.hitqz.robot.watchtower.hcnetw.NET_DVR_THERMOMETRY_BASICPARAM;
-import com.hitqz.robot.watchtower.hcnetw.NET_DVR_THERMOMETRY_COND;
 import com.hitqz.robot.watchtower.player.PlayerCallback;
 import com.hitqz.robot.watchtower.util.CameraUtil;
 import com.hitqz.robot.watchtower.util.PathUtil;
 import com.orhanobut.logger.Logger;
 
 import org.MediaPlayer.PlayM4.Player;
+import org.MediaPlayer.PlayM4.PlayerCallBack;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -330,6 +328,8 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         return cbf;
     }
 
+    private boolean seeking;
+
     public void processRealData(int iPlayViewNo, int iDataType,
                                 byte[] pDataBuffer, int iDataSize, int iStreamMode) {
         if (HCNetSDK.NET_DVR_SYSHEAD == iDataType) {
@@ -358,6 +358,59 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 if (!Player.getInstance().playSound(m_iPort)) {
                     Log.e(TAG, "playSound failed with error code:" + Player.getInstance().getLastError(m_iPort));
                 }
+
+//                Player.getInstance().setHSDetectCB(m_iPort, new PlayerCallBack.PlayerHSDetectCB() {
+//                    @Override
+//                    public void onHSDetect(int i, int i1) {
+//                        Log.e(TAG, "onHSDetect");
+//                    }
+//                });
+
+                Player.getInstance().setDisplayCB(m_iPort, new PlayerCallBack.PlayerDisplayCB() {
+                    @Override
+                    public void onDisplay(int i, byte[] bytes, int i1, int i2, int i3, int i4, int i5, int i6) {
+                        Log.e(TAG, "onDisplay");
+                        if (seeking) {
+                            seeking = false;
+                            notifySeekComplete();
+                        }
+                    }
+                });
+
+//                Player.getInstance().setDecodeCB(m_iPort, new PlayerCallBack.PlayerDecodeCB() {
+//                    @Override
+//                    public void onDecode(int i, byte[] bytes, int i1, int i2, int i3, int i4, int i5, int i6) {
+//                        Log.e(TAG, "onDecode");
+//
+//                    }
+//                });
+
+//                Player.getInstance().setFileRefCB(m_iPort, new PlayerCallBack.PlayerFileRefCB() {
+//                    @Override
+//                    public void onFileRefDone(int i) {
+//                        Log.e(TAG, "onFileRefDone");
+//
+//                    }
+//                });
+//                Player.getInstance().setPreRecordCallBack(m_iPort, new PlayerCallBack.PlayerPreRecordCB() {
+//                    @Override
+//                    public void onPreRecord(int i, byte[] bytes, int i1) {
+//                        Log.e(TAG, "onPreRecord");
+//                    }
+//                });
+//                Player.getInstance().setEcnTypeChgCB(m_iPort, new PlayerCallBack.PlayerEncTypeChgCB() {
+//                    @Override
+//                    public void onEncTypeChg(int i) {
+//                        Log.e(TAG, "onEncTypeChg");
+//                    }
+//                });
+
+                Player.getInstance().setFileEndCB(m_iPort, new PlayerCallBack.PlayerPlayEndCB() {
+                    @Override
+                    public void onPlayEnd(int i) {
+
+                    }
+                });
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
@@ -484,8 +537,10 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public void playbackSeekTo(float percent) {
 
+        seeking = true;
+
         // 需要把缓冲流清掉，不然播放器在这个时候会继续播放缓冲内容
-//        Player.getInstance().resetSourceBuffer(m_iPort);
+        Player.getInstance().resetSourceBuffer(m_iPort);
 
         int progress = (int) (percent * 100);
 
@@ -606,6 +661,14 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         if (callbacks != null) {
             for (PlayerCallback callback : callbacks) {
                 callback.onPlayStop();
+            }
+        }
+    }
+
+    private void notifySeekComplete() {
+        if (callbacks != null) {
+            for (PlayerCallback callback : callbacks) {
+                callback.onSeekComplete();
             }
         }
     }

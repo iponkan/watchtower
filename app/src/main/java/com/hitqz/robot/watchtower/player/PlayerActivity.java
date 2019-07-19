@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
+import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -44,6 +45,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     CommonTitleBar commonTitleBar;
 
+    LoadingView loadingView;
+
     public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
         intent.putExtra(EXTRA_PATH, fileInfo);
@@ -56,6 +59,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_palyer);
         commonTitleBar = findViewById(R.id.player_ctb);
+        loadingView = findViewById(R.id.loadingView);
 
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
         Log.i(TAG, "播放文件名：" + fileInfo);
@@ -144,6 +148,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     }
 
     @Override
+    public void onSeekComplete() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressHandler.sendEmptyMessage(UPDATE);
+                dismissDialog();
+            }
+        });
+    }
+
+    @Override
     public void onClick(View v) {
         if (ivPlay == v) {
             if (hcSdkManager.isPlaying()) {
@@ -179,19 +194,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     }
 
-    private int seekProgress = -1;
-
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         hcSdkManager.playbackSeekTo(seekBar.getProgress() / (duration * 1.0f));
-        seekProgress = seekBar.getProgress();
         progressHandler.removeMessages(UPDATE);
-        progressHandler.sendEmptyMessage(SEEKING);
+        showDialog();
     }
 
     public static final int UPDATE = 0x01;
-    public static final int SEEKING = 0x02;
-    public static final int FADE_OUT_BUTTON = 0x03;
+    public static final int FADE_OUT_BUTTON = 0x02;
 
     class ProgressHandler extends Handler {
         @Override
@@ -200,37 +211,24 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             switch (msg.what) {
                 case UPDATE:
                     int current = hcSdkManager.getPlayBackTime();
-                    Log.d(TAG, "seekProgress;" + seekProgress);
                     Log.d(TAG, "current;" + current);
-                    if (seekProgress != -1) {
-                        if (Math.abs(current - seekProgress) < 100) {
-                            ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
-                            seekProgress = -1;
-                        }
-                    }
                     sbTime.setProgress(current);
                     tvCurrent.setText(formatTimeS(current));
                     progressHandler.sendEmptyMessageDelayed(UPDATE, 1000);
-                    break;
-                case SEEKING:
-                    int playBackTime = hcSdkManager.getPlayBackTime();
-                    Log.d(TAG, "seekProgress;" + seekProgress);
-                    Log.d(TAG, "current;" + playBackTime);
-                    if (seekProgress != -1) {
-                        if (Math.abs(playBackTime - seekProgress) < 100) {
-                            ToastUtils.showToastShort(PlayerActivity.this, "有画面拉");
-                            seekProgress = -1;
-                            progressHandler.sendEmptyMessageDelayed(UPDATE, 1000);
-                        } else {
-                            progressHandler.sendEmptyMessageDelayed(SEEKING, 1000);
-                        }
-                    }
                     break;
                 case FADE_OUT_BUTTON:
                     ivPlay.setVisibility(View.GONE);
                     break;
             }
         }
+    }
+
+    private void showDialog() {
+        loadingView.start();
+    }
+
+    private void dismissDialog() {
+        loadingView.stop();
     }
 
 }

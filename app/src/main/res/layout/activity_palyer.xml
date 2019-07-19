@@ -33,6 +33,18 @@
             android:layout_centerInParent="true"
             android:src="@drawable/icon_play" />
 
+
+        <com.github.loadingview.LoadingView
+            android:id="@+id/loadingView"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_centerInParent="true"
+            app:lv_duration="30"
+            app:lv_end_color="@android:color/white"
+            app:lv_external_radius="24dp"
+            app:lv_internal_radius="4dp"
+            app:lv_start_color="@android:color/white" />
+
     </RelativeLayout>
 
     <LinearLayout
