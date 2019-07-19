@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -74,7 +75,7 @@ public class ProductionView extends View {
         mPaint = new Paint();
         mCenterPaint = new Paint();
         Resources resources = context.getResources();
-        mPaint.setColor(resources.getColor(R.color.color_438eff));
+        mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(resources.getDimension(R.dimen.fr_director_production_lw));
         mCenterPaint.setColor(resources.getColor(R.color.fr_storage_photo));

@@ -78,7 +78,8 @@ public class CameraActivity extends AppCompatActivity {
         productionView = findViewById(R.id.pv_camera);
         normalSurfaceView = findViewById(R.id.sv_normal_camera);
 
-        resetSize(hotSurfaceView, productionView, normalSurfaceView);
+        resetHotCameraView(hotSurfaceView, productionView);
+        resetNormalCameraView(normalSurfaceView);
 
         hotHCSdkManager.setSurfaceView(hotSurfaceView);
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
@@ -108,7 +109,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    private void resetSize(View... views) {
+    private void resetHotCameraView(View... views) {
 
         int leftMargin = SizeUtils.dp2px(40);
         int rightMargin = SizeUtils.dp2px(40);
@@ -134,6 +135,25 @@ public class CameraActivity extends AppCompatActivity {
 
         productionView.setParentSize(width, height);
         productionView.setProductionManager(productionManager);
+    }
+
+    private void resetNormalCameraView(View normalCameraView) {
+
+        int leftMargin = SizeUtils.dp2px(40);
+        int rightMargin = SizeUtils.dp2px(40);
+        int topMargin = SizeUtils.dp2px(10);
+
+        int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
+        int height = (int) (width / 16f * 9);
+
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) normalCameraView.getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = height;
+        layoutParams.leftMargin = leftMargin;
+        layoutParams.rightMargin = rightMargin;
+        layoutParams.topMargin = topMargin;
+
+        normalCameraView.setLayoutParams(layoutParams);
     }
 
     @Override
