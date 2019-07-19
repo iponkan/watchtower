@@ -10,6 +10,7 @@ import com.hikvision.netsdk.NET_DVR_TIME;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -141,14 +142,16 @@ public class TimeStruct implements Parcelable {
     }
 
     public static TimeStruct fromMillSeconds(long num) {
+        Calendar calendar = Calendar.getInstance();
         Date date = new Date(num);
+        calendar.setTime(date);
         TimeStruct struct = new TimeStruct();
-        struct.dwYear = date.getYear() + 1900;
-        struct.dwDay = date.getDay();
-        struct.dwHour = date.getHours();
-        struct.dwMinute = date.getMinutes();
-        struct.dwMonth = date.getMonth() + 1;
-        struct.dwSecond = date.getSeconds();
+        struct.dwYear = calendar.get(Calendar.YEAR);
+        struct.dwMonth = calendar.get(Calendar.MONTH) + 1;
+        struct.dwDay = calendar.get(Calendar.DAY_OF_MONTH);
+        struct.dwHour = calendar.get(Calendar.HOUR_OF_DAY);
+        struct.dwMinute = calendar.get(Calendar.MINUTE);
+        struct.dwSecond = calendar.get(Calendar.SECOND);
         return struct;
     }
 

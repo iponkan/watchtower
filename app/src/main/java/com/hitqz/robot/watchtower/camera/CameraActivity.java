@@ -101,9 +101,11 @@ public class CameraActivity extends AppCompatActivity {
         ivFocus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hotHCSdkManager.focusNear();
+//                hotHCSdkManager.focusNear();
                 // test
 //                DonghuoRecordManager.getInstance().clearRecods();
+
+                normalHCSdkManager.testGetAbility();
             }
 
         });
@@ -177,7 +179,6 @@ public class CameraActivity extends AppCompatActivity {
         }
         if (normalHCSdkManager != null) {
             normalHCSdkManager.startSinglePreview();
-            normalHCSdkManager.stopPlayback();
         }
     }
 
