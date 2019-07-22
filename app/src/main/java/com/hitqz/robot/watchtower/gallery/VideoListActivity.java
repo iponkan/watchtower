@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
-import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
@@ -74,7 +73,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
                 PlayerActivity.go2Player(VideoListActivity.this, videoList.get(position));
             }
         });
-        loadingView = findViewById(R.id.loadingView);
+        loadingView = findViewById(R.id.loading_view);
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         findFile();
 

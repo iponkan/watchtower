@@ -12,13 +12,13 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
-import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
@@ -46,6 +46,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     CommonTitleBar commonTitleBar;
 
     LoadingView loadingView;
+    View playerMask;
 
     public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
@@ -59,7 +60,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_palyer);
         commonTitleBar = findViewById(R.id.player_ctb);
-        loadingView = findViewById(R.id.loadingView);
+        loadingView = findViewById(R.id.play_loading);
+        playerMask = findViewById(R.id.player_mask);
 
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
         Log.i(TAG, "播放文件名：" + fileInfo);
@@ -67,11 +69,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         surfaceView = findViewById(R.id.sv_player);
 
         ViewGroup playLayout = findViewById(R.id.rl_player);
-        int width = ScreenUtils.getScreenWidth();
-        int height = (int) ((width / 16f) * 9);
-        ViewGroup.LayoutParams layoutParams = playLayout.getLayoutParams();
-        layoutParams.height = height;
-        playLayout.setLayoutParams(layoutParams);
+        resetView(playLayout);
+
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
         duration = hcSdkManager.getPlaybackDuration(fileInfo);
@@ -89,6 +88,21 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         sbTime.setMax(duration);
 
         progressHandler = new ProgressHandler();
+    }
+
+    private void resetView(View... views) {
+
+
+        int width = ScreenUtils.getScreenWidth();
+        int height = (int) (width / 16f * 9);
+
+        for (View view : views) {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.width = width;
+            layoutParams.height = height;
+
+            view.setLayoutParams(layoutParams);
+        }
     }
 
     ProgressHandler progressHandler;
@@ -149,13 +163,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     @Override
     public void onSeekComplete() {
-        runOnUiThread(new Runnable() {
+        progressHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 progressHandler.sendEmptyMessage(UPDATE);
                 dismissDialog();
             }
-        });
+        }, 1500);
     }
 
     @Override
@@ -196,7 +210,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        hcSdkManager.playbackSeekTo(seekBar.getProgress() / (duration * 1.0f));
+        int progress = seekBar.getProgress();
+        hcSdkManager.playbackSeekTo(progress / (duration * 1.0f));
+        tvCurrent.setText(formatTimeS(progress));
         progressHandler.removeMessages(UPDATE);
         showDialog();
     }
@@ -224,10 +240,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     }
 
     private void showDialog() {
+        playerMask.setVisibility(View.VISIBLE);
         loadingView.start();
     }
 
     private void dismissDialog() {
+        playerMask.setVisibility(View.GONE);
         loadingView.stop();
     }
 
