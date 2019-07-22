@@ -315,6 +315,8 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             Log.e(TAG, "freePort is failed!" + m_iPort);
             return;
         }
+
+        preFrameNumber = -100;
         m_iPort = -1;
     }
 
@@ -369,11 +371,15 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 Player.getInstance().setDisplayCB(m_iPort, new PlayerCallBack.PlayerDisplayCB() {
                     @Override
                     public void onDisplay(int i, byte[] bytes, int i1, int i2, int i3, int i4, int i5, int i6) {
-                        Log.e(TAG, "onDisplay");
+                        Log.e(TAG, "onDisplay:" + bytes.length);
                         if (seeking) {
                             seeking = false;
                             notifySeekComplete();
                         }
+
+//                        if (isEnd()) {
+//                            stopPlayback();
+//                        }
                     }
                 });
 
@@ -404,13 +410,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 //                        Log.e(TAG, "onEncTypeChg");
 //                    }
 //                });
-
-                Player.getInstance().setFileEndCB(m_iPort, new PlayerCallBack.PlayerPlayEndCB() {
-                    @Override
-                    public void onPlayEnd(int i) {
-
-                    }
-                });
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
@@ -586,9 +585,37 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         logout();
     }
 
+    private int preFrameNumber = -100;
+
+    public boolean isEnd() {
+
+//        int total = Player.getInstance().getFileTotalFrames(m_iPort);
+//        Log.i(TAG, "Player getFileTotalFrames====" + total);
+
+        int current = Player.getInstance().getCurrentFrameNum(m_iPort);
+
+        Log.i(TAG, "Player getCurrentFrameNum====" + current);
+        Log.i(TAG, "Player preFrameNumber====" + preFrameNumber);
+
+        Log.i(TAG, "Player Frame isEnd====" + (current == preFrameNumber));
+
+        boolean result = current == preFrameNumber;
+
+        if (current > 0) {
+            preFrameNumber = current;
+        }
+
+        return result;
+    }
+
     public int getPlayBackTime() {
         int progress = Player.getInstance().getPlayedTime(m_iPort);
         Log.i(TAG, "Player getPlayedTime====" + Player.getInstance().getPlayedTime(m_iPort));
+        return progress;
+    }
+
+    public float getPlayBackPos() {
+        float progress = Player.getInstance().getPlayPos(m_iPort);
         return progress;
     }
 
@@ -601,6 +628,10 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             return duration;
         }
         return 0;
+    }
+
+    public boolean isStop() {
+        return playState == STATE_STOP;
     }
 
     class PlaybackRunnable implements Runnable {
@@ -728,4 +759,33 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void testGetAbility() {
         CameraUtil.test(m_iLogID, 1);
     }
+
+    public boolean recording;
+
+    public void startRecord() {
+        if (recording) {
+            Log.e(TAG, "已经在录制！！！！！");
+            return;
+        }
+        if (!HCNetSDK.getInstance().NET_DVR_StartDVRRecord(m_iLogID, 1, 0)) {
+            Log.d(TAG, "NET_DVR_StartDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            Log.d(TAG, "NET_DVR_StartDVRRecord succ!");
+            recording = true;
+        }
+    }
+
+    public void stopRecord() {
+        if (!recording) {
+            Log.e(TAG, "未在录制！！！！！");
+        }
+
+        if (!HCNetSDK.getInstance().NET_DVR_StopDVRRecord(m_iLogID, 1)) {
+            Log.d(TAG, "NET_DVR_StopDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+        } else {
+            Log.d(TAG, "NET_DVR_StopDVRRecord succ!");
+            recording = false;
+        }
+    }
+
 }

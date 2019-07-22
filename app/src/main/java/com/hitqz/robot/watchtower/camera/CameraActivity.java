@@ -105,8 +105,18 @@ public class CameraActivity extends AppCompatActivity {
                 // test
 //                DonghuoRecordManager.getInstance().clearRecods();
 
-                normalHCSdkManager.testGetAbility();
+//                normalHCSdkManager.testGetAbility();
+                if(!normalHCSdkManager.recording){
+                    normalHCSdkManager.startRecord();
+
+                }else {
+                    normalHCSdkManager.stopRecord();
+
+                }
+
+
             }
+
 
         });
     }

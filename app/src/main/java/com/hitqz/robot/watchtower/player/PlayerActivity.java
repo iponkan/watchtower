@@ -151,6 +151,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                ivPlay.setImageResource(R.drawable.icon_play);
+                ivPlay.setVisibility(View.VISIBLE);
+                progressHandler.removeMessages(UPDATE);
             }
         });
 
@@ -177,8 +180,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         if (ivPlay == v) {
             if (hcSdkManager.isPlaying()) {
                 hcSdkManager.pausePlayBack();
-            } else {
+            } else if (hcSdkManager.isPause()) {
                 hcSdkManager.resumePlayBack();
+            } else if (hcSdkManager.isStop()) {
+                hcSdkManager.playBack(fileInfo);
             }
         } else if (surfaceView == v) {
             if (hcSdkManager.isPlaying()) {
@@ -227,7 +232,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             switch (msg.what) {
                 case UPDATE:
                     int current = hcSdkManager.getPlayBackTime();
+
+                    float pos = hcSdkManager.getPlayBackPos();
+                    Log.d(TAG, "getPlayPos pos;" + pos);
                     Log.d(TAG, "current;" + current);
+                    if (hcSdkManager.isEnd()) {
+                        hcSdkManager.stopPlayback();
+                    }
                     sbTime.setProgress(current);
                     tvCurrent.setText(formatTimeS(current));
                     progressHandler.sendEmptyMessageDelayed(UPDATE, 1000);
