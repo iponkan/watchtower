@@ -537,6 +537,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void playbackSeekTo(float percent) {
 
         seeking = true;
+        preFrameNumber = -100;
 
         // 需要把缓冲流清掉，不然播放器在这个时候会继续播放缓冲内容
         Player.getInstance().resetSourceBuffer(m_iPort);
