@@ -20,27 +20,28 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
     @BindView(R.id.iv_camera_minus)
-    private ImageView ivMinus;
+    ImageView ivMinus;
     @BindView(R.id.iv_camera_plus)
-    private ImageView ivPlus;
+    ImageView ivPlus;
     @BindView(R.id.iv_camera_focus)
-    private ImageView ivFocus;
+    ImageView ivFocus;
     @BindView(R.id.iv_camera_confirm)
-    private ImageView ivConfirm;
+    ImageView ivConfirm;
     @BindView(R.id.sv_hot_camera)
-    private SurfaceView hotSurfaceView;
+    SurfaceView hotSurfaceView;
     @BindView(R.id.sv_normal_camera)
-    private SurfaceView normalSurfaceView;
+    SurfaceView normalSurfaceView;
     @BindView(R.id.pv_camera)
-    private ProductionView productionView;
+    ProductionView productionView;
 
-    private HCSdkManager hotHCSdkManager;
-    private HCSdkManager normalHCSdkManager;
+    HCSdkManager hotHCSdkManager;
+    HCSdkManager normalHCSdkManager;
     ProductionManager productionManager;
 
     @Override
@@ -48,6 +49,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_camera);
+        ButterKnife.bind(this);
 
         hotHCSdkManager = HCSdkManager.getHotHCSdkManager(this);
         if (!hotHCSdkManager.isInit()) {
@@ -61,12 +63,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        ivConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DonghuoRecordManager.getInstance().addTimePoint();
-            }
-        });
+//        ivConfirm.setOnClickListener(this);
 
         resetHotCameraView(hotSurfaceView, productionView);
         resetNormalCameraView(normalSurfaceView);
@@ -175,6 +172,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
                 normalHCSdkManager.stopRecord();
 
             }
+        } else if (v == ivConfirm) {
+            DonghuoRecordManager.getInstance().addTimePoint();
         }
     }
 

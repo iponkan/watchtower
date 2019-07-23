@@ -17,9 +17,14 @@ import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class GalleryActivity extends AppCompatActivity {
 
+    @BindView(R.id.lv_records)
     ListView listView;
+    @BindView(R.id.tv_empty_record)
     TextView tvEmpty;
 
     @Override
@@ -27,7 +32,7 @@ public class GalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
-        tvEmpty = findViewById(R.id.tv_empty_record);
+        ButterKnife.bind(this);
 
         DonghuoRecordManager.getInstance().initRecords();
         List<DonghuoRecord> donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
@@ -37,7 +42,6 @@ public class GalleryActivity extends AppCompatActivity {
             tvEmpty.setVisibility(View.GONE);
         }
 
-        listView = findViewById(R.id.lv_records);
         DonghuoRecordAdapter donghuoRecordAdapter = new DonghuoRecordAdapter(donghuoRecords, this);
         listView.setAdapter(donghuoRecordAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

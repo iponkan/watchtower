@@ -24,6 +24,9 @@ import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 import com.orhanobut.logger.Logger;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.hitqz.robot.watchtower.util.TimeUtil.formatTimeS;
 
 public class PlayerActivity extends AppCompatActivity implements PlayerCallback, View.OnClickListener
@@ -33,20 +36,29 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
 
     public static final String EXTRA_PATH = "EXTRA_PATH";
 
-    private SurfaceView surfaceView;
-    private HCSdkManager hcSdkManager;
-    private ImageView ivPlay;
-    private SeekBar sbTime;
-    private TextView tvCurrent;
-    private TextView tvDuration;
-
-    private FileInfo fileInfo;
-    private int duration;
-
-    CommonTitleBar commonTitleBar;
-
+    @BindView(R.id.sv_player)
+    SurfaceView surfaceView;
+    @BindView(R.id.iv_play)
+    ImageView ivPlay;
+    @BindView(R.id.sb_time)
+    SeekBar sbTime;
+    @BindView(R.id.tv_current_time)
+    TextView tvCurrent;
+    @BindView(R.id.tv_duration_time)
+    TextView tvDuration;
+    @BindView(R.id.play_loading)
     LoadingView loadingView;
+    @BindView(R.id.player_mask)
     View playerMask;
+    @BindView(R.id.common_title_bar)
+    CommonTitleBar commonTitleBar;
+    @BindView(R.id.rl_player)
+    ViewGroup playLayout;
+
+    HCSdkManager hcSdkManager;
+    FileInfo fileInfo;
+    int duration;
+
 
     public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
@@ -59,31 +71,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         super.onCreate(savedInstanceState);
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_palyer);
-        commonTitleBar = findViewById(R.id.player_ctb);
-        loadingView = findViewById(R.id.play_loading);
-        playerMask = findViewById(R.id.player_mask);
-
+        ButterKnife.bind(this);
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
         Logger.i("播放文件名：" + fileInfo);
         commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
-        surfaceView = findViewById(R.id.sv_player);
 
-        ViewGroup playLayout = findViewById(R.id.rl_player);
         resetView(playLayout);
 
         hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
         hcSdkManager.setSurfaceView(surfaceView);
         duration = hcSdkManager.getPlaybackDuration(fileInfo);
-        ivPlay = findViewById(R.id.iv_play);
-
         ivPlay.setOnClickListener(this);
-
         surfaceView.setOnClickListener(this);
-
-        tvCurrent = findViewById(R.id.tv_current_time);
-        tvDuration = findViewById(R.id.tv_duration_time);
         tvDuration.setText(formatTimeS(duration));
-        sbTime = findViewById(R.id.sb_time);
         sbTime.setOnSeekBarChangeListener(this);
         sbTime.setMax(duration);
 

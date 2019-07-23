@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 
+import butterknife.ButterKnife;
+
 public class SettingActivity extends AppCompatActivity {
 
     @Override
@@ -14,6 +16,7 @@ public class SettingActivity extends AppCompatActivity {
 
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_setting);
+        ButterKnife.bind(this);
     }
 
     @Override
