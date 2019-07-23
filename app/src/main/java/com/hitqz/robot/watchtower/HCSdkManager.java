@@ -1,7 +1,6 @@
 package com.hitqz.robot.watchtower;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,12 +32,39 @@ import java.util.HashMap;
 import java.util.List;
 
 public class HCSdkManager implements SurfaceHolder.Callback {
+
     public static final String TAG = "HCSdkManager";
-    private LoginInfo loginInfo;
 
     private static HashMap<LoginInfo, HCSdkManager> hcSdkManagers = new HashMap<>();
 
     private Context applicationContext;
+    boolean init = false;
+    private LoginInfo loginInfo;
+
+    private int preFrameNumber = -100;
+    private int m_iLogID = -1; // return by NET_DVR_Login_v30
+
+    private NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30;
+    private int m_iStartChan = 0; // start channel no
+    private int m_iChanNum = 0; // channel number,通常是1
+    private int m_iPlayID = -1; // return by NET_DVR_RealPlay_V30
+    private int m_iPlaybackID = -1; // return by NET_DVR_PlayBackByTime
+    private int m_iPort = -1; // play port
+    private boolean m_bStopPlayback = false;
+
+
+    public static final int STATE_IDLE = 0;
+    public static final int STATE_PLAYING = 1;
+    public static final int STATE_PAUSE = 2;
+    public static final int STATE_STOP = 3;
+    private int playState = STATE_IDLE;
+    public boolean recording;
+
+    private PlaybackRunnable playbackRunnable;
+    private List<PlayerCallback> callbacks;
+    private boolean seeking;
+    private WeakReference<SurfaceView> surfaceView;
+
 
     private HCSdkManager(Context context, LoginInfo li) {
         this.applicationContext = context.getApplicationContext();
@@ -66,12 +92,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         // 去掉没影响，会触发surface重建
 //        holder.setFormat(PixelFormat.TRANSLUCENT);
-        Log.i(TAG, "surface is created");
+        Logger.t(TAG).i("surface is created");
         Surface surface = holder.getSurface();
         if (surface.isValid()) {
             if (!Player.getInstance()
                     .setVideoWindow(m_iPort, 0, holder)) {
-                Log.e(TAG, "Player setVideoWindow failed!");
+                Logger.t(TAG).e("Player setVideoWindow failed!");
             }
             if (playbackRunnable != null) {
                 playbackRunnable.run();
@@ -94,22 +120,17 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     // @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i(TAG, "Player setVideoWindow release!" + m_iPort);
+        Logger.t(TAG).i(TAG, "surface Destroyed Player setVideoWindow release!" + m_iPort);
     }
-
-    boolean init = false;
 
     public boolean isInit() {
         return init;
     }
 
     public boolean init() {
-        // init net sdk
-//        Logger.i("before initSdk");
         boolean result = HCNetSDK.getInstance().NET_DVR_Init();
-//        Logger.i("after initSdk");
         if (!result) {
-            Logger.e("HCNetSDK init is failed!");
+            Logger.t(TAG).e("HCNetSDK init is failed! error code:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return false;
         }
 
@@ -118,12 +139,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         init = true;
         return true;
     }
-
-    private int m_iLogID = -1; // return by NET_DVR_Login_v30
-
-    private NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30 = null;
-    private int m_iStartChan = 0; // start channel no
-    private int m_iChanNum = 0; // channel number
 
     private int loginNormalDevice() {
         // get instance
@@ -136,7 +151,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         int iLogID = HCNetSDK.getInstance().NET_DVR_Login_V30(strIP, nPort,
                 strUser, strPsd, m_oNetDvrDeviceInfoV30);
         if (iLogID < 0) {
-            Logger.e("NET_DVR_Login is failed!Err:"
+            Logger.t(TAG).e("NET_DVR_Login is failed!Err:"
                     + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return -1;
         }
@@ -148,7 +163,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             m_iChanNum = m_oNetDvrDeviceInfoV30.byIPChanNum
                     + m_oNetDvrDeviceInfoV30.byHighDChanNum * 256;
         }
-        Logger.i("NET_DVR_Login is Successful!");
+        Logger.t(TAG).i("NET_DVR_Login is Successful!");
 
         return iLogID;
     }
@@ -164,7 +179,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     private ExceptionCallBack getExceptiongCbf() {
         ExceptionCallBack oExceptionCbf = new ExceptionCallBack() {
             public void fExceptionCallBack(int iType, int iUserID, int iHandle) {
-                System.out.println("recv exception, type:" + iType);
+                Logger.t(TAG).e("recv exception, type:" + iType);
             }
         };
         return oExceptionCbf;
@@ -187,30 +202,24 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             // login on the device
             m_iLogID = loginDevice();
             if (m_iLogID < 0) {
-                Logger.e("This device logins failed!");
                 return false;
             } else {
-                Logger.i("m_iLogID=" + m_iLogID);
+                Logger.t(TAG).i("m_iLogID=" + m_iLogID);
             }
             // get instance of exception callback and set
             ExceptionCallBack oexceptionCbf = getExceptiongCbf();
-            if (oexceptionCbf == null) {
-                Logger.e("ExceptionCallBack object is failed!");
-                return false;
-            }
 
             if (!HCNetSDK.getInstance().NET_DVR_SetExceptionCallBack(
                     oexceptionCbf)) {
-                Logger.e("NET_DVR_SetExceptionCallBack is failed!");
+                Logger.e("NET_DVR_SetExceptionCallBack is failed! error code:", HCNetSDK.getInstance().NET_DVR_GetLastError());
                 return false;
             }
 
 
-            Logger.i(
-                    "Login sucess ****************************1***************************");
+            Logger.t(TAG).i("Login success");
             return true;
         } else {
-            Logger.e("already login !");
+            Logger.t(TAG).e("already login !");
             return true;
         }
     }
@@ -218,19 +227,13 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public boolean logout() {
         // whether we have logout
         if (!HCNetSDK.getInstance().NET_DVR_Logout_V30(m_iLogID)) {
-            Log.e(TAG, " NET_DVR_Logout is failed!");
+            Logger.t(TAG).e(" NET_DVR_Logout is failed!, error code" + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return true;
         }
         m_iLogID = -1;
         return false;
     }
 
-    private int m_iPlayID = -1; // return by NET_DVR_RealPlay_V30
-    private int m_iPlaybackID = -1; // return by NET_DVR_PlayBackByTime
-    private int m_iPort = -1; // play port
-    private boolean m_bStopPlayback = false;
-
-    private WeakReference<SurfaceView> surfaceView;
 
     public void setSurfaceView(@NonNull SurfaceView svView) {
         surfaceView = new WeakReference<>(svView);
@@ -241,7 +244,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public void startSinglePreview() {
         if (surfaceView == null || surfaceView.get() == null) {
-            Log.e(TAG, "must call setSurfaceView before preview");
+            Logger.t(TAG).e("must call setSurfaceView before preview");
             return;
         }
 
@@ -256,16 +259,16 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     private boolean startPreviewInternal() {
         if (m_iLogID < 0) {
-            Log.e(TAG, "please login on device first");
+            Logger.t(TAG).e("startPreviewInternal error please login on device first");
             return false;
         }
 
         if (m_iPlaybackID >= 0) {
-            Log.i(TAG, "Please stop palyback first");
+            Logger.t(TAG).e("startPreviewInternal Please stop palyback first");
             return false;
         }
         RealPlayCallBack fRealDataCallBack = getRealPlayerCbf();
-        Log.i(TAG, "m_iStartChan:" + m_iStartChan);
+        Logger.t(TAG).i(TAG, "m_iStartChan:" + m_iStartChan);
 
         NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
         previewInfo.lChannel = m_iStartChan;
@@ -274,23 +277,23 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
         m_iPlayID = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(m_iLogID, previewInfo, fRealDataCallBack);
         if (m_iPlayID < 0) {
-            Log.e(TAG, "NET_DVR_RealPlay is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("NET_DVR_RealPlay is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return false;
         }
 
-        Log.i(TAG, "NetSdk Play success ***********************3***************************");
+        Logger.t(TAG).i("NET_DVR_RealPlay success");
         return true;
     }
 
     public boolean stopSinglePreview() {
         if (m_iPlayID < 0) {
-            Log.e(TAG, "m_iPlayID < 0");
+            Logger.t(TAG).e("m_iPlayID < 0");
             return false;
         }
 
         // net sdk stop preview
         if (!HCNetSDK.getInstance().NET_DVR_StopRealPlay(m_iPlayID)) {
-            Log.e(TAG, "StopRealPlay is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("StopRealPlay is failed!Err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
             return false;
         }
 
@@ -303,16 +306,16 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         Player.getInstance().stopSound();
         // player stop play
         if (!Player.getInstance().stop(m_iPort)) {
-            Log.e(TAG, "stop is failed!");
+            Logger.t(TAG).e("stop is failed!");
             return;
         }
 
         if (!Player.getInstance().closeStream(m_iPort)) {
-            Log.e(TAG, "closeStream is failed!");
+            Logger.t(TAG).e("closeStream is failed!");
             return;
         }
         if (!Player.getInstance().freePort(m_iPort)) {
-            Log.e(TAG, "freePort is failed!" + m_iPort);
+            Logger.t(TAG).e("freePort is failed!" + m_iPort);
             return;
         }
 
@@ -330,7 +333,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         return cbf;
     }
 
-    private boolean seeking;
 
     public void processRealData(int iPlayViewNo, int iDataType,
                                 byte[] pDataBuffer, int iDataSize, int iStreamMode) {
@@ -340,25 +342,25 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             }
             m_iPort = Player.getInstance().getPort();
             if (m_iPort == -1) {
-                Log.e(TAG, "getPort is failed with: " + Player.getInstance().getLastError(m_iPort));
+                Logger.t(TAG).e("getPort is failed with: " + Player.getInstance().getLastError(m_iPort));
                 return;
             }
-            Log.i(TAG, "getPort succ with: " + m_iPort);
+            Logger.t(TAG).i(TAG, "getPort succ with: " + m_iPort);
             if (iDataSize > 0) {
                 if (!Player.getInstance().setStreamOpenMode(m_iPort, iStreamMode)) {// set stream mode
-                    Log.e(TAG, "setStreamOpenMode failed");
+                    Logger.t(TAG).e("setStreamOpenMode failed");
                     return;
                 }
                 if (!Player.getInstance().openStream(m_iPort, pDataBuffer, iDataSize, 2 * 1024 * 1024)) {// open stream
-                    Log.e(TAG, "openStream failed");
+                    Logger.t(TAG).e("openStream failed");
                     return;
                 }
                 if (surfaceView.get() == null || !Player.getInstance().play(m_iPort, surfaceView.get().getHolder())) {
-                    Log.e(TAG, "play failed");
+                    Logger.t(TAG).e("play failed");
                     return;
                 }
                 if (!Player.getInstance().playSound(m_iPort)) {
-                    Log.e(TAG, "playSound failed with error code:" + Player.getInstance().getLastError(m_iPort));
+                    Logger.t(TAG).e("playSound failed with error code:" + Player.getInstance().getLastError(m_iPort));
                 }
 
 //                Player.getInstance().setHSDetectCB(m_iPort, new PlayerCallBack.PlayerHSDetectCB() {
@@ -371,7 +373,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 Player.getInstance().setDisplayCB(m_iPort, new PlayerCallBack.PlayerDisplayCB() {
                     @Override
                     public void onDisplay(int i, byte[] bytes, int i1, int i2, int i3, int i4, int i5, int i6) {
-                        Log.e(TAG, "onDisplay:" + bytes.length);
+//                        Logger.t(TAG).i(TAG, "onDisplay:" + bytes.length);
                         if (seeking) {
                             seeking = false;
                             notifySeekComplete();
@@ -413,7 +415,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                Log.e(TAG, "inputData failed with: " +
+                Logger.t(TAG).e("inputData failed with: " +
                         Player.getInstance().getLastError(m_iPort));
 //                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
 //                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
@@ -447,17 +449,11 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         return cbf;
     }
 
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_PLAYING = 1;
-    public static final int STATE_PAUSE = 2;
-    public static final int STATE_STOP = 3;
-    private int playState = STATE_IDLE;
-
     public void playBack(FileInfo fi) {
 
         fileInfo = fi;
         if (surfaceView == null || surfaceView.get() == null) {
-            Log.e(TAG, "must call setSurfaceView before preview");
+            Logger.t(TAG).e("playback must call setSurfaceView before preview");
             return;
         }
 
@@ -472,12 +468,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     private void playBackInternal(String fileName) {
         if (m_iLogID < 0) {
-            Log.e(TAG, "please login on a device first");
+            Logger.t(TAG).e("playBackInternal please login on a device first");
             return;
         }
         if (m_iPlaybackID < 0) {
             if (m_iPlayID >= 0) {
-                Log.i(TAG, "Please stop preview first");
+                Logger.t(TAG).i("playBackInternal Please stop preview first");
                 return;
             }
 
@@ -485,12 +481,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             if (m_iPlaybackID >= 0) {
                 PlaybackCallBack fPlaybackCallBack = getPlayerbackPlayerCbf();
                 if (!HCNetSDK.getInstance().NET_DVR_SetPlayDataCallBack(m_iPlaybackID, fPlaybackCallBack)) {
-                    Log.e(TAG, "Set playback callback failed!");
+                    Logger.t(TAG).e("Set playback callback failed!");
                     return;
                 }
                 if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
                         PlaybackControlCommand.NET_DVR_PLAYSTART, null, 0, null)) {
-                    Log.e(TAG, "net sdk playback start failed!");
+                    Logger.t(TAG).e("net sdk playback start failed!");
                     return;
                 }
                 m_bStopPlayback = false;
@@ -498,7 +494,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 notifyPlayStart();
 
             } else {
-                Log.i(TAG, "NET_DVR_PlayBackByName failed, error code: " +
+                Logger.t(TAG).i("NET_DVR_PlayBackByName failed, error code: " +
                         HCNetSDK.getInstance().NET_DVR_GetLastError());
             }
         }
@@ -507,7 +503,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void pausePlayBack() {
         if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
                 PlaybackControlCommand.NET_DVR_PLAYPAUSE, null, 0, null)) {
-            Log.e(TAG, "net sdk playback pause failed!");
+            Logger.t(TAG).e("net sdk playback pause failed! error code:", HCNetSDK.getInstance().NET_DVR_GetLastError());
         }
         Player.getInstance().pause(m_iPort, 1);
         Player.getInstance().stopSound();
@@ -518,7 +514,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void resumePlayBack() {
         if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
                 PlaybackControlCommand.NET_DVR_PLAYRESTART, null, 0, null)) {
-            Log.e(TAG, "net sdk playback pause failed!");
+            Logger.t(TAG).e("net sdk playback resume failed! error code:", HCNetSDK.getInstance().NET_DVR_GetLastError());
         }
         Player.getInstance().pause(m_iPort, 0);
         Player.getInstance().playSound(m_iPort);
@@ -548,10 +544,10 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
         if (!HCNetSDK.getInstance().NET_DVR_PlayBackControl_V40(m_iPlaybackID,
                 12, bytes, 0, null)) {
-            Log.e(TAG, "NET_DVR_PlayBackControl_V40 failed, error code: " +
+            Logger.t(TAG).e("NET_DVR_PlayBackControl_V40 seek failed, error code: " +
                     HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            Log.i(TAG, "NET_DVR_PlayBackControl_V40 success");
+            Logger.t(TAG).i("NET_DVR_PlayBackControl_V40 seek success");
         }
 
     }
@@ -559,13 +555,13 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void stopPlayback() {
         m_bStopPlayback = true;
         if (!HCNetSDK.getInstance().NET_DVR_StopPlayBack(m_iPlaybackID)) {
-            Log.e(TAG, "net sdk stop playback failed");
+            Logger.t(TAG).e("net sdk stop playback failed! error code:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } // player stop play
         stopSinglePlayer();
         notifyPlayStop();
 
         if (!Player.getInstance().setVideoWindow(m_iPort, 0, null)) {
-            Log.e(TAG, "Player setVideoWindow failed!");
+            Logger.t(TAG).e("Player setVideoWindow failed! error code: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         }
         m_iPlaybackID = -1;
     }
@@ -573,7 +569,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public List<FileInfo> findFile(TimeStruct startTime, TimeStruct stopTime) {
         if (m_iLogID < 0) {
-            Log.e(TAG, "please login on a device first");
+            Logger.t(TAG).e("findFile please login on a device first");
             return new ArrayList<>();
         }
         List<FileInfo> fileList = CameraUtil.findFile(m_iLogID, startTime, stopTime);
@@ -586,7 +582,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         logout();
     }
 
-    private int preFrameNumber = -100;
 
     public boolean isEnd() {
 
@@ -595,10 +590,10 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
         int current = Player.getInstance().getCurrentFrameNum(m_iPort);
 
-        Log.i(TAG, "Player getCurrentFrameNum====" + current);
-        Log.i(TAG, "Player preFrameNumber====" + preFrameNumber);
-
-        Log.i(TAG, "Player Frame isEnd====" + (current == preFrameNumber));
+//        Logger.t(TAG).i(TAG, "Player getCurrentFrameNum====" + current);
+//        Logger.t(TAG).i(TAG, "Player preFrameNumber====" + preFrameNumber);
+//
+//        Logger.t(TAG).i(TAG, "Player Frame isEnd====" + (current == preFrameNumber));
 
         boolean result = current == preFrameNumber;
 
@@ -611,7 +606,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public int getPlayBackTime() {
         int progress = Player.getInstance().getPlayedTime(m_iPort);
-        Log.i(TAG, "Player getPlayedTime====" + Player.getInstance().getPlayedTime(m_iPort));
+        Logger.t(TAG).i("Player getPlayedTime====" + Player.getInstance().getPlayedTime(m_iPort));
         return progress;
     }
 
@@ -625,7 +620,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public int getPlaybackDuration(FileInfo fileInfo) {
         if (fileInfo != null) {
             int duration = TimeStruct.getDurationSeconds(fileInfo.startTime, fileInfo.stopTime);
-            Log.i(TAG, "duration ==== " + duration);
+            Logger.t(TAG).i("getPlaybackDuration ==== " + duration);
             return duration;
         }
         return 0;
@@ -648,10 +643,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             playBackInternal(fileName);
         }
     }
-
-    private PlaybackRunnable playbackRunnable = null;
-
-    private List<PlayerCallback> callbacks = null;
 
     public void addPlayerCallBack(PlayerCallback callBack) {
         if (callbacks == null) {
@@ -716,39 +707,37 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     public void focusFar() {
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 0)) {
-            System.out.println("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            System.out.println("PTZControl  PAN_LEFT 0 succ");
+            Logger.t(TAG).i("PTZControl  PAN_LEFT 0 succ");
         }
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 1)) {
-            System.out.println("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            System.out.println("PTZControl  PAN_LEFT 1 succ");
+            Logger.t(TAG).i("PTZControl  PAN_LEFT 1 succ");
         }
     }
 
     public void focusNear() {
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_NEAR, 0)) {
-            System.out.println("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            System.out.println("PTZControl  PAN_LEFT 0 succ");
+            Logger.t(TAG).i("PTZControl  PAN_LEFT 0 succ");
         }
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_NEAR, 1)) {
-            System.out.println("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            System.out.println("PTZControl  PAN_LEFT 1 succ");
+            Logger.t(TAG).i("PTZControl  PAN_LEFT 1 succ");
         }
     }
 
@@ -761,30 +750,29 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         CameraUtil.test(m_iLogID, 1);
     }
 
-    public boolean recording;
 
     public void startRecord() {
         if (recording) {
-            Log.e(TAG, "已经在录制！！！！！");
+            Logger.t(TAG).e("已经在录制！！！！！");
             return;
         }
         if (!HCNetSDK.getInstance().NET_DVR_StartDVRRecord(m_iLogID, 1, 0)) {
-            Log.d(TAG, "NET_DVR_StartDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).e("NET_DVR_StartDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            Log.d(TAG, "NET_DVR_StartDVRRecord succ!");
+            Logger.t(TAG).i("NET_DVR_StartDVRRecord succ!");
             recording = true;
         }
     }
 
     public void stopRecord() {
         if (!recording) {
-            Log.e(TAG, "未在录制！！！！！");
+            Logger.t(TAG).e("未在录制！！！！！");
         }
 
         if (!HCNetSDK.getInstance().NET_DVR_StopDVRRecord(m_iLogID, 1)) {
-            Log.d(TAG, "NET_DVR_StopDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
+            Logger.t(TAG).i("NET_DVR_StopDVRRecord err:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
-            Log.d(TAG, "NET_DVR_StopDVRRecord succ!");
+            Logger.t(TAG).i("NET_DVR_StopDVRRecord succ!");
             recording = false;
         }
     }

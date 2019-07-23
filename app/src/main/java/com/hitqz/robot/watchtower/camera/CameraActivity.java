@@ -18,6 +18,7 @@ import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
+import com.orhanobut.logger.Logger;
 
 
 public class CameraActivity extends AppCompatActivity {

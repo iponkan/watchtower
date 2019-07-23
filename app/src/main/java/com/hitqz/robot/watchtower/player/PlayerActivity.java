@@ -232,10 +232,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             switch (msg.what) {
                 case UPDATE:
                     int current = hcSdkManager.getPlayBackTime();
-
-                    float pos = hcSdkManager.getPlayBackPos();
-                    Log.d(TAG, "getPlayPos pos;" + pos);
-                    Log.d(TAG, "current;" + current);
                     if (hcSdkManager.isEnd()) {
                         hcSdkManager.stopPlayback();
                     }

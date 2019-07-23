@@ -7,11 +7,17 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
+import com.hitqz.robot.commonlib.util.CrashUtil;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.DiskLogAdapter;
+import com.orhanobut.logger.FormatStrategy;
+import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -21,6 +27,8 @@ import static com.hitqz.robot.watchtower.constant.PermissionConstant.STORAGE_PER
 
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String TAG = "MainActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,9 +73,21 @@ public class MainActivity extends AppCompatActivity {
                     RC_STORAGE_PERM,
                     STORAGE_PERMISSION);
         } else {
+            FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
+                    .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
+                    .methodCount(0)         // (Optional) How many method line to show. Default 2
+                    .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
+                    .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                    .build();
+            Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
+            Logger.addLogAdapter(new DiskLogAdapter(formatStrategy));
+
+            CrashUtil.getInstance().init(this, getResources().getString(R.string.app_name));
+
             DhpDialog.showDhpDialog(this);
             if (!NetworkUtils.isConnected()) {
                 ToastUtils.showToastShort(this, "网络未连接");
+                Logger.t(TAG).e("网络未连接");
             } else {
                 // 高清摄像头初始化
                 HCSdkManager normalSdkManager = HCSdkManager.getNormalHCSdkManager(this);
