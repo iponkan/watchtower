@@ -1,13 +1,12 @@
 package com.hitqz.robot.watchtower;
 
-import android.util.Log;
-
 import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.reflect.TypeToken;
 import com.hitqz.robot.commonlib.singleton.GsonUtil;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.Constants;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class DonghuoRecordManager {
 
     public void initRecords() {
         String gsonString = SPUtils.getInstance(Constants.SP_FILE_NAME).getString(Constants.ROCORD_KEY);
-        Log.d(TAG, "initRecords gsonString " + gsonString);
+        Logger.t(TAG).i("initRecords gsonString " + gsonString);
         List<String> list = GsonUtil.getInstance().fromJson(gsonString, new TypeToken<List<String>>() {
         }.getType());
 
@@ -74,7 +73,7 @@ public class DonghuoRecordManager {
 
     public void addTimePoint() {
         String gsonString = SPUtils.getInstance(Constants.SP_FILE_NAME).getString(Constants.ROCORD_KEY);
-        Log.d(TAG, "addTimePoint gsonString " + gsonString);
+        Logger.t(TAG).i("before addTimePoint gsonString " + gsonString);
         List<String> list = GsonUtil.getInstance().fromJson(gsonString, new TypeToken<List<String>>() {
         }.getType());
         if (list == null) {

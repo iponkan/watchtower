@@ -26,8 +26,8 @@ public class LoginInfo {
         this.name = n;
     }
 
-    private static LoginInfo normalLoginInfo = new LoginInfo(NORMAL_IP, NORMAL_PORT, NORMAL_USER, NORMAL_PSD, "高清摄像头");
-    private static LoginInfo hotLoginInfo = new LoginInfo(HOT_IP, HOT_PORT, HOT_USER, HOT_PSD, "热成像摄像头");
+    private static LoginInfo normalLoginInfo = new LoginInfo(NORMAL_IP, NORMAL_PORT, NORMAL_USER, NORMAL_PSD, "normal");
+    private static LoginInfo hotLoginInfo = new LoginInfo(HOT_IP, HOT_PORT, HOT_USER, HOT_PSD, "hot");
 
 
     public static LoginInfo getNormalLogInfo() {

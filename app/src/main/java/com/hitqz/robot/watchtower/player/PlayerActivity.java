@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
+import com.orhanobut.logger.Logger;
 
 import static com.hitqz.robot.watchtower.util.TimeUtil.formatTimeS;
 
@@ -64,7 +64,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         playerMask = findViewById(R.id.player_mask);
 
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
-        Log.i(TAG, "播放文件名：" + fileInfo);
+        Logger.i("播放文件名：" + fileInfo);
         commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
         surfaceView = findViewById(R.id.sv_player);
 
@@ -128,7 +128,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, TAG + " onDestroy");
         if (progressHandler != null) {
             progressHandler.removeCallbacksAndMessages(null);
         }

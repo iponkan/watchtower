@@ -33,7 +33,7 @@ import java.util.List;
 
 public class HCSdkManager implements SurfaceHolder.Callback {
 
-    public static final String TAG = "HCSdkManager";
+    private String TAG = "HCSdkManager";
 
     private static HashMap<LoginInfo, HCSdkManager> hcSdkManagers = new HashMap<>();
 
@@ -68,6 +68,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     private HCSdkManager(Context context, LoginInfo li) {
         this.applicationContext = context.getApplicationContext();
+        this.TAG = this.TAG + "-" + li.name;
         this.loginInfo = li;
     }
 
@@ -120,7 +121,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     // @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Logger.t(TAG).i(TAG, "surface Destroyed Player setVideoWindow release!" + m_iPort);
+        Logger.t(TAG).i("surface Destroyed Player setVideoWindow release!" + m_iPort);
     }
 
     public boolean isInit() {
@@ -742,12 +743,12 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     }
 
     public void getConfig() {
-        CameraUtil.COMPRESS_CFG(m_iPlayID, 1);
+        CameraUtil.testGetCompressCfg(m_iPlayID, 1);
     }
 
 
     public void testGetAbility() {
-        CameraUtil.test(m_iLogID, 1);
+        CameraUtil.testGetAbility(m_iLogID, 1);
     }
 
 
