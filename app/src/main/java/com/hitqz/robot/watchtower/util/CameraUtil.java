@@ -1,6 +1,8 @@
 package com.hitqz.robot.watchtower.util;
 
 
+import android.util.Log;
+
 import com.hikvision.netsdk.HCNetSDK;
 import com.hikvision.netsdk.NET_DVR_COMPRESSIONCFG_ABILITY;
 import com.hikvision.netsdk.NET_DVR_COMPRESSIONCFG_V30;
@@ -47,18 +49,18 @@ public class CameraUtil {
                 fileInfo.stopTime = TimeStruct.cloneFrom(struFindData.struStopTime);
                 fileInfo.fileSize = struFindData.dwFileSize;
                 list.add(fileInfo);
-                Logger.t(TAG).i(TAG, "~~~~~Find File" + fileName, "~~~~~File Size" + struFindData.dwFileSize, "~~~~~File Time,from" + struFindData.struStartTime.ToString(), "~~~~~File Time,to" + struFindData.struStopTime.ToString());
+                Logger.t(TAG).i("~~~~~Find File" + fileName, "~~~~~File Size" + struFindData.dwFileSize, "~~~~~File Time,from" + struFindData.struStartTime.ToString(), "~~~~~File Time,to" + struFindData.struStopTime.ToString());
             } else if (HCNetSDK.NET_DVR_FILE_NOFIND == findNext) {
-                Logger.t(TAG).i(TAG, "No file found");
+                Logger.t(TAG).i("No file found");
                 break;
             } else if (HCNetSDK.NET_DVR_NOMOREFILE == findNext) {
-                Logger.t(TAG).i(TAG, "All files are listed");
+                Logger.t(TAG).i("All files are listed");
                 break;
             } else if (HCNetSDK.NET_DVR_FILE_EXCEPTION == findNext) {
-                Logger.t(TAG).e(TAG, "Exception in searching");
+                Logger.t(TAG).e("Exception in searching");
                 break;
             } else if (HCNetSDK.NET_DVR_ISFINDING == findNext) {
-                Logger.t(TAG).i(TAG, "NET_DVR_ISFINDING");
+                Log.i(TAG, "NET_DVR_ISFINDING");
             }
         }
         HCNetSDK.getInstance().NET_DVR_FindClose_V30(iFindHandle);
