@@ -18,31 +18,27 @@ import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
-import com.orhanobut.logger.Logger;
+
+import butterknife.BindView;
 
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public void circlePressed(View view) {
-        SteerView azimuthCircle = (SteerView) view;
-        if (azimuthCircle.getPressDirection() == SteerView.LEFT_PRESS) {
-            Toast.makeText(this, "LEFT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.TOP_PRESS) {
-            Toast.makeText(this, "TOP_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.RIGHT_PRESS) {
-            Toast.makeText(this, "RIGHT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.BOTTOM_PRESS) {
-            Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private ImageView ivMinus = null;
-    private ImageView ivPlus = null;
-    private ImageView ivFocus = null;
-    private ImageView ivConfirm = null;
-    private SurfaceView hotSurfaceView = null;
+    @BindView(R.id.iv_camera_minus)
+    private ImageView ivMinus;
+    @BindView(R.id.iv_camera_plus)
+    private ImageView ivPlus;
+    @BindView(R.id.iv_camera_focus)
+    private ImageView ivFocus;
+    @BindView(R.id.iv_camera_confirm)
+    private ImageView ivConfirm;
+    @BindView(R.id.sv_hot_camera)
+    private SurfaceView hotSurfaceView;
+    @BindView(R.id.sv_normal_camera)
     private SurfaceView normalSurfaceView;
+    @BindView(R.id.pv_camera)
     private ProductionView productionView;
+
     private HCSdkManager hotHCSdkManager;
     private HCSdkManager normalHCSdkManager;
     ProductionManager productionManager;
@@ -65,19 +61,12 @@ public class CameraActivity extends AppCompatActivity {
             return;
         }
 
-        ivPlus = findViewById(R.id.iv_camera_plus);
-        ivMinus = findViewById(R.id.iv_camera_minus);
-        ivFocus = findViewById(R.id.iv_camera_focus);
-        ivConfirm = findViewById(R.id.iv_camera_confirm);
         ivConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DonghuoRecordManager.getInstance().addTimePoint();
             }
         });
-        hotSurfaceView = findViewById(R.id.sv_hot_camera);
-        productionView = findViewById(R.id.pv_camera);
-        normalSurfaceView = findViewById(R.id.sv_normal_camera);
 
         resetHotCameraView(hotSurfaceView, productionView);
         resetNormalCameraView(normalSurfaceView);
@@ -85,41 +74,9 @@ public class CameraActivity extends AppCompatActivity {
         hotHCSdkManager.setSurfaceView(hotSurfaceView);
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
 
-        ivPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                productionView.zoomIn();
-            }
-        });
-
-        ivMinus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                productionView.zoomOut();
-            }
-        });
-
-        ivFocus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                hotHCSdkManager.focusNear();
-                // test
-//                DonghuoRecordManager.getInstance().clearRecods();
-
-//                normalHCSdkManager.testGetAbility();
-                if(!normalHCSdkManager.recording){
-                    normalHCSdkManager.startRecord();
-
-                }else {
-                    normalHCSdkManager.stopRecord();
-
-                }
-
-
-            }
-
-
-        });
+        ivPlus.setOnClickListener(this);
+        ivMinus.setOnClickListener(this);
+        ivFocus.setOnClickListener(this);
     }
 
     private void resetHotCameraView(View... views) {
@@ -197,5 +154,40 @@ public class CameraActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == ivPlus) {
+            productionView.zoomIn();
+        } else if (v == ivMinus) {
+            productionView.zoomOut();
+        } else if (v == ivFocus) {
+            //hotHCSdkManager.focusNear();
+            // test
+//                DonghuoRecordManager.getInstance().clearRecods();
+
+//                normalHCSdkManager.testGetAbility();
+            if (!normalHCSdkManager.recording) {
+                normalHCSdkManager.startRecord();
+
+            } else {
+                normalHCSdkManager.stopRecord();
+
+            }
+        }
+    }
+
+    public void circlePressed(View view) {
+        SteerView azimuthCircle = (SteerView) view;
+        if (azimuthCircle.getPressDirection() == SteerView.LEFT_PRESS) {
+            Toast.makeText(this, "LEFT_PRESS", Toast.LENGTH_SHORT).show();
+        } else if (azimuthCircle.getPressDirection() == SteerView.TOP_PRESS) {
+            Toast.makeText(this, "TOP_PRESS", Toast.LENGTH_SHORT).show();
+        } else if (azimuthCircle.getPressDirection() == SteerView.RIGHT_PRESS) {
+            Toast.makeText(this, "RIGHT_PRESS", Toast.LENGTH_SHORT).show();
+        } else if (azimuthCircle.getPressDirection() == SteerView.BOTTOM_PRESS) {
+            Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
+        }
     }
 }
