@@ -14,7 +14,7 @@ public class RetrofitManager {
     private static final int DEFAULT_READ_TIME_OUT = 10;
     private Retrofit mRetrofit;
     private static RetrofitManager mManager;
-    final private String baseUrl = "https://www.wanandroid.com";
+    final private String baseUrl = "http://192.168.8.103:8080";
 
 
     public RetrofitManager() {
@@ -25,9 +25,7 @@ public class RetrofitManager {
             builder.readTimeout(DEFAULT_READ_TIME_OUT, TimeUnit.SECONDS);//读操作超时时间
             // 添加公共参数拦截器
             HttpCommonInterceptor commonInterceptor = new HttpCommonInterceptor.Builder()
-                    .addHeaderParams("paltform", "android")
-                    .addHeaderParams("userToken", "1234343434dfdfd3434")
-                    .addHeaderParams("userId", "123445")
+                    .addHeaderParams("Content-Type", "application/json")
                     .build();
             builder.addInterceptor(commonInterceptor);
 

@@ -1,58 +1,48 @@
 package com.hitqz.robot.watchtower.net;
 
 public class DataBean {
-    int curPage;
-    int offset;
-    boolean over;
-    int total;
-    int pageCount;
-    int size;
 
-    public int getCurPage() {
-        return curPage;
+    /**
+     * code : 200
+     * status : SUCCESS
+     * msg :
+     * data : false
+     */
+
+    private int code;
+    private String status;
+    private String msg;
+    private boolean data;
+
+    public int getCode() {
+        return code;
     }
 
-    public void setCurPage(int curPage) {
-        this.curPage = curPage;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public int getOffset() {
-        return offset;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public boolean isOver() {
-        return over;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setOver(boolean over) {
-        this.over = over;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public int getTotal() {
-        return total;
+    public boolean isData() {
+        return data;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
-    }
-
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
+    public void setData(boolean data) {
+        this.data = data;
     }
 }

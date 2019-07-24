@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower.camera;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,9 +19,16 @@ import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.net.BaseObserver;
+import com.hitqz.robot.watchtower.net.DataBean;
+import com.hitqz.robot.watchtower.net.ISkyNet;
+import com.hitqz.robot.watchtower.net.MonitorEntity;
+import com.hitqz.robot.watchtower.net.RetrofitManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
@@ -44,6 +52,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     HCSdkManager normalHCSdkManager;
     ProductionManager productionManager;
 
+    ISkyNet skyNet;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +73,10 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-//        ivConfirm.setOnClickListener(this);
+        skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
+
+
+        ivConfirm.setOnClickListener(this);
 
         resetHotCameraView(hotSurfaceView, productionView);
         resetNormalCameraView(normalSurfaceView);
@@ -174,7 +187,73 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
             }
         } else if (v == ivConfirm) {
             DonghuoRecordManager.getInstance().addTimePoint();
+
+            startMonitor();
         }
+    }
+
+    @SuppressLint("CheckResult")
+    private void startMonitor() {
+        MonitorEntity monitorEntity = new MonitorEntity();
+        monitorEntity.setHasIgnoreRegion(false);
+        skyNet.startMonitor(monitorEntity).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        ToastUtils.showToastShort(CameraActivity.this, "开始监控成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtils.showToastShort(CameraActivity.this, "开始监控失败");
+                    }
+
+                });
+
+    }
+
+    @SuppressLint("CheckResult")
+    private void stopMonitor() {
+        skyNet.stopMonitor().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtils.showToastShort(CameraActivity.this, "停止监控失败");
+                    }
+
+                });
+
+    }
+
+    @SuppressLint("CheckResult")
+    private void isMonitoring() {
+        skyNet.isMonitoring().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        if (model.isData()) {
+                            ToastUtils.showToastShort(CameraActivity.this, "正在监控");
+                        } else {
+                            ToastUtils.showToastShort(CameraActivity.this, "不在监控");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
+                    }
+
+                });
+
     }
 
     public void circlePressed(View view) {

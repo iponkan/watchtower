@@ -37,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+@SuppressLint("CheckResult")
 public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener
         , AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -66,7 +67,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     Handler handler = new Handler();
     TimeRange dayTimeRange;
 
-    @SuppressLint("CheckResult")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
