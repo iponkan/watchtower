@@ -8,7 +8,7 @@
     tools:context=".player.PlayerActivity">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
-        android:id="@+id/player_ctb"
+        android:id="@+id/common_title_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp">
 

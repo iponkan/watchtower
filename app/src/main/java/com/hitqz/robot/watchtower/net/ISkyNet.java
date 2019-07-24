@@ -19,16 +19,16 @@ public interface ISkyNet {
     @POST("/monitor/start")
     Observable<BaseRespond<DataBean>> startMonitor(@Body MonitorEntity entity);
 
-    @GET("/monitor/end")
+    @GET("/monitor/stop")
     Observable<BaseRespond<DataBean>> stopMonitor();
 
     @GET("/monitor/now")
-    Observable<BaseRespond<DataBean>> isMonitoring();
+    Observable<BaseRespond<Boolean>> isMonitoring();
 
-    @GET("/alarm/level")
-    Observable<BaseRespond<DataBean>> getAlarmLevel();
+    @GET("/monitor/alarm/level")
+    Observable<BaseRespond<Integer>> getAlarmLevel();
 
-    @GET(" /alarm/reset")
+    @GET("/monitor/alarm/reset")
     Observable<BaseRespond<DataBean>> resetAlarmLevel();
 
 }

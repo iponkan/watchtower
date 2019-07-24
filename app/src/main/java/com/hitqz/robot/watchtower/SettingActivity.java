@@ -60,6 +60,7 @@ public class SettingActivity extends AppCompatActivity {
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
         getAlarmLevelConfig();
+        getAlarmLevel();
     }
 
     @Override
@@ -136,36 +137,16 @@ public class SettingActivity extends AppCompatActivity {
     private void getAlarmLevel() {
         skyNet.getAlarmLevel().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<Integer>() {
                     @Override
-                    public void onSuccess(DataBean model) {
-                        ToastUtils.showToastShort(SettingActivity.this, "成功");
+                    public void onSuccess(Integer model) {
+                        ToastUtils.showToastShort(SettingActivity.this, "成功, level" + model);
                     }
 
                     @Override
                     public void onFailure(String msg) {
                         ToastUtils.showToastShort(SettingActivity.this, "失败");
                     }
-
-                });
-
-    }
-
-    @SuppressLint("CheckResult")
-    private void resetAlarmLevel() {
-        skyNet.resetAlarmLevel().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<DataBean>() {
-                    @Override
-                    public void onSuccess(DataBean model) {
-                        ToastUtils.showToastShort(SettingActivity.this, "成功");
-                    }
-
-                    @Override
-                    public void onFailure(String msg) {
-                        ToastUtils.showToastShort(SettingActivity.this, "失败");
-                    }
-
                 });
 
     }
@@ -179,14 +160,14 @@ public class SettingActivity extends AppCompatActivity {
 
         int t1 = Integer.parseInt(s1);
 
-        String s2 = etLevel1.getText().toString();
+        String s2 = etLevel2.getText().toString();
         if (TextUtils.isEmpty(s1)) {
             DhpDialog.showDhpDialog(SettingActivity.this, "二级报警输入为空");
             return false;
         }
         int t2 = Integer.parseInt(s2);
 
-        String s3 = etLevel1.getText().toString();
+        String s3 = etLevel3.getText().toString();
         if (TextUtils.isEmpty(s1)) {
             DhpDialog.showDhpDialog(SettingActivity.this, "三级报警输入为空");
             return false;

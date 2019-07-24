@@ -27,32 +27,38 @@ import com.hitqz.robot.watchtower.net.RetrofitManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class CameraActivity extends AppCompatActivity implements View.OnClickListener {
+public class CameraActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_camera_minus)
     ImageView ivMinus;
     @BindView(R.id.iv_camera_plus)
     ImageView ivPlus;
-    @BindView(R.id.iv_camera_focus)
-    ImageView ivFocus;
-    @BindView(R.id.iv_camera_confirm)
-    ImageView ivConfirm;
+    @BindView(R.id.iv_camera_far)
+    ImageView ivFar;
+    @BindView(R.id.iv_camera_near)
+    ImageView ivNear;
+    @BindView(R.id.iv_camera_start_monitor)
+    ImageView ivStartMonitor;
     @BindView(R.id.sv_hot_camera)
     SurfaceView hotSurfaceView;
     @BindView(R.id.sv_normal_camera)
     SurfaceView normalSurfaceView;
     @BindView(R.id.pv_camera)
     ProductionView productionView;
+    @BindView(R.id.iv_camera_clear_alarm)
+    ImageView ivClearAlarm;
 
     HCSdkManager hotHCSdkManager;
     HCSdkManager normalHCSdkManager;
     ProductionManager productionManager;
 
     ISkyNet skyNet;
+    boolean isMonitoring;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,18 +81,13 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
 
-
-        ivConfirm.setOnClickListener(this);
-
         resetHotCameraView(hotSurfaceView, productionView);
         resetNormalCameraView(normalSurfaceView);
 
         hotHCSdkManager.setSurfaceView(hotSurfaceView);
         normalHCSdkManager.setSurfaceView(normalSurfaceView);
 
-        ivPlus.setOnClickListener(this);
-        ivMinus.setOnClickListener(this);
-        ivFocus.setOnClickListener(this);
+        isMonitoring();
     }
 
     private void resetHotCameraView(View... views) {
@@ -166,42 +167,60 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v == ivPlus) {
-            productionView.zoomIn();
-        } else if (v == ivMinus) {
-            productionView.zoomOut();
-        } else if (v == ivFocus) {
-            //hotHCSdkManager.focusNear();
-            // test
-//                DonghuoRecordManager.getInstance().clearRecods();
+    @OnClick(R.id.iv_camera_near)
+    void cameraNear() {
+        hotHCSdkManager.focusNear();
+    }
 
-//                normalHCSdkManager.testGetAbility();
-            if (!normalHCSdkManager.recording) {
-                normalHCSdkManager.startRecord();
+    @OnClick(R.id.iv_camera_far)
+    void cameraFar() {
+        hotHCSdkManager.focusFar();
+    }
 
-            } else {
-                normalHCSdkManager.stopRecord();
+    @OnClick(R.id.iv_camera_plus)
+    void rectPlus() {
+        productionView.zoomIn();
+    }
 
-            }
-        } else if (v == ivConfirm) {
-            DonghuoRecordManager.getInstance().addTimePoint();
+    @OnClick(R.id.iv_camera_minus)
+    void rectMinus() {
+        productionView.zoomOut();
+    }
 
+    @OnClick(R.id.iv_camera_start_monitor)
+    void start() {
+        if (isMonitoring) {
+            stopMonitor();
+        } else {
             startMonitor();
         }
+    }
+
+    @OnClick(R.id.iv_camera_clear_alarm)
+    void clearAlarm() {
+        resetAlarmLevel();
     }
 
     @SuppressLint("CheckResult")
     private void startMonitor() {
         MonitorEntity monitorEntity = new MonitorEntity();
         monitorEntity.setHasIgnoreRegion(false);
+        ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.startMonitor(monitorEntity).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
+                        ivStartMonitor.setImageResource(R.drawable.btn_end_active);
                         ToastUtils.showToastShort(CameraActivity.this, "开始监控成功");
+                        // 添加动火记录点
+                        DonghuoRecordManager.getInstance().addTimePoint();
+                        // 高清摄像头开始录像
+                        if (!normalHCSdkManager.recording) {
+                            normalHCSdkManager.startRecord();
+                        } else {
+                            normalHCSdkManager.stopRecord();
+                        }
                     }
 
                     @Override
@@ -215,16 +234,21 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
 
     @SuppressLint("CheckResult")
     private void stopMonitor() {
+        ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.stopMonitor().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
                         ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
+                        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
+                        isMonitoring = false;
                     }
 
                     @Override
                     public void onFailure(String msg) {
+                        ivStartMonitor.setImageResource(R.drawable.btn_end_active);
+                        isMonitoring = true;
                         ToastUtils.showToastShort(CameraActivity.this, "停止监控失败");
                     }
 
@@ -236,20 +260,44 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     private void isMonitoring() {
         skyNet.isMonitoring().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<Boolean>() {
                     @Override
-                    public void onSuccess(DataBean model) {
-                        if (model.isData()) {
+                    public void onSuccess(Boolean model) {
+                        if (model) {
+                            ivStartMonitor.setImageResource(R.drawable.btn_end_active);
+                            isMonitoring = true;
                             ToastUtils.showToastShort(CameraActivity.this, "正在监控");
                         } else {
+                            ivStartMonitor.setImageResource(R.drawable.btn_start_active);
+                            isMonitoring = false;
                             ToastUtils.showToastShort(CameraActivity.this, "不在监控");
                         }
-
                     }
 
                     @Override
                     public void onFailure(String msg) {
+                        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
+                        isMonitoring = false;
                         ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
+                    }
+
+                });
+
+    }
+
+    @SuppressLint("CheckResult")
+    private void resetAlarmLevel() {
+        skyNet.resetAlarmLevel().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        ToastUtils.showToastShort(CameraActivity.this, "成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtils.showToastShort(CameraActivity.this, "失败");
                     }
 
                 });

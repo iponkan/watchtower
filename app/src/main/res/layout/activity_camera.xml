@@ -27,11 +27,75 @@
         android:layout_height="180dp"
         android:layout_below="@id/common_title_bar" />
 
+    <LinearLayout
+        android:id="@+id/ll_camera_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sv_hot_camera"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="框选:"
+            android:textColor="@android:color/white"
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/iv_camera_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:src="@drawable/camera_plus_selector" />
+
+        <ImageView
+            android:id="@+id/iv_camera_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:src="@drawable/camera_minus_selector" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="80dp"
+            android:text="调焦:"
+            android:textColor="@android:color/white"
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/iv_camera_far"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:clickable="true"
+            android:src="@drawable/camera_plus_selector" />
+
+        <ImageView
+            android:id="@+id/iv_camera_near"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:src="@drawable/camera_minus_selector" />
+    </LinearLayout>
+
     <SurfaceView
         android:id="@+id/sv_normal_camera"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:layout_below="@id/sv_hot_camera"
+        android:layout_below="@id/ll_camera_control"
         android:background="#0000ff00" />
 
     <FrameLayout
@@ -50,7 +114,6 @@
                 android:id="@+id/tv_camera_steer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="20dp"
                 android:text="角度调整"
                 android:textColor="@android:color/white"
@@ -106,49 +169,24 @@
         </RelativeLayout>
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sv_normal_camera"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iv_camera_plus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:src="@drawable/camera_plus_selector" />
-
-        <ImageView
-            android:id="@+id/iv_camera_focus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:clickable="true"
-            android:src="@drawable/camera_focus_selector" />
-
-        <ImageView
-            android:id="@+id/iv_camera_minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true"
-            android:src="@drawable/camera_minus_selector" />
-    </LinearLayout>
-
     <ImageView
-        android:id="@+id/iv_camera_confirm"
+        android:id="@+id/iv_camera_start_monitor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
         android:clickable="true"
-        android:src="@drawable/camera_ok_selector" />
+        android:src="@drawable/btn_start_active" />
+
+    <ImageView
+        android:id="@+id/iv_camera_clear_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:clickable="true"
+        android:src="@drawable/clear_alarm_selector" />
 
 
 </RelativeLayout>
