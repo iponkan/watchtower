@@ -2,6 +2,8 @@ package com.hitqz.robot.watchtower;
 
 import org.junit.Test;
 
+import java.util.HashSet;
+
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -11,22 +13,21 @@ import org.junit.Test;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        char[] chars = new char[]{'h', 'e', 'l', 'l', 'o'};
-        reverseString(chars);
-        for (int i = 0; i < chars.length; i++) {
-            System.out.println(chars[i]);
-        }
+        String s = "abcdefffff";
+        int length = lengthOfLongestSubstring(s);
+        System.out.println(length);
     }
 
-    public void reverseString(char[] s) {
-        int length = s.length;
-        int halfLength = length / 2;
-        for (int i = 0; i < halfLength; i++) {
-            int bottom = length - 1 - i;
-            char a = s[i];
-            s[i] = s[bottom];
-            s[bottom] = a;
+    public int lengthOfLongestSubstring(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
         }
+        HashSet<Character> set = new HashSet<>();
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            set.add(chars[i]);
+        }
+        return set.size();
     }
 
 }

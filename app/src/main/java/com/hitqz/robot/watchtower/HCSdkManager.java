@@ -269,7 +269,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             return false;
         }
         RealPlayCallBack fRealDataCallBack = getRealPlayerCbf();
-        Logger.t(TAG).i(TAG, "m_iStartChan:" + m_iStartChan);
+        Logger.t(TAG).i("m_iStartChan:" + m_iStartChan);
 
         NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
         previewInfo.lChannel = m_iStartChan;
@@ -346,7 +346,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
                 Logger.t(TAG).e("getPort is failed with: " + Player.getInstance().getLastError(m_iPort));
                 return;
             }
-            Logger.t(TAG).i(TAG, "getPort succ with: " + m_iPort);
+            Logger.t(TAG).i("getPort succ with: " + m_iPort);
             if (iDataSize > 0) {
                 if (!Player.getInstance().setStreamOpenMode(m_iPort, iStreamMode)) {// set stream mode
                     Logger.t(TAG).e("setStreamOpenMode failed");
