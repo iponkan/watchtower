@@ -24,6 +24,7 @@ import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,6 +64,8 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.i("----------CameraActivity--------");
+
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_camera);
         ButterKnife.bind(this);
@@ -212,20 +215,22 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DataBean model) {
                         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
-                        ToastUtils.showToastShort(CameraActivity.this, "开始监控成功");
+                        isMonitoring = true;
+                        Logger.i("开始监火成功");
                         // 添加动火记录点
                         DonghuoRecordManager.getInstance().addTimePoint();
                         // 高清摄像头开始录像
-                        if (!normalHCSdkManager.recording) {
-                            normalHCSdkManager.startRecord();
-                        } else {
-                            normalHCSdkManager.stopRecord();
-                        }
+//                        if (!normalHCSdkManager.recording) {
+//                            normalHCSdkManager.startRecord();
+//                        } else {
+//                            normalHCSdkManager.stopRecord();
+//                        }
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(CameraActivity.this, "开始监控失败");
+                        Logger.e("开始监火失败：" + msg);
+                        ToastUtils.showToastShort(CameraActivity.this, "开始监火失败：" + msg);
                     }
 
                 });
@@ -240,7 +245,8 @@ public class CameraActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
+//                        ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
+                        Logger.i("停止监火成功");
                         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
                         isMonitoring = false;
                     }
@@ -249,6 +255,7 @@ public class CameraActivity extends AppCompatActivity {
                     public void onFailure(String msg) {
                         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
                         isMonitoring = true;
+                        Logger.e("停止监火失败：" + msg);
                         ToastUtils.showToastShort(CameraActivity.this, "停止监控失败");
                     }
 
@@ -266,11 +273,13 @@ public class CameraActivity extends AppCompatActivity {
                         if (model) {
                             ivStartMonitor.setImageResource(R.drawable.btn_end_active);
                             isMonitoring = true;
-                            ToastUtils.showToastShort(CameraActivity.this, "正在监控");
+//                            ToastUtils.showToastShort(CameraActivity.this, "正在监控");
+                            Logger.i("正在监火");
                         } else {
                             ivStartMonitor.setImageResource(R.drawable.btn_start_active);
                             isMonitoring = false;
-                            ToastUtils.showToastShort(CameraActivity.this, "不在监控");
+//                            ToastUtils.showToastShort(CameraActivity.this, "不在监控");
+                            Logger.i("不在监火");
                         }
                     }
 
@@ -278,7 +287,8 @@ public class CameraActivity extends AppCompatActivity {
                     public void onFailure(String msg) {
                         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
                         isMonitoring = false;
-                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
+//                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
+                        Logger.e("获取监火状态失败:" + msg);
                     }
 
                 });

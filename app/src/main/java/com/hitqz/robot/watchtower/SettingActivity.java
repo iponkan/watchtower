@@ -16,6 +16,7 @@ import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class SettingActivity extends AppCompatActivity {
     EditText etLevel3;
 
     ISkyNet skyNet;
+    boolean isMonitoring;
 
     AlarmLevelSettingEntity levle1 = AlarmLevelSettingEntity.getDefaultLevel1();
     AlarmLevelSettingEntity levle2 = AlarmLevelSettingEntity.getDefaultLevel2();
@@ -50,9 +52,13 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Logger.i("----------SettingActivity--------");
+
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
+
+        ivConfirm.setClickable(false);
 
         etLevel1.setText(String.valueOf(levle1.getAlarmTemperature()));
         etLevel2.setText(String.valueOf(levle2.getAlarmTemperature()));
@@ -60,7 +66,7 @@ public class SettingActivity extends AppCompatActivity {
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
         getAlarmLevelConfig();
-        getAlarmLevel();
+        isMonitoring();
     }
 
     @Override
@@ -75,6 +81,10 @@ public class SettingActivity extends AppCompatActivity {
         if (!checkInput()) {
             return;
         }
+        if (isMonitoring) {
+            DhpDialog.showDhpDialog(SettingActivity.this, "请先停止监火！");
+            return;
+        }
         List<AlarmLevelSettingEntity> alarmLevelSettingEntities = new ArrayList<>();
         levle1.setAlarmTemperature(Integer.parseInt(etLevel1.getText().toString()));
         levle2.setAlarmTemperature(Integer.parseInt(etLevel2.getText().toString()));
@@ -87,12 +97,15 @@ public class SettingActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ToastUtils.showToastShort(SettingActivity.this, "成功");
+                        DhpDialog.showDhpDialog(SettingActivity.this, "设置成功");
+                        Logger.i("设置报警温度成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(SettingActivity.this, "失败");
+                        ToastUtils.showToastShort(SettingActivity.this, "设置失败");
+                        Logger.i("设置报警温度失败：" + msg);
+
                     }
 
                 });
@@ -134,19 +147,31 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     @SuppressLint("CheckResult")
-    private void getAlarmLevel() {
-        skyNet.getAlarmLevel().subscribeOn(Schedulers.io())
+    private void isMonitoring() {
+        skyNet.isMonitoring().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<Integer>() {
+                .subscribeWith(new BaseObserver<Boolean>() {
                     @Override
-                    public void onSuccess(Integer model) {
-                        ToastUtils.showToastShort(SettingActivity.this, "成功, level" + model);
+                    public void onSuccess(Boolean model) {
+                        if (model) {
+//                            ToastUtils.showToastShort(SettingActivity.this, "正在监控");
+                            Logger.i("正在监火");
+                        } else {
+                            Logger.i("不在监火");
+//                            ToastUtils.showToastShort(SettingActivity.this, "不在监控");
+                        }
+                        isMonitoring = model;
+                        ivConfirm.setClickable(true);
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(SettingActivity.this, "失败");
+                        isMonitoring = false;
+//                        ToastUtils.showToastShort(SettingActivity.this, "获取监控失败");
+                        Logger.e("获取监火状态失败:" + msg);
+                        ivConfirm.setClickable(true);
                     }
+
                 });
 
     }
@@ -176,7 +201,7 @@ public class SettingActivity extends AppCompatActivity {
 
         boolean right = t2 > t1 && t2 < t3;
         if (!right) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "输入错误，报警温度必须依次增加!");
+            DhpDialog.showDhpDialog(SettingActivity.this, "报警温度必须依次增加!");
         }
         return right;
     }

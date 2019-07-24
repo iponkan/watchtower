@@ -14,6 +14,7 @@ import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.i("----------GalleryActivity--------");
         FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
