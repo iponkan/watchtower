@@ -11,7 +11,7 @@ import retrofit2.http.POST;
 public interface ISkyNet {
 
     @GET("/set/alarmLevel")
-    Observable<BaseRespond<DataBean>> getAlarmLevelConfig();
+    Observable<BaseRespond<List<AlarmLevelSettingEntity>>> getAlarmLevelConfig();
 
     @POST("/set/alarmLevel")
     Observable<BaseRespond<DataBean>> setAlarmLevelConfig(@Body List<AlarmLevelSettingEntity> entity);

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,14 @@ import com.hitqz.robot.watchtower.R;
 
 public class DhpDialog extends DialogFragment implements View.OnClickListener {
 
-    private ImageView ivOk;
+    ImageView ivOk;
+    TextView tvAlert;
+    String alertString;
+
+    public DhpDialog(String alertText) {
+        super();
+        alertString = alertText;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,6 +42,8 @@ public class DhpDialog extends DialogFragment implements View.OnClickListener {
         getDialog().setCanceledOnTouchOutside(true);
         View rootView = inflater.inflate(R.layout.layout_alert_dhp, container, false);
         ivOk = rootView.findViewById(R.id.iv_pop_confirm);
+        tvAlert = rootView.findViewById(R.id.tv_alert_text);
+        tvAlert.setText(alertString);
         ivOk.setOnClickListener(this);
         //Do something
         // 设置宽度为屏宽、靠近屏幕底部。
@@ -58,8 +68,8 @@ public class DhpDialog extends DialogFragment implements View.OnClickListener {
     }
 
 
-    public static void showDhpDialog(AppCompatActivity activity) {
-        DhpDialog dialog = new DhpDialog();
+    public static void showDhpDialog(AppCompatActivity activity, String alertText) {
+        DhpDialog dialog = new DhpDialog(alertText);
         dialog.show(activity.getSupportFragmentManager(), "dhalert");
     }
 }

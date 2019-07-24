@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="300dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/white"
     app:clip_background="true"
     app:round_corner="8dp">
@@ -32,11 +33,12 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/tv_alert_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:text="请注意核对动火票!"
+        tools:text="请注意核对动火票!"
         android:textColor="@android:color/black"
         android:textSize="20dp" />
 

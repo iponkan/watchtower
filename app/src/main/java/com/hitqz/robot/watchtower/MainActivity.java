@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
             CrashUtil.getInstance().init(this, getResources().getString(R.string.app_name));
 
-            DhpDialog.showDhpDialog(this);
+            DhpDialog.showDhpDialog(this, "请注意核对动火票");
             if (!NetworkUtils.isConnected()) {
                 ToastUtils.showToastShort(this, "网络未连接");
                 Logger.t(TAG).e("网络未连接");

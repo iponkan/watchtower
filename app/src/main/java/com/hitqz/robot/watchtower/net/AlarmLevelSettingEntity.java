@@ -30,4 +30,16 @@ public class AlarmLevelSettingEntity {
     public void setAlarmTemperature(int alarmTemperature) {
         this.alarmTemperature = alarmTemperature;
     }
+
+    public static AlarmLevelSettingEntity getDefaultLevel1() {
+        return new AlarmLevelSettingEntity(1, 100);
+    }
+
+    public static AlarmLevelSettingEntity getDefaultLevel2() {
+        return new AlarmLevelSettingEntity(2, 200);
+    }
+
+    public static AlarmLevelSettingEntity getDefaultLevel3() {
+        return new AlarmLevelSettingEntity(3, 300);
+    }
 }

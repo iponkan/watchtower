@@ -41,7 +41,11 @@ public abstract class BaseObserver<M> extends DisposableObserver<BaseRespond<M>>
      */
     @Override
     public void onNext(BaseRespond<M> mBaseRespond) {
-        onSuccess(mBaseRespond.getData());
+        if ("SUCCESS".endsWith(mBaseRespond.getStatus())) {
+            onSuccess(mBaseRespond.getData());
+        } else {
+            onFailure("服务器Status返回Fail");
+        }
     }
 
 
