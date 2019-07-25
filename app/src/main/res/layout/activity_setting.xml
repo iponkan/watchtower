@@ -71,7 +71,6 @@
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
-            android:text="100"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
@@ -108,7 +107,6 @@
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
-            android:text="200"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
@@ -145,7 +143,6 @@
             android:background="@drawable/reply_custom_message_edit_background"
             android:gravity="center"
             android:inputType="number"
-            android:text="300"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
@@ -158,6 +155,15 @@
             android:textColor="@android:color/white"
             android:textSize="22dp" />
     </LinearLayout>
+
+    <!-- <ImageView
+         android:id="@+id/iv_reset"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_weight="1"
+         android:clickable="true"
+         android:src="@drawable/setting_reset_selector" />-->
 
     <ImageView
         android:id="@+id/iv_confirm"

@@ -125,26 +125,32 @@ public class SettingActivity extends AppCompatActivity {
                                 int temperature = entity.getAlarmTemperature();
                                 if (entity.getAlarmLevel() == 1) {
                                     levle1.setAlarmTemperature(temperature);
-                                    etLevel1.setText(String.valueOf(temperature));
                                 } else if (entity.getAlarmLevel() == 2) {
                                     levle2.setAlarmTemperature(temperature);
-                                    etLevel2.setText(String.valueOf(entity.getAlarmTemperature()));
                                 } else if (entity.getAlarmLevel() == 3) {
                                     levle3.setAlarmTemperature(temperature);
-                                    etLevel3.setText(String.valueOf(entity.getAlarmTemperature()));
                                 }
                             }
                         }
+                        setEtText();
 //                        ToastUtils.showToastShort(SettingActivity.this, "成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
                         ToastUtils.showToastShort(SettingActivity.this, "失败:" + msg);
+                        setEtText();
                     }
 
                 });
 
+    }
+
+
+    private void setEtText() {
+        etLevel1.setText(String.valueOf(levle1.getAlarmTemperature()));
+        etLevel2.setText(String.valueOf(levle2.getAlarmTemperature()));
+        etLevel3.setText(String.valueOf(levle3.getAlarmTemperature()));
     }
 
     @SuppressLint("CheckResult")
