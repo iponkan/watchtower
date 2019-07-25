@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -69,6 +70,22 @@ public class ProductionView extends View {
 //            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
 //        }
 
+    }
+
+    public Point[] getPoints() {
+        if (mBorderRect.mRatio == 1.0f) {
+            return null;
+        }
+
+        Point[] points = new Point[2];
+        points[0] = new Point(mBorderRect.commonLeft(), mBorderRect.commonBottom());
+        points[1] = new Point(mBorderRect.commonRight(), mBorderRect.commonTop());
+        return points;
+    }
+
+    public void setPoints(Point[] points) {
+        mBorderRect.setPoints(points);
+        postInvalidate();
     }
 
     private void init(Context context) {
@@ -244,6 +261,10 @@ public class ProductionView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        if (antiTouch) {
+            return true;
+        }
+
         Log.d(TAG, "onTouchEvent: getPointerCount:" + event.getPointerCount());
 
         if (event.getPointerCount() > 1) {
@@ -286,6 +307,12 @@ public class ProductionView extends View {
         mBorderRect.setProduction(null);
         mBorderRect.set(0, 0, mScreenWidth, mScreenHeight, 1.0f);
         postInvalidate();
+    }
+
+    boolean antiTouch;
+
+    public void antiTouch(boolean b) {
+        antiTouch = b;
     }
 
     public interface ProductionListener {

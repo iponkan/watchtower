@@ -14,6 +14,7 @@ import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.BaseObserver;
 import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
+import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
 import com.orhanobut.logger.Logger;
@@ -150,17 +151,20 @@ public class SettingActivity extends AppCompatActivity {
     private void isMonitoring() {
         skyNet.isMonitoring().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<MonitorEntity>() {
                     @Override
-                    public void onSuccess(Boolean model) {
-                        if (model) {
+                    public void onSuccess(MonitorEntity model) {
+                        if (model == null) {
+                            return;
+                        }
+                        if (model.isMonitor()) {
 //                            ToastUtils.showToastShort(SettingActivity.this, "正在监控");
                             Logger.i("正在监火");
                         } else {
                             Logger.i("不在监火");
 //                            ToastUtils.showToastShort(SettingActivity.this, "不在监控");
                         }
-                        isMonitoring = model;
+                        isMonitoring = model.isMonitor();
                         ivConfirm.setClickable(true);
                     }
 

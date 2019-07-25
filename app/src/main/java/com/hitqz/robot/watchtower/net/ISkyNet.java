@@ -23,7 +23,7 @@ public interface ISkyNet {
     Observable<BaseRespond<DataBean>> stopMonitor();
 
     @GET("/monitor/now")
-    Observable<BaseRespond<Boolean>> isMonitoring();
+    Observable<BaseRespond<MonitorEntity>> isMonitoring();
 
     @GET("/monitor/alarm/level")
     Observable<BaseRespond<Integer>> getAlarmLevel();

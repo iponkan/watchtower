@@ -3,6 +3,7 @@ package com.hitqz.robot.watchtower.camera;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
@@ -207,15 +208,21 @@ public class CameraActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     private void startMonitor() {
         MonitorEntity monitorEntity = new MonitorEntity();
-        monitorEntity.setHasIgnoreRegion(false);
+        Point[] points = productionView.getPoints();
+        if (points == null) {
+            monitorEntity.setHasIgnoreRegion(false);
+        } else {
+            monitorEntity.setHasIgnoreRegion(true);
+            MonitorEntity.IgnoreRegionBean ignoreRegionBean = MonitorEntity.fromPoints(points);
+            monitorEntity.setIgnoreRegion(ignoreRegionBean);
+        }
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.startMonitor(monitorEntity).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ivStartMonitor.setImageResource(R.drawable.btn_end_active);
-                        isMonitoring = true;
+                        onStartMonitor();
                         Logger.i("开始监火成功");
                         // 添加动火记录点
                         DonghuoRecordManager.getInstance().addTimePoint();
@@ -247,14 +254,11 @@ public class CameraActivity extends AppCompatActivity {
                     public void onSuccess(DataBean model) {
 //                        ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
                         Logger.i("停止监火成功");
-                        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
-                        isMonitoring = false;
+                        onStopMonitor();
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ivStartMonitor.setImageResource(R.drawable.btn_end_active);
-                        isMonitoring = true;
                         Logger.e("停止监火失败：" + msg);
                         ToastUtils.showToastShort(CameraActivity.this, "停止监控失败");
                     }
@@ -267,26 +271,36 @@ public class CameraActivity extends AppCompatActivity {
     private void isMonitoring() {
         skyNet.isMonitoring().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<MonitorEntity>() {
                     @Override
-                    public void onSuccess(Boolean model) {
-                        if (model) {
-                            ivStartMonitor.setImageResource(R.drawable.btn_end_active);
-                            isMonitoring = true;
-//                            ToastUtils.showToastShort(CameraActivity.this, "正在监控");
+                    public void onSuccess(MonitorEntity model) {
+                        if (model == null) {
+                            Logger.e("MonitorEntity====null");
+                            return;
+                        }
+                        if (model.isMonitor()) {
+                            onStartMonitor();
                             Logger.i("正在监火");
                         } else {
-                            ivStartMonitor.setImageResource(R.drawable.btn_start_active);
-                            isMonitoring = false;
-//                            ToastUtils.showToastShort(CameraActivity.this, "不在监控");
+                            onStopMonitor();
                             Logger.i("不在监火");
+                        }
+
+                        MonitorEntity.IgnoreRegionBean ignoreRegionBean = model.getIgnoreRegion();
+                        if (ignoreRegionBean != null) {
+                            MonitorEntity.IgnoreRegionBean.LeftDownPointBean leftDownPointBean = ignoreRegionBean.getLeftDownPoint();
+                            MonitorEntity.IgnoreRegionBean.RightTopPointBean rightTopPointBean = ignoreRegionBean.getRightTopPoint();
+
+                            if (leftDownPointBean != null && rightTopPointBean != null) {
+                                Point point1 = new Point(leftDownPointBean.getX(), leftDownPointBean.getY());
+                                Point point2 = new Point(rightTopPointBean.getX(), rightTopPointBean.getY());
+                                productionView.setPoints(new Point[]{point1, point2});
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
-                        isMonitoring = false;
 //                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                     }
@@ -325,5 +339,25 @@ public class CameraActivity extends AppCompatActivity {
         } else if (azimuthCircle.getPressDirection() == SteerView.BOTTOM_PRESS) {
             Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void onStartMonitor() {
+        productionView.antiTouch(true);
+        ivStartMonitor.setImageResource(R.drawable.btn_end_active);
+        isMonitoring = true;
+        ivPlus.setClickable(false);
+        ivMinus.setClickable(false);
+        ivFar.setClickable(false);
+        ivNear.setClickable(false);
+    }
+
+    private void onStopMonitor() {
+        productionView.antiTouch(false);
+        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
+        isMonitoring = false;
+        ivPlus.setClickable(true);
+        ivMinus.setClickable(true);
+        ivFar.setClickable(true);
+        ivNear.setClickable(true);
     }
 }
