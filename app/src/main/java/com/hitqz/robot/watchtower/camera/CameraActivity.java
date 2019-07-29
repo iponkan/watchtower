@@ -3,6 +3,9 @@ package com.hitqz.robot.watchtower.camera;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.SurfaceView;
@@ -62,6 +65,12 @@ public class CameraActivity extends AppCompatActivity {
 
     ISkyNet skyNet;
     boolean isMonitoring;
+
+    public static void go2Camera(Activity activity) {
+        Intent intent = new Intent(activity, CameraActivity.class);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,7 +178,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     @OnClick(R.id.iv_camera_near)

@@ -2,7 +2,6 @@ package com.hitqz.robot.watchtower;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -25,26 +24,18 @@ import static com.hitqz.robot.watchtower.constant.PermissionConstant.STORAGE_PER
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
+    private static final int RC_STORAGE_PERM = 123;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_main);
         askForPermissionTask();
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
-            FullScreenUtil.initFullScreen(this);
-        }
-        super.onWindowFocusChanged(hasFocus);
-    }
-
     public void go2Camera(View view) {
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        CameraActivity.go2Camera(this);
     }
 
     public void go2Gallery(View view) {
@@ -52,16 +43,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void go2Setting(View view) {
-        Intent intent = new Intent(this, SettingActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        SettingActivity.go2Setting(this);
     }
-
-    private static final int RC_STORAGE_PERM = 123;
 
     @AfterPermissionGranted(RC_STORAGE_PERM)
     public void askForPermissionTask() {
-        if (!hasStoragePermission()) {
+        if (!EasyPermissions.hasPermissions(this, STORAGE_PERMISSION)) {
             // Ask for one permission
             EasyPermissions.requestPermissions(
                     this,
@@ -81,7 +68,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean hasStoragePermission() {
-        return EasyPermissions.hasPermissions(this, STORAGE_PERMISSION);
-    }
 }

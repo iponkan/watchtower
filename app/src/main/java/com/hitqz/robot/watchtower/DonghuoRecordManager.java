@@ -35,19 +35,18 @@ public class DonghuoRecordManager {
         return singleton;
     }
 
+    private List<DonghuoRecord> donghuoRecords;
 
-    private static List<DonghuoRecord> donghuoRecords;
 
-
-    public void initRecords() {
+    public List<DonghuoRecord> getDonghuoRecords() {
         String gsonString = SPUtils.getInstance(Constants.SP_FILE_NAME).getString(Constants.ROCORD_KEY);
-        Logger.t(TAG).i("initRecords gsonString " + gsonString);
+        Logger.t(TAG).i("DonghuoRecords gsonString " + gsonString);
         List<String> list = GsonUtil.getInstance().fromJson(gsonString, new TypeToken<List<String>>() {
         }.getType());
 
         if (list == null) {
             donghuoRecords = new ArrayList<>();
-            return;
+            return donghuoRecords;
         }
 
         if (list.size() == 1) {
@@ -69,6 +68,7 @@ public class DonghuoRecordManager {
                 donghuoRecords.add(donghuoRecord);
             }
         }
+        return donghuoRecords;
     }
 
     public void addTimePoint() {
@@ -83,10 +83,6 @@ public class DonghuoRecordManager {
         list.add(time);
         String result = GsonUtil.getInstance().toJson(list);
         SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.ROCORD_KEY, result);
-    }
-
-    public List<DonghuoRecord> getDonghuoRecords() {
-        return donghuoRecords;
     }
 
     public void clearRecods() {

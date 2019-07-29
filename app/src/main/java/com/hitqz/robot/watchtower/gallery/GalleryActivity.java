@@ -36,7 +36,6 @@ public class GalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
 
-        DonghuoRecordManager.getInstance().initRecords();
         List<DonghuoRecord> donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
         if (donghuoRecords == null || donghuoRecords.size() == 0) {
             tvEmpty.setVisibility(View.VISIBLE);
@@ -49,7 +48,6 @@ public class GalleryActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position));
             }
         });
@@ -60,7 +58,6 @@ public class GalleryActivity extends AppCompatActivity {
         super.onPause();
         overridePendingTransition(0, 0);
     }
-
 
     public static void go2Gallery(Activity activity) {
         Intent intent = new Intent(activity, GalleryActivity.class);

@@ -3,6 +3,8 @@ package com.hitqz.robot.watchtower.setting;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -49,6 +51,12 @@ public class SettingActivity extends AppCompatActivity {
     AlarmLevelSettingEntity levle1 = AlarmLevelSettingEntity.getDefaultLevel1();
     AlarmLevelSettingEntity levle2 = AlarmLevelSettingEntity.getDefaultLevel2();
     AlarmLevelSettingEntity levle3 = AlarmLevelSettingEntity.getDefaultLevel3();
+
+    public static void go2Setting(Activity activity) {
+        Intent intent = new Intent(activity, SettingActivity.class);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
