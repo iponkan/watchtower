@@ -11,6 +11,7 @@ import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
+import com.hitqz.robot.watchtower.setting.SettingActivity;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
 import com.orhanobut.logger.Logger;
 

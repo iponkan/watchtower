@@ -68,7 +68,7 @@ public class HCSdk implements SurfaceHolder.Callback {
         this.loginInfo = li;
     }
 
-    public static HCSdk getInstance(Context context, LoginInfo li) {
+    static HCSdk getInstance(Context context, LoginInfo li) {
         return new HCSdk(context, li);
     }
 

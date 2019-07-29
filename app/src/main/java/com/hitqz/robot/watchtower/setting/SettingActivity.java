@@ -1,4 +1,4 @@
-package com.hitqz.robot.watchtower;
+package com.hitqz.robot.watchtower.setting;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.BaseObserver;
 import com.hitqz.robot.watchtower.net.DataBean;

@@ -26,7 +26,7 @@ public class HCSdkManager {
 
     private static HashMap<LoginInfo, HCSdk> hcSdks = new HashMap<>();
 
-    public static HCSdk getHCSdk(Context context, LoginInfo loginInfo) {
+    private static HCSdk getHCSdk(Context context, LoginInfo loginInfo) {
         HCSdk hcSdk = hcSdks.get(loginInfo);
         if (hcSdk == null) {
             hcSdk = HCSdk.getInstance(context, loginInfo);

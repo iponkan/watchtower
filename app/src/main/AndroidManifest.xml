@@ -18,7 +18,7 @@
         android:networkSecurityConfig="@xml/network_security_config">
         <activity android:name=".gallery.VideoListActivity"></activity>
         <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".SettingActivity" />
+        <activity android:name=".setting.SettingActivity" />
         <activity android:name=".player.PlayerActivity" />
         <activity
             android:name=".camera.CameraActivity"

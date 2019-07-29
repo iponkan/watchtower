@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/common_bg"
     android:orientation="vertical"
-    tools:context=".SettingActivity">
+    tools:context=".setting.SettingActivity">
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
         android:id="@+id/common_title_bar"
