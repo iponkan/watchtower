@@ -19,6 +19,7 @@ import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.hitqz.robot.watchtower.rx.RxSchedulers;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
 
@@ -28,8 +29,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -102,8 +101,8 @@ public class SettingActivity extends AppCompatActivity {
         alarmLevelSettingEntities.add(levle1);
         alarmLevelSettingEntities.add(levle2);
         alarmLevelSettingEntities.add(levle3);
-        skyNet.setAlarmLevelConfig(alarmLevelSettingEntities).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.setAlarmLevelConfig(alarmLevelSettingEntities)
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
@@ -124,8 +123,8 @@ public class SettingActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void getAlarmLevelConfig() {
-        skyNet.getAlarmLevelConfig().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.getAlarmLevelConfig()
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<List<AlarmLevelSettingEntity>>() {
                     @Override
                     public void onSuccess(List<AlarmLevelSettingEntity> model) {
@@ -169,8 +168,8 @@ public class SettingActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
-        skyNet.isMonitoring().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.isMonitoring()
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
                     @Override
                     public void onSuccess(MonitorEntity model) {

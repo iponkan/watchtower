@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -29,13 +28,12 @@ import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.hitqz.robot.watchtower.rx.RxSchedulers;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -226,8 +224,8 @@ public class CameraActivity extends AppCompatActivity {
             monitorEntity.setIgnoreRegion(ignoreRegionBean);
         }
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
-        skyNet.startMonitor(monitorEntity).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.startMonitor(monitorEntity)
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
@@ -256,8 +254,8 @@ public class CameraActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     private void stopMonitor() {
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
-        skyNet.stopMonitor().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.stopMonitor()
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
@@ -278,8 +276,8 @@ public class CameraActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
-        skyNet.isMonitoring().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.isMonitoring()
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
                     @Override
                     public void onSuccess(MonitorEntity model) {
@@ -320,8 +318,8 @@ public class CameraActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void resetAlarmLevel() {
-        skyNet.resetAlarmLevel().subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        skyNet.resetAlarmLevel()
+                .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
