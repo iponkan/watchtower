@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
+import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 
@@ -56,6 +57,8 @@ public class CameraActivity extends AppCompatActivity {
     ProductionView productionView;
     @BindView(R.id.iv_camera_clear_alarm)
     ImageView ivClearAlarm;
+    @BindView(R.id.loading_view)
+    LoadingView loadingView;
 
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
@@ -276,6 +279,7 @@ public class CameraActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
+        showDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
@@ -304,14 +308,15 @@ public class CameraActivity extends AppCompatActivity {
                                 productionView.setPoints(new Point[]{point1, point2});
                             }
                         }
+                        dismissDialog();
                     }
 
                     @Override
                     public void onFailure(String msg) {
 //                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
+                        dismissDialog();
                     }
-
                 });
 
     }
@@ -366,5 +371,13 @@ public class CameraActivity extends AppCompatActivity {
         ivMinus.setClickable(true);
         ivFar.setClickable(true);
         ivNear.setClickable(true);
+    }
+
+    private void showDialog() {
+        loadingView.start();
+    }
+
+    private void dismissDialog() {
+        loadingView.stop();
     }
 }

@@ -41,7 +41,7 @@
 
 
         <com.github.loadingview.LoadingView
-            android:id="@+id/play_loading"
+            android:id="@+id/loading_view"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_centerInParent="true"

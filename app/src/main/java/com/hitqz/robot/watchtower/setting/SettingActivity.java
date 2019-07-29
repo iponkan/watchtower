@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.R;
@@ -44,6 +45,9 @@ public class SettingActivity extends AppCompatActivity {
     @BindView(R.id.et_level3)
     EditText etLevel3;
 
+    @BindView(R.id.loading_view)
+    LoadingView loadingView;
+
     ISkyNet skyNet;
     boolean isMonitoring;
 
@@ -74,8 +78,8 @@ public class SettingActivity extends AppCompatActivity {
         etLevel3.setText(String.valueOf(levle3.getAlarmTemperature()));
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
-        getAlarmLevelConfig();
         isMonitoring();
+        getAlarmLevelConfig();
     }
 
     @Override
@@ -168,6 +172,7 @@ public class SettingActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
+        showDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
@@ -185,6 +190,7 @@ public class SettingActivity extends AppCompatActivity {
                         }
                         isMonitoring = model.isMonitor();
                         ivConfirm.setClickable(true);
+                        dismissDialog();
                     }
 
                     @Override
@@ -193,8 +199,8 @@ public class SettingActivity extends AppCompatActivity {
 //                        ToastUtils.showToastShort(SettingActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                         ivConfirm.setClickable(true);
+                        dismissDialog();
                     }
-
                 });
 
     }
@@ -227,5 +233,13 @@ public class SettingActivity extends AppCompatActivity {
             AlertDialogFragment.showDialog(SettingActivity.this, "报警温度必须依次增加!");
         }
         return right;
+    }
+
+    private void showDialog() {
+        loadingView.start();
+    }
+
+    private void dismissDialog() {
+        loadingView.stop();
     }
 }

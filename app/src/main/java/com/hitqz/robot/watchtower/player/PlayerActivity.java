@@ -47,7 +47,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     TextView tvCurrent;
     @BindView(R.id.tv_duration_time)
     TextView tvDuration;
-    @BindView(R.id.play_loading)
+    @BindView(R.id.loading_view)
     LoadingView loadingView;
     @BindView(R.id.player_mask)
     View playerMask;

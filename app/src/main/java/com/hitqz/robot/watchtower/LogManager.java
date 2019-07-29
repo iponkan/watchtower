@@ -39,7 +39,7 @@ public class LogManager {
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
                 .methodCount(0)         // (Optional) How many method line to show. Default 2
                 .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
-                .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .tag("WatchTower")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
 
@@ -49,7 +49,7 @@ public class LogManager {
                 .build();
         Logger.addLogAdapter(new DiskLogAdapter(csvFormatStrategy));
 
-        CrashUtil.getInstance().init(context.getApplicationContext(), context.getResources().getString(R.string.app_name));
+        CrashUtil.getInstance().init(context.getApplicationContext(), "WatchTower");
         init = true;
     }
 }

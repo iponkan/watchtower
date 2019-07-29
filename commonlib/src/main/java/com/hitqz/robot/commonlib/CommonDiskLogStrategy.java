@@ -127,7 +127,7 @@ public class CommonDiskLogStrategy implements LogStrategy {
 
     public static CommonDiskLogStrategy getInstance() {
         String diskPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String folder = diskPath + File.separatorChar + "logger";
+        String folder = diskPath + File.separatorChar + "WatchTower" + File.separatorChar + "logger";
 
         HandlerThread ht = new HandlerThread("AndroidFileLogger." + folder);
         ht.start();

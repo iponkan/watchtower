@@ -1,181 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/common_bg"
-    android:orientation="vertical"
     tools:context=".setting.SettingActivity">
 
-    <com.hitqz.robot.watchtower.widget.CommonTitleBar
-        android:id="@+id/common_title_bar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:titleText="设置">
-
-    </com.hitqz.robot.watchtower.widget.CommonTitleBar>
-
-    <!--<LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="当前报警等级："
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-
-        <TextView
-            android:id="@+id/tv_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="1"
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-    </LinearLayout>-->
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/common_bg"
+        android:orientation="vertical">
 
-        <TextView
+        <com.hitqz.robot.watchtower.widget.CommonTitleBar
+            android:id="@+id/common_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:titleText="设置">
+
+        </com.hitqz.robot.watchtower.widget.CommonTitleBar>
+
+        <!--<LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="一级报警："
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
+            android:layout_gravity="left"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/et_level1"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/reply_custom_message_edit_background"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@android:color/white"
-            android:textSize="20dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="当前报警等级："
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
 
-        <TextView
+            <TextView
+                android:id="@+id/tv_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="1"
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+        </LinearLayout>-->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="一级报警："
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/et_level1"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/reply_custom_message_edit_background"
+                android:gravity="center"
+                android:inputType="number"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="℃"
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="℃"
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="二级报警："
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/et_level2"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/reply_custom_message_edit_background"
+                android:gravity="center"
+                android:inputType="number"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="℃"
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="三级报警："
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/et_level3"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/reply_custom_message_edit_background"
+                android:gravity="center"
+                android:inputType="number"
+                android:textColor="@android:color/white"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="℃"
+                android:textColor="@android:color/white"
+                android:textSize="22dp" />
+        </LinearLayout>
+
+        <!-- <ImageView
+             android:id="@+id/iv_reset"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_horizontal"
+             android:layout_weight="1"
+             android:clickable="true"
+             android:src="@drawable/setting_reset_selector" />-->
+
+        <ImageView
+            android:id="@+id/iv_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:src="@drawable/setting_ok_selector" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="二级报警："
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-
-        <EditText
-            android:id="@+id/et_level2"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/reply_custom_message_edit_background"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@android:color/white"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="℃"
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="三级报警："
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-
-        <EditText
-            android:id="@+id/et_level3"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/reply_custom_message_edit_background"
-            android:gravity="center"
-            android:inputType="number"
-            android:textColor="@android:color/white"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="℃"
-            android:textColor="@android:color/white"
-            android:textSize="22dp" />
-    </LinearLayout>
-
-    <!-- <ImageView
-         android:id="@+id/iv_reset"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_gravity="center_horizontal"
-         android:layout_weight="1"
-         android:clickable="true"
-         android:src="@drawable/setting_reset_selector" />-->
-
-    <ImageView
-        android:id="@+id/iv_confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:clickable="true"
-        android:src="@drawable/setting_ok_selector" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3" />
-</LinearLayout>
+    <com.github.loadingview.LoadingView
+        android:id="@+id/loading_view"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_centerInParent="true"
+        app:lv_duration="30"
+        app:lv_end_color="@android:color/white"
+        app:lv_external_radius="24dp"
+        app:lv_internal_radius="4dp"
+        app:lv_start_color="@android:color/white" />
+</RelativeLayout>
