@@ -80,11 +80,11 @@ public class SettingActivity extends AppCompatActivity {
     @SuppressLint("CheckResult")
     @OnClick(R.id.iv_confirm)
     void submit() {
-        if (!checkInput()) {
-            return;
-        }
         if (isMonitoring) {
             DhpDialog.showDhpDialog(SettingActivity.this, "请先停止监火！");
+            return;
+        }
+        if (!checkInput()) {
             return;
         }
         List<AlarmLevelSettingEntity> alarmLevelSettingEntities = new ArrayList<>();
@@ -123,13 +123,18 @@ public class SettingActivity extends AppCompatActivity {
                     public void onSuccess(List<AlarmLevelSettingEntity> model) {
                         if (model != null && model.size() > 0) {
                             for (AlarmLevelSettingEntity entity : model) {
+                                int level = entity.getAlarmLevel();
                                 int temperature = entity.getAlarmTemperature();
-                                if (entity.getAlarmLevel() == 1) {
-                                    levle1.setAlarmTemperature(temperature);
-                                } else if (entity.getAlarmLevel() == 2) {
-                                    levle2.setAlarmTemperature(temperature);
-                                } else if (entity.getAlarmLevel() == 3) {
-                                    levle3.setAlarmTemperature(temperature);
+                                switch (level) {
+                                    case 1:
+                                        levle1.setAlarmTemperature(temperature);
+                                        break;
+                                    case 2:
+                                        levle2.setAlarmTemperature(temperature);
+                                        break;
+                                    case 3:
+                                        levle3.setAlarmTemperature(temperature);
+                                        break;
                                 }
                             }
                         }
