@@ -11,7 +11,9 @@
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
         android:id="@+id/common_title_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"></com.hitqz.robot.watchtower.widget.CommonTitleBar>
+        android:layout_height="50dp">
+
+    </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 
     <com.hitqz.robot.commonlib.view.RCRelativeLayout
         android:id="@+id/rl_select_date"
@@ -52,13 +54,13 @@
         android:layout_height="match_parent"
         android:layout_below="@id/rl_select_date"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginRight="20dp"
         android:divider="#00000000"
         android:dividerHeight="18dp"
         android:fadeScrollbars="false"
         android:listSelector="@android:color/transparent"
-        android:paddingBottom="18dp"
         android:scrollbars="none">
 
     </ListView>
