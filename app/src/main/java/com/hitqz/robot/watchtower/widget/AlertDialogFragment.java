@@ -1,6 +1,7 @@
 package com.hitqz.robot.watchtower.widget;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +18,17 @@ import androidx.fragment.app.DialogFragment;
 
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.util.SoundPoolUtil;
 
-public class DhpDialog extends DialogFragment implements View.OnClickListener {
+public class AlertDialogFragment extends DialogFragment implements View.OnClickListener {
 
     ImageView ivOk;
     TextView tvAlert;
     String alertString;
+    boolean playSound;
+    Handler handler = new Handler();
 
-    public DhpDialog(String alertText) {
+    public AlertDialogFragment(String alertText) {
         super();
         alertString = alertText;
     }
@@ -33,6 +37,19 @@ public class DhpDialog extends DialogFragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NORMAL, R.style.MyDialog);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (playSound) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SoundPoolUtil.getInstance(getContext()).play(1);
+                }
+            }, 500);
+        }
     }
 
     @Nullable
@@ -67,9 +84,18 @@ public class DhpDialog extends DialogFragment implements View.OnClickListener {
         }
     }
 
+    public void enablePlaySound() {
+        playSound = true;
+    }
 
-    public static void showDhpDialog(AppCompatActivity activity, String alertText) {
-        DhpDialog dialog = new DhpDialog(alertText);
+    public static void showDialog(AppCompatActivity activity, String alertText) {
+        AlertDialogFragment dialog = new AlertDialogFragment(alertText);
+        dialog.show(activity.getSupportFragmentManager(), "dhalert");
+    }
+
+    public static void showDhpDialog(AppCompatActivity activity) {
+        AlertDialogFragment dialog = new AlertDialogFragment("请注意核对动火票！");
+        dialog.enablePlaySound();
         dialog.show(activity.getSupportFragmentManager(), "dhalert");
     }
 }

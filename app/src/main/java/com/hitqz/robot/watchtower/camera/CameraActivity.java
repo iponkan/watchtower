@@ -74,14 +74,14 @@ public class CameraActivity extends AppCompatActivity {
 
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
-            ToastUtils.showToastShort(this, "热成像摄像头Sdk未初始化");
-            return;
+            ToastUtils.showToastShort(this, "摄像头未连接");
+            finish();
         }
 
         normalHCSdk = HCSdkManager.getNormalHCSdk(this);
         if (!normalHCSdk.isInit()) {
-            ToastUtils.showToastShort(this, "高清摄像头Sdk未初始化");
-            return;
+            ToastUtils.showToastShort(this, "摄像头未连接");
+            finish();
         }
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);

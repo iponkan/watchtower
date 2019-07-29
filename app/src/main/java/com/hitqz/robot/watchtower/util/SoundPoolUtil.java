@@ -14,7 +14,7 @@ public class SoundPoolUtil {
     public SoundPoolUtil(Context context) {
         soundPool = new SoundPool(3, AudioManager.STREAM_SYSTEM, 5);
         //加载音频文件
-        soundPool.load(context, R.raw.click, 1);
+        soundPool.load(context, R.raw.alert, 1);
 //可以添加多个
 //   soundPool.load(context, R.raw.yuyin,2);
 //   soundPool.load(context, R.raw.yuyin, 3);

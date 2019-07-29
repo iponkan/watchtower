@@ -17,7 +17,7 @@ import com.hitqz.robot.watchtower.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
-import com.hitqz.robot.watchtower.widget.DhpDialog;
+import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class SettingActivity extends AppCompatActivity {
     @OnClick(R.id.iv_confirm)
     void submit() {
         if (isMonitoring) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "请先停止监火！");
+            AlertDialogFragment.showDialog(SettingActivity.this, "请先停止监火！");
             return;
         }
         if (!checkInput()) {
@@ -99,7 +99,7 @@ public class SettingActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        DhpDialog.showDhpDialog(SettingActivity.this, "设置成功");
+                        AlertDialogFragment.showDialog(SettingActivity.this, "设置成功");
                         Logger.i("设置报警温度成功");
                     }
 
@@ -195,7 +195,7 @@ public class SettingActivity extends AppCompatActivity {
     private boolean checkInput() {
         String s1 = etLevel1.getText().toString();
         if (TextUtils.isEmpty(s1)) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "一级报警输入为空");
+            AlertDialogFragment.showDialog(SettingActivity.this, "一级报警输入为空");
             return false;
         }
 
@@ -203,21 +203,21 @@ public class SettingActivity extends AppCompatActivity {
 
         String s2 = etLevel2.getText().toString();
         if (TextUtils.isEmpty(s1)) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "二级报警输入为空");
+            AlertDialogFragment.showDialog(SettingActivity.this, "二级报警输入为空");
             return false;
         }
         int t2 = Integer.parseInt(s2);
 
         String s3 = etLevel3.getText().toString();
         if (TextUtils.isEmpty(s1)) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "三级报警输入为空");
+            AlertDialogFragment.showDialog(SettingActivity.this, "三级报警输入为空");
             return false;
         }
         int t3 = Integer.parseInt(s3);
 
         boolean right = t2 > t1 && t2 < t3;
         if (!right) {
-            DhpDialog.showDhpDialog(SettingActivity.this, "报警温度必须依次增加!");
+            AlertDialogFragment.showDialog(SettingActivity.this, "报警温度必须依次增加!");
         }
         return right;
     }
