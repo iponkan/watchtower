@@ -93,13 +93,14 @@ public class HCSdkManager implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         // 去掉没影响，会触发surface重建
 //        holder.setFormat(PixelFormat.TRANSLUCENT);
-        Logger.t(TAG).i("surface is created");
+        Logger.t(TAG).i("surfaceCreated");
         Surface surface = holder.getSurface();
         if (surface.isValid()) {
-            if (!Player.getInstance()
-                    .setVideoWindow(m_iPort, 0, holder)) {
-                Logger.t(TAG).e("Player setVideoWindow failed!");
-            }
+//            if (!Player.getInstance().setVideoWindow(m_iPort, 0, holder)) {
+//                Logger.t(TAG).e("surfaceCreated Player setVideoWindow failed:" + Player.getInstance().getLastError(m_iPort));
+//            } else {
+//                Logger.t(TAG).e("surfaceCreated Player setVideoWindow succeed");
+//            }
             if (playbackRunnable != null) {
                 playbackRunnable.run();
                 playbackRunnable = null;
@@ -121,7 +122,7 @@ public class HCSdkManager implements SurfaceHolder.Callback {
 
     // @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Logger.t(TAG).i("surface Destroyed Player setVideoWindow release!" + m_iPort);
+        Logger.t(TAG).i("surfaceDestroyed");
     }
 
     public boolean isInit() {
@@ -561,9 +562,9 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         stopSinglePlayer();
         notifyPlayStop();
 
-        if (!Player.getInstance().setVideoWindow(m_iPort, 0, null)) {
-            Logger.t(TAG).e("Player setVideoWindow failed! error code: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
-        }
+//        if (!Player.getInstance().setVideoWindow(m_iPort, 0, null)) {
+//            Logger.t(TAG).e("stopPlayback Player setVideoWindow failed: " + Player.getInstance().getLastError(m_iPort));
+//        }
         m_iPlaybackID = -1;
     }
 
@@ -712,11 +713,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
         } else {
             Logger.t(TAG).i("PTZControl  PAN_LEFT 0 succ");
         }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_FAR, 1)) {
             Logger.t(TAG).e("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
@@ -729,11 +725,6 @@ public class HCSdkManager implements SurfaceHolder.Callback {
             Logger.t(TAG).e("PTZControl  PAN_LEFT 0 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } else {
             Logger.t(TAG).i("PTZControl  PAN_LEFT 0 succ");
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         if (!HCNetSDK.getInstance().NET_DVR_PTZControl(m_iPlayID, PTZCommand.FOCUS_NEAR, 1)) {
             Logger.t(TAG).e("PTZControl  PAN_LEFT 1 faild!" + " err: " + HCNetSDK.getInstance().NET_DVR_GetLastError());

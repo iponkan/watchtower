@@ -1,6 +1,8 @@
 package com.hitqz.robot.watchtower.net;
 
 
+import com.orhanobut.logger.Logger;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -31,7 +33,7 @@ public class RetrofitManager {
 
             // if (BuildConfig.DEBUG) {
             // Log信息拦截器
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLogger());
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             //设置 Debug Log 模式
             builder.addInterceptor(loggingInterceptor);
@@ -76,5 +78,11 @@ public class RetrofitManager {
         return mRetrofit.create(service);
     }
 
+    private class HttpLogger implements HttpLoggingInterceptor.Logger {
 
+        @Override
+        public void log(String message) {
+            Logger.t("OkHttp").d(message);
+        }
+    }
 }

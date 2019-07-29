@@ -13,10 +13,12 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
+import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
+import com.orhanobut.logger.PrettyFormatStrategy;
 
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -72,11 +74,18 @@ public class MainActivity extends AppCompatActivity {
                     RC_STORAGE_PERM,
                     STORAGE_PERMISSION);
         } else {
-            FormatStrategy formatStrategy = CsvFormatStrategy.newBuilder()      // (Optional) Hides internal method calls up to offset. Default 5
+            FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
+                    .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
+                    .methodCount(0)         // (Optional) How many method line to show. Default 2
+                    .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
                     .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                     .build();
-//            Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
-            Logger.addLogAdapter(new DiskLogAdapter(formatStrategy));
+            Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
+
+            FormatStrategy csvFormatStrategy = CsvFormatStrategy.newBuilder()      // (Optional) Hides internal method calls up to offset. Default 5
+                    .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                    .build();
+            Logger.addLogAdapter(new DiskLogAdapter(csvFormatStrategy));
 
             CrashUtil.getInstance().init(this, getResources().getString(R.string.app_name));
 
