@@ -49,7 +49,8 @@ public class CameraUtil {
                 fileInfo.stopTime = TimeStruct.cloneFrom(struFindData.struStopTime);
                 fileInfo.fileSize = struFindData.dwFileSize;
                 list.add(fileInfo);
-                Logger.t(TAG).i("~~~~~Find File" + fileName, "~~~~~File Size" + struFindData.dwFileSize, "~~~~~File Time,from" + struFindData.struStartTime.ToString(), "~~~~~File Time,to" + struFindData.struStopTime.ToString());
+                Logger.t(TAG).i("~~~~~Find File" + fileName + "~~~~~File Size" + struFindData.dwFileSize +
+                        "~~~~~File Time,from" + struFindData.struStartTime.ToString() + "~~~~~File Time,to" + struFindData.struStopTime.ToString());
             } else if (HCNetSDK.NET_DVR_FILE_NOFIND == findNext) {
                 Logger.t(TAG).i("No file found");
                 break;

@@ -18,6 +18,7 @@ import com.hitqz.robot.commonlib.util.ToastUtils;
 
 import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
+import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.BaseObserver;
@@ -55,8 +56,8 @@ public class CameraActivity extends AppCompatActivity {
     @BindView(R.id.iv_camera_clear_alarm)
     ImageView ivClearAlarm;
 
-    HCSdkManager hotHCSdkManager;
-    HCSdkManager normalHCSdkManager;
+    HCSdk hotHCSdk;
+    HCSdk normalHCSdk;
     ProductionManager productionManager;
 
     ISkyNet skyNet;
@@ -71,14 +72,14 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         ButterKnife.bind(this);
 
-        hotHCSdkManager = HCSdkManager.getHotHCSdkManager(this);
-        if (!hotHCSdkManager.isInit()) {
+        hotHCSdk = HCSdkManager.getHotHCSdk(this);
+        if (!hotHCSdk.isInit()) {
             ToastUtils.showToastShort(this, "热成像摄像头Sdk未初始化");
             return;
         }
 
-        normalHCSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-        if (!normalHCSdkManager.isInit()) {
+        normalHCSdk = HCSdkManager.getNormalHCSdk(this);
+        if (!normalHCSdk.isInit()) {
             ToastUtils.showToastShort(this, "高清摄像头Sdk未初始化");
             return;
         }
@@ -88,8 +89,8 @@ public class CameraActivity extends AppCompatActivity {
         resetHotCameraView(hotSurfaceView, productionView);
         resetNormalCameraView(normalSurfaceView);
 
-        hotHCSdkManager.setSurfaceView(hotSurfaceView);
-        normalHCSdkManager.setSurfaceView(normalSurfaceView);
+        hotHCSdk.setSurfaceView(hotSurfaceView);
+        normalHCSdk.setSurfaceView(normalSurfaceView);
 
         isMonitoring();
     }
@@ -145,23 +146,23 @@ public class CameraActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         overridePendingTransition(0, 0);
-        if (hotHCSdkManager != null) {
-            hotHCSdkManager.stopSinglePreview();
+        if (hotHCSdk != null) {
+            hotHCSdk.stopSinglePreview();
         }
 
-        if (normalHCSdkManager != null) {
-            normalHCSdkManager.stopSinglePreview();
+        if (normalHCSdk != null) {
+            normalHCSdk.stopSinglePreview();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (hotHCSdkManager != null) {
-            hotHCSdkManager.startSinglePreview();
+        if (hotHCSdk != null) {
+            hotHCSdk.startSinglePreview();
         }
-        if (normalHCSdkManager != null) {
-            normalHCSdkManager.startSinglePreview();
+        if (normalHCSdk != null) {
+            normalHCSdk.startSinglePreview();
         }
     }
 
@@ -173,12 +174,12 @@ public class CameraActivity extends AppCompatActivity {
 
     @OnClick(R.id.iv_camera_near)
     void cameraNear() {
-        hotHCSdkManager.focusNear();
+        hotHCSdk.focusNear();
     }
 
     @OnClick(R.id.iv_camera_far)
     void cameraFar() {
-        hotHCSdkManager.focusFar();
+        hotHCSdk.focusFar();
     }
 
     @OnClick(R.id.iv_camera_plus)
@@ -227,10 +228,10 @@ public class CameraActivity extends AppCompatActivity {
                         // 添加动火记录点
                         DonghuoRecordManager.getInstance().addTimePoint();
                         // 高清摄像头开始录像
-//                        if (!normalHCSdkManager.recording) {
-//                            normalHCSdkManager.startRecord();
+//                        if (!normalHCSdk.recording) {
+//                            normalHCSdk.startRecord();
 //                        } else {
-//                            normalHCSdkManager.stopRecord();
+//                            normalHCSdk.stopRecord();
 //                        }
                     }
 

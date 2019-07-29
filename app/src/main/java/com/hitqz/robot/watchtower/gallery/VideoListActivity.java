@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
@@ -58,7 +59,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
 
     VideoAdapter videoAdapter;
-    HCSdkManager hcSdkManager;
+    HCSdk hcSdk;
     CalendarPopWindow calendarPopWindow;
 
     ArrayList<FileInfo> videoList;
@@ -82,7 +83,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         dayTimeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
         commonTitleBar.setTitle(donghuoRecord.toString());
         listView.setOnItemClickListener(this);
-        hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
+        hcSdk = HCSdkManager.getNormalHCSdk(this);
         findFile();
         searchView.setOnClickListener(this);
         tvSelectDate.setText(getSelectDate(donghuoRecord.struStartTime));
@@ -153,7 +154,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdkManager.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
+                videoList = (ArrayList<FileInfo>) hcSdk.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())

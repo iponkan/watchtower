@@ -7,18 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
-import com.hitqz.robot.commonlib.util.CrashUtil;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtils;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.widget.DhpDialog;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.CsvFormatStrategy;
-import com.orhanobut.logger.DiskLogAdapter;
-import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
-import com.orhanobut.logger.PrettyFormatStrategy;
 
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -74,49 +68,13 @@ public class MainActivity extends AppCompatActivity {
                     RC_STORAGE_PERM,
                     STORAGE_PERMISSION);
         } else {
-            FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
-                    .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
-                    .methodCount(0)         // (Optional) How many method line to show. Default 2
-                    .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
-                    .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                    .build();
-            Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
-
-            FormatStrategy csvFormatStrategy = CsvFormatStrategy.newBuilder()      // (Optional) Hides internal method calls up to offset. Default 5
-                    .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                    .build();
-            Logger.addLogAdapter(new DiskLogAdapter(csvFormatStrategy));
-
-            CrashUtil.getInstance().init(this, getResources().getString(R.string.app_name));
-
+            LogManager.getInstance().init(this);
             DhpDialog.showDhpDialog(this, "请注意核对动火票");
             if (!NetworkUtils.isConnected()) {
                 ToastUtils.showToastShort(this, "网络未连接");
                 Logger.t(TAG).e("网络未连接");
             } else {
-                // 高清摄像头初始化
-                HCSdkManager normalSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-                boolean initResult = normalSdkManager.init();
-                if (initResult) {
-                    boolean result = normalSdkManager.login();
-                    if (!result) {
-                        ToastUtils.showToastShort(this, "高清摄像头登录失败");
-                    }
-                } else {
-                    ToastUtils.showToastShort(this, "高清摄像头初始化失败");
-                }
-
-                // 热成像摄像头初始化
-                HCSdkManager hotSdkManager = HCSdkManager.getHotHCSdkManager(this);
-                boolean ir = hotSdkManager.init();
-                if (ir) {
-                    boolean result = hotSdkManager.login();
-                    if (!result) {
-                        ToastUtils.showToastShort(this, "热成像摄像头登录失败");
-                    }
-                } else {
-                    ToastUtils.showToastShort(this, "热成像摄像头初始化失败");
-                }
+                HCSdkManager.getInstance().initAndLogin(this);
             }
         }
     }

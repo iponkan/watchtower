@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
@@ -55,7 +56,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @BindView(R.id.rl_player)
     ViewGroup playLayout;
 
-    HCSdkManager hcSdkManager;
+    HCSdk hcSdk;
     FileInfo fileInfo;
     int duration;
 
@@ -73,14 +74,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         setContentView(R.layout.activity_palyer);
         ButterKnife.bind(this);
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
-        Logger.i("播放文件名：" + fileInfo);
+        Logger.i("播放文件名：" + fileInfo.toString());
         commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
 
         resetView(playLayout);
 
-        hcSdkManager = HCSdkManager.getNormalHCSdkManager(this);
-        hcSdkManager.setSurfaceView(surfaceView);
-        duration = hcSdkManager.getPlaybackDuration(fileInfo);
+        hcSdk = HCSdkManager.getNormalHCSdk(this);
+        hcSdk.setSurfaceView(surfaceView);
+        duration = hcSdk.getPlaybackDuration(fileInfo);
         ivPlay.setOnClickListener(this);
         surfaceView.setOnClickListener(this);
         tvDuration.setText(formatTimeS(duration));
@@ -110,18 +111,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     protected void onResume() {
         super.onResume();
-        if (hcSdkManager != null) {
-            hcSdkManager.playBack(fileInfo);
-            hcSdkManager.addPlayerCallBack(this);
+        if (hcSdk != null) {
+            hcSdk.playBack(fileInfo);
+            hcSdk.addPlayerCallBack(this);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (hcSdkManager != null) {
-            hcSdkManager.stopPlayback();
-            hcSdkManager.removePlayerCallBack(this);
+        if (hcSdk != null) {
+            hcSdk.stopPlayback();
+            hcSdk.removePlayerCallBack(this);
         }
     }
 
@@ -177,19 +178,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     public void onClick(View v) {
         if (ivPlay == v) {
-            if (hcSdkManager.isPlaying()) {
-                hcSdkManager.pausePlayBack();
-            } else if (hcSdkManager.isPause()) {
-                hcSdkManager.resumePlayBack();
-            } else if (hcSdkManager.isStop()) {
-                hcSdkManager.playBack(fileInfo);
+            if (hcSdk.isPlaying()) {
+                hcSdk.pausePlayBack();
+            } else if (hcSdk.isPause()) {
+                hcSdk.resumePlayBack();
+            } else if (hcSdk.isStop()) {
+                hcSdk.playBack(fileInfo);
             }
         } else if (surfaceView == v) {
-            if (hcSdkManager.isPlaying()) {
+            if (hcSdk.isPlaying()) {
                 ivPlay.setImageResource(R.drawable.icon_pause);
                 ivPlay.setVisibility(View.VISIBLE);
                 fadeOutPlayButton();
-            } else if (hcSdkManager.isPause()) {
+            } else if (hcSdk.isPause()) {
                 ivPlay.setImageResource(R.drawable.icon_play);
                 ivPlay.setVisibility(View.VISIBLE);
                 fadeOutPlayButton();
@@ -215,7 +216,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         int progress = seekBar.getProgress();
-        hcSdkManager.playbackSeekTo(progress / (duration * 1.0f));
+        hcSdk.playbackSeekTo(progress / (duration * 1.0f));
         tvCurrent.setText(formatTimeS(progress));
         progressHandler.removeMessages(UPDATE);
         showDialog();
@@ -230,9 +231,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
             super.handleMessage(msg);
             switch (msg.what) {
                 case UPDATE:
-                    int current = hcSdkManager.getPlayBackTime();
-                    if (hcSdkManager.isEnd()) {
-                        hcSdkManager.stopPlayback();
+                    int current = hcSdk.getPlayBackTime();
+                    if (hcSdk.isEnd()) {
+                        hcSdk.stopPlayback();
                     }
                     sbTime.setProgress(current);
                     tvCurrent.setText(formatTimeS(current));
