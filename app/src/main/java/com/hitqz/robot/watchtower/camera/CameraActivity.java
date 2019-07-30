@@ -26,6 +26,7 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.commonlib.net.BaseObserver;
 import com.hitqz.robot.commonlib.net.DataBean;
+import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
@@ -38,6 +39,8 @@ import butterknife.OnClick;
 
 
 public class CameraActivity extends AppCompatActivity {
+
+    public static final String TAG = "CameraActivity";
 
     @BindView(R.id.iv_camera_minus)
     ImageView ivMinus;
@@ -59,6 +62,8 @@ public class CameraActivity extends AppCompatActivity {
     ImageView ivClearAlarm;
     @BindView(R.id.loading_view)
     LoadingView loadingView;
+    @BindView(R.id.sv_car)
+    SteerView svCar;
 
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
@@ -101,6 +106,12 @@ public class CameraActivity extends AppCompatActivity {
 
         hotHCSdk.setSurfaceView(hotSurfaceView);
         normalHCSdk.setSurfaceView(normalSurfaceView);
+        svCar.setReleaseListener(new SteerView.IReleaseListener() {
+            @Override
+            public void onRelease() {
+                plateStop();
+            }
+        });
 
         isMonitoring();
     }
@@ -337,21 +348,37 @@ public class CameraActivity extends AppCompatActivity {
                     }
 
                 });
-
     }
 
-    public void circlePressed(View view) {
-        SteerView azimuthCircle = (SteerView) view;
-        if (azimuthCircle.getPressDirection() == SteerView.LEFT_PRESS) {
+    public void cameraPressed(View view) {
+        SteerView steerView = (SteerView) view;
+        if (steerView.getPressDirection() == SteerView.LEFT_PRESS) {
             Toast.makeText(this, "LEFT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.TOP_PRESS) {
+        } else if (steerView.getPressDirection() == SteerView.TOP_PRESS) {
             Toast.makeText(this, "TOP_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.RIGHT_PRESS) {
+        } else if (steerView.getPressDirection() == SteerView.RIGHT_PRESS) {
             Toast.makeText(this, "RIGHT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (azimuthCircle.getPressDirection() == SteerView.BOTTOM_PRESS) {
+        } else if (steerView.getPressDirection() == SteerView.BOTTOM_PRESS) {
             Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * 地盘方向控制
+     */
+    public void platePressed(View view) {
+        SteerView steerView = (SteerView) view;
+        if (steerView.getPressDirection() == SteerView.LEFT_PRESS) {
+            plateTurn(Constants.PLATE_LEFT);
+        } else if (steerView.getPressDirection() == SteerView.TOP_PRESS) {
+            plateTurn(Constants.PLATE_FORWORD);
+        } else if (steerView.getPressDirection() == SteerView.RIGHT_PRESS) {
+            plateTurn(Constants.PLATE_RIGHT);
+        } else if (steerView.getPressDirection() == SteerView.BOTTOM_PRESS) {
+            plateTurn(Constants.PLATE_BACKWORD);
+        }
+    }
+
 
     private void onStartMonitor() {
         productionView.antiTouch(true);
@@ -379,5 +406,42 @@ public class CameraActivity extends AppCompatActivity {
 
     private void dismissDialog() {
         loadingView.stop();
+    }
+
+    @SuppressLint("CheckResult")
+    private void plateTurn(int direction) {
+        skyNet.setBaseplateDirection(direction)
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        ToastUtil.showToastShort(CameraActivity.this, "成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtil.showToastShort(CameraActivity.this, "失败");
+                    }
+
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void plateStop() {
+        Logger.t(TAG).i("-----------------plateStop-----------------");
+        skyNet.setBaseplateDirection(Constants.PLATE_STOP)
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<DataBean>() {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        ToastUtil.showToastShort(CameraActivity.this, "plateStop成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtil.showToastShort(CameraActivity.this, "plateStop失败");
+                    }
+
+                });
     }
 }

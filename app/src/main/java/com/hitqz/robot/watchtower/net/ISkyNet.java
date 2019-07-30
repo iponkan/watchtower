@@ -110,6 +110,6 @@ public interface ISkyNet {
      * 4：右转
      */
     @GET("/baseplate/direction/{direction}")
-    Observable<BaseRespond<Integer>> getBaseplateElectric(@Path("direction") int direction);
+    Observable<BaseRespond<DataBean>> setBaseplateDirection(@Path("direction") int direction);
 
 }

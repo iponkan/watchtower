@@ -121,6 +121,9 @@ public class SteerView extends View {
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            if (SteerView.this.listener != null) {
+                                listener.onRelease();
+                            }
                             unClick();
                         }
                     }, 50);
@@ -303,5 +306,15 @@ public class SteerView extends View {
 
         canvas.rotate(-45);
         canvas.restore();
+    }
+
+    public interface IReleaseListener {
+        void onRelease();
+    }
+
+    IReleaseListener listener;
+
+    public void setReleaseListener(IReleaseListener l) {
+        this.listener = l;
     }
 }
