@@ -10,28 +10,106 @@ import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface ISkyNet {
 
-    @GET("/set/alarmLevel")
-    Observable<BaseRespond<List<AlarmLevelSettingEntity>>> getAlarmLevelConfig();
-
+    /**
+     * 1.1.1.	设置报警温度规则
+     */
     @POST("/set/alarmLevel")
     Observable<BaseRespond<DataBean>> setAlarmLevelConfig(@Body List<AlarmLevelSettingEntity> entity);
 
+    /**
+     * 1.1.2.	获取报警温度规则
+     */
+    @GET("/set/alarmLevel")
+    Observable<BaseRespond<List<AlarmLevelSettingEntity>>> getAlarmLevelConfig();
+
+
+    /**
+     * 1.1.3.	开启监控模式
+     */
     @POST("/monitor/start")
     Observable<BaseRespond<DataBean>> startMonitor(@Body MonitorEntity entity);
 
+    /**
+     * 1.1.4.	停止监控
+     */
     @GET("/monitor/stop")
     Observable<BaseRespond<DataBean>> stopMonitor();
 
+    /**
+     * 1.1.5.	当前是否处于监控模式
+     */
     @GET("/monitor/now")
     Observable<BaseRespond<MonitorEntity>> isMonitoring();
 
+    /**
+     * 1.1.6.	获取当前报警等级
+     */
     @GET("/monitor/alarm/level")
     Observable<BaseRespond<Integer>> getAlarmLevel();
 
+    /**
+     * 1.1.7.	重置报警等级
+     */
     @GET("/monitor/alarm/reset")
     Observable<BaseRespond<DataBean>> resetAlarmLevel();
+
+    /**
+     * 1.1.8.	查询手环天线工作状态
+     *
+     * @return false:状态异常
+     * true:状态正常
+     */
+    @GET("/system/status/ring")
+    Observable<BaseRespond<Boolean>> getRingState();
+
+    /**
+     * 1.1.9.	查询底盘通讯串口工作状态
+     *
+     * @return false:状态异常
+     * true:状态正常
+     */
+    @GET("/system/status/baseplate")
+    Observable<BaseRespond<Boolean>> getBaseplateState();
+
+    /**
+     * 1.1.10.	查询云台通讯串口工作状态
+     *
+     * @return false:状态异常
+     * true:状态正常
+     */
+    @GET("/system/status/cameraPlatform")
+    Observable<BaseRespond<Boolean>> getCameraPlatformState();
+
+    /**
+     * 1.1.12.	查询底盘急停按钮状态
+     *
+     * @return false:状态异常
+     * true:状态正常
+     */
+    @GET("/baseplate/emergencyStop")
+    Observable<BaseRespond<Boolean>> getEmergencyStopState();
+
+    /**
+     * 1.1.13.	查询底盘电量
+     *
+     * @return 0~100
+     */
+    @GET("/baseplate/electric")
+    Observable<BaseRespond<Integer>> getBaseplateElectric();
+
+    /**
+     * 1.1.14.	设置底盘方向
+     * 0：停止
+     * 1：前进
+     * 2：左转
+     * 3：后退
+     * 4：右转
+     */
+    @GET("/baseplate/direction/{direction}")
+    Observable<BaseRespond<Integer>> getBaseplateElectric(@Path("direction") int direction);
 
 }
