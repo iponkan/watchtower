@@ -1,4 +1,4 @@
-package com.hitqz.robot.watchtower.net;
+package com.hitqz.robot.commonlib.net;
 
 /**
  * 网络请求结果 基类,剥离出数据给上层

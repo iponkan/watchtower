@@ -128,7 +128,7 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
             }
         }, 300);
-//        ToastUtils.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
+//        ToastUtil.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
 
         dayTimeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
 

@@ -2,7 +2,7 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
-import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
 
 import java.util.HashMap;
@@ -55,11 +55,11 @@ public class HCSdkManager {
         if (initResult) {
             boolean result = normalSdkManager.login();
             if (!result) {
-                ToastUtils.showToastShort(context, "高清摄像头登录失败");
+                ToastUtil.showToastShort(context, "高清摄像头登录失败");
                 return;
             }
         } else {
-            ToastUtils.showToastShort(context, "高清摄像头初始化失败");
+            ToastUtil.showToastShort(context, "高清摄像头初始化失败");
             return;
         }
 
@@ -69,11 +69,11 @@ public class HCSdkManager {
         if (ir) {
             boolean result = hotSdkManager.login();
             if (!result) {
-                ToastUtils.showToastShort(context, "热成像摄像头登录失败");
+                ToastUtil.showToastShort(context, "热成像摄像头登录失败");
                 return;
             }
         } else {
-            ToastUtils.showToastShort(context, "热成像摄像头初始化失败");
+            ToastUtil.showToastShort(context, "热成像摄像头初始化失败");
             return;
         }
 

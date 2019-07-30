@@ -12,15 +12,15 @@ import android.widget.ImageView;
 
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
-import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
-import com.hitqz.robot.watchtower.net.BaseObserver;
-import com.hitqz.robot.watchtower.net.DataBean;
+import com.hitqz.robot.commonlib.net.BaseObserver;
+import com.hitqz.robot.commonlib.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
-import com.hitqz.robot.watchtower.rx.RxSchedulers;
+import com.hitqz.robot.commonlib.rx.RxSchedulers;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
 
@@ -116,7 +116,7 @@ public class SettingActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(SettingActivity.this, "设置失败");
+                        ToastUtil.showToastShort(SettingActivity.this, "设置失败");
                         Logger.i("设置报警温度失败：" + msg);
 
                     }
@@ -150,12 +150,12 @@ public class SettingActivity extends AppCompatActivity {
                             }
                         }
                         setEtText();
-//                        ToastUtils.showToastShort(SettingActivity.this, "成功");
+//                        ToastUtil.showToastShort(SettingActivity.this, "成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(SettingActivity.this, "失败:" + msg);
+                        ToastUtil.showToastShort(SettingActivity.this, "失败:" + msg);
                         setEtText();
                     }
 
@@ -182,11 +182,11 @@ public class SettingActivity extends AppCompatActivity {
                             return;
                         }
                         if (model.isMonitor()) {
-//                            ToastUtils.showToastShort(SettingActivity.this, "正在监控");
+//                            ToastUtil.showToastShort(SettingActivity.this, "正在监控");
                             Logger.i("正在监火");
                         } else {
                             Logger.i("不在监火");
-//                            ToastUtils.showToastShort(SettingActivity.this, "不在监控");
+//                            ToastUtil.showToastShort(SettingActivity.this, "不在监控");
                         }
                         isMonitoring = model.isMonitor();
                         ivConfirm.setClickable(true);
@@ -196,7 +196,7 @@ public class SettingActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(String msg) {
                         isMonitoring = false;
-//                        ToastUtils.showToastShort(SettingActivity.this, "获取监控失败");
+//                        ToastUtil.showToastShort(SettingActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                         ivConfirm.setClickable(true);
                         dismissDialog();

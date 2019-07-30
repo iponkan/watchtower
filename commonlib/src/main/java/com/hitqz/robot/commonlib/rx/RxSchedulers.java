@@ -1,4 +1,4 @@
-package com.hitqz.robot.watchtower.rx;
+package com.hitqz.robot.commonlib.rx;
 
 import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;

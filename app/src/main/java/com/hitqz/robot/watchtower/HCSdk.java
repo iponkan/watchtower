@@ -19,7 +19,7 @@ import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
 import com.hitqz.robot.watchtower.player.PlayerCallback;
-import com.hitqz.robot.watchtower.util.CameraUtil;
+import com.hitqz.robot.watchtower.util.HKCameraUtil;
 import com.hitqz.robot.watchtower.util.PathUtil;
 import com.orhanobut.logger.Logger;
 
@@ -560,7 +560,7 @@ public class HCSdk implements SurfaceHolder.Callback {
             Logger.t(TAG).e("findFile please login on a device first");
             return new ArrayList<>();
         }
-        List<FileInfo> fileList = CameraUtil.findFile(m_iLogID, startTime, stopTime);
+        List<FileInfo> fileList = HKCameraUtil.findFile(m_iLogID, startTime, stopTime);
         return fileList;
     }
 
@@ -720,12 +720,12 @@ public class HCSdk implements SurfaceHolder.Callback {
     }
 
     public void getConfig() {
-        CameraUtil.testGetCompressCfg(m_iPlayID, 1);
+        HKCameraUtil.testGetCompressCfg(m_iPlayID, 1);
     }
 
 
     public void testGetAbility() {
-        CameraUtil.testGetAbility(m_iLogID, 1);
+        HKCameraUtil.testGetAbility(m_iLogID, 1);
     }
 
 

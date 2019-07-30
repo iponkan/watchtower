@@ -1,4 +1,4 @@
-package com.hitqz.robot.commonlib;
+package com.hitqz.robot.commonlib.log;
 
 import android.os.Environment;
 import android.os.Handler;
@@ -97,11 +97,11 @@ public class CommonDiskLogStrategy implements LogStrategy {
             File newFile;
             File existingFile = null;
 
-            newFile = new File(folder, String.format("%s_%s.csv", fileName, newFileCount));
+            newFile = new File(folder, String.format("%s_%s.log", fileName, newFileCount));
             while (newFile.exists()) {
                 existingFile = newFile;
                 newFileCount++;
-                newFile = new File(folder, String.format("%s_%s.csv", fileName, newFileCount));
+                newFile = new File(folder, String.format("%s_%s.log", fileName, newFileCount));
             }
 
             if (existingFile != null) {

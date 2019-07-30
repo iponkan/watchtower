@@ -16,9 +16,9 @@ import com.orhanobut.logger.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraUtil {
+public class HKCameraUtil {
 
-    public static final String TAG = "CameraUtil";
+    public static final String TAG = "HKCameraUtil";
 
     // lChannel为1
     public static List<FileInfo> findFile(int iUserID, TimeStruct start, TimeStruct stop) {

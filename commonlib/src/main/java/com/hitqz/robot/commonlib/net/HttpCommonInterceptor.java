@@ -1,6 +1,4 @@
-package com.hitqz.robot.watchtower.net;
-
-import android.util.Log;
+package com.hitqz.robot.commonlib.net;
 
 import androidx.annotation.NonNull;
 
@@ -14,20 +12,19 @@ import okhttp3.Response;
 
 /**
  * 拦截器
- *
  * 向请求头里添加公共参数
  */
 
 public class HttpCommonInterceptor implements Interceptor {
 
-    private Map<String,String> mHeaderParamsMap = new HashMap<>();
+    private Map<String, String> mHeaderParamsMap = new HashMap<>();
+
     public HttpCommonInterceptor() {
 
     }
 
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        Log.d("HttpCommonInterceptor","add common params");
         Request oldRequest = chain.request();
 
         // 添加新的参数，添加到url 中
@@ -38,12 +35,12 @@ public class HttpCommonInterceptor implements Interceptor {
 
         // 新的请求
 
-        Request.Builder requestBuilder =  oldRequest.newBuilder();
-                requestBuilder.method(oldRequest.method(), oldRequest.body());
+        Request.Builder requestBuilder = oldRequest.newBuilder();
+        requestBuilder.method(oldRequest.method(), oldRequest.body());
         //添加公共参数,添加到header中
-        if(mHeaderParamsMap.size() > 0){
-            for(Map.Entry<String, String> params:mHeaderParamsMap.entrySet()){
-                requestBuilder.header(params.getKey(),params.getValue());
+        if (mHeaderParamsMap.size() > 0) {
+            for (Map.Entry<String, String> params : mHeaderParamsMap.entrySet()) {
+                requestBuilder.header(params.getKey(), params.getValue());
             }
         }
 
@@ -52,36 +49,36 @@ public class HttpCommonInterceptor implements Interceptor {
         return chain.proceed(newRequest);
     }
 
-    public static class Builder{
+    public static class Builder {
         HttpCommonInterceptor mHttpCommonInterceptor;
 
-        public Builder(){
+        public Builder() {
             mHttpCommonInterceptor = new HttpCommonInterceptor();
         }
 
-        public Builder addHeaderParams(String key, String value){
-            mHttpCommonInterceptor.mHeaderParamsMap.put(key,value);
+        public Builder addHeaderParams(String key, String value) {
+            mHttpCommonInterceptor.mHeaderParamsMap.put(key, value);
             return this;
         }
 
-        public Builder  addHeaderParams(String key, int value){
+        public Builder addHeaderParams(String key, int value) {
             return addHeaderParams(key, String.valueOf(value));
         }
 
-        public Builder  addHeaderParams(String key, float value){
+        public Builder addHeaderParams(String key, float value) {
             return addHeaderParams(key, String.valueOf(value));
         }
 
-        public Builder  addHeaderParams(String key, long value){
+        public Builder addHeaderParams(String key, long value) {
             return addHeaderParams(key, String.valueOf(value));
         }
 
-        public Builder  addHeaderParams(String key, double value){
+        public Builder addHeaderParams(String key, double value) {
             return addHeaderParams(key, String.valueOf(value));
         }
 
 
-        public HttpCommonInterceptor build(){
+        public HttpCommonInterceptor build() {
             return mHttpCommonInterceptor;
         }
     }

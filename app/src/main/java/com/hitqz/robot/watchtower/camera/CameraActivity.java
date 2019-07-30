@@ -17,19 +17,19 @@ import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.github.loadingview.LoadingView;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
-import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.commonlib.util.ToastUtil;
 
 import com.hitqz.robot.commonlib.view.SteerView;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.net.BaseObserver;
-import com.hitqz.robot.watchtower.net.DataBean;
+import com.hitqz.robot.commonlib.net.BaseObserver;
+import com.hitqz.robot.commonlib.net.DataBean;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
-import com.hitqz.robot.watchtower.rx.RxSchedulers;
+import com.hitqz.robot.commonlib.rx.RxSchedulers;
 import com.orhanobut.logger.Logger;
 
 import butterknife.BindView;
@@ -84,13 +84,13 @@ public class CameraActivity extends AppCompatActivity {
 
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
-            ToastUtils.showToastShort(this, "摄像头未连接");
+            ToastUtil.showToastShort(this, "摄像头未连接");
             finish();
         }
 
         normalHCSdk = HCSdkManager.getNormalHCSdk(this);
         if (!normalHCSdk.isInit()) {
-            ToastUtils.showToastShort(this, "摄像头未连接");
+            ToastUtil.showToastShort(this, "摄像头未连接");
             finish();
         }
 
@@ -247,7 +247,7 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(String msg) {
                         Logger.e("开始监火失败：" + msg);
-                        ToastUtils.showToastShort(CameraActivity.this, "开始监火失败：" + msg);
+                        ToastUtil.showToastShort(CameraActivity.this, "开始监火失败：" + msg);
                     }
 
                 });
@@ -262,7 +262,7 @@ public class CameraActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-//                        ToastUtils.showToastShort(CameraActivity.this, "停止监控成功");
+//                        ToastUtil.showToastShort(CameraActivity.this, "停止监控成功");
                         Logger.i("停止监火成功");
                         onStopMonitor();
                     }
@@ -270,7 +270,7 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(String msg) {
                         Logger.e("停止监火失败：" + msg);
-                        ToastUtils.showToastShort(CameraActivity.this, "停止监控失败");
+                        ToastUtil.showToastShort(CameraActivity.this, "停止监控失败");
                     }
 
                 });
@@ -313,7 +313,7 @@ public class CameraActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String msg) {
-//                        ToastUtils.showToastShort(CameraActivity.this, "获取监控失败");
+//                        ToastUtil.showToastShort(CameraActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                         dismissDialog();
                     }
@@ -328,12 +328,12 @@ public class CameraActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ToastUtils.showToastShort(CameraActivity.this, "成功");
+                        ToastUtil.showToastShort(CameraActivity.this, "成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtils.showToastShort(CameraActivity.this, "失败");
+                        ToastUtil.showToastShort(CameraActivity.this, "失败");
                     }
 
                 });

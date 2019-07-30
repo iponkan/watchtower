@@ -28,7 +28,7 @@ import com.orhanobut.logger.Logger;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.hitqz.robot.watchtower.util.TimeUtil.formatTimeS;
+import static com.hitqz.robot.commonlib.util.TimeUtil.formatTimeS;
 
 public class PlayerActivity extends AppCompatActivity implements PlayerCallback, View.OnClickListener
         , SeekBar.OnSeekBarChangeListener {

@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.hitqz.robot.commonlib.util.FullScreenUtil;
-import com.hitqz.robot.commonlib.util.ToastUtils;
+import com.hitqz.robot.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.setting.SettingActivity;
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             LogManager.getInstance().init(this);
             AlertDialogFragment.showDhpDialog(this);
             if (!NetworkUtils.isConnected()) {
-                ToastUtils.showToastShort(this, "网络未连接");
+                ToastUtil.showToastShort(this, "网络未连接");
                 Logger.t(TAG).e("网络未连接");
             } else {
                 // 会占用主线程资源，这里不管

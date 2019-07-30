@@ -6,14 +6,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
-public class ToastUtils {
+public class ToastUtil {
 
     private static Handler sMainThreadHandler;
     private static Toast mToast;
 
     public static Handler getMainThreadHandler() {
         if (sMainThreadHandler == null) {
-            synchronized (ToastUtils.class) {
+            synchronized (ToastUtil.class) {
                 if (sMainThreadHandler == null) {
                     sMainThreadHandler = new Handler(Looper.getMainLooper());
                 }

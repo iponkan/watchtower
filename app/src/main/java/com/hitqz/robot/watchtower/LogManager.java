@@ -2,7 +2,7 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
-import com.hitqz.robot.commonlib.CommonDiskLogStrategy;
+import com.hitqz.robot.commonlib.log.CommonDiskLogStrategy;
 import com.hitqz.robot.commonlib.util.CrashUtil;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.CsvFormatStrategy;
