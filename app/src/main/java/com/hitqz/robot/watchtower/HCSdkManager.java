@@ -50,10 +50,10 @@ public class HCSdkManager {
             return;
         }
         // 高清摄像头初始化
-        HCSdk normalSdkManager = getNormalHCSdk(context);
-        boolean initResult = normalSdkManager.init();
+        HCSdk normalHCSdk = getNormalHCSdk(context);
+        boolean initResult = normalHCSdk.init();
         if (initResult) {
-            boolean result = normalSdkManager.login();
+            boolean result = normalHCSdk.login();
             if (!result) {
                 ToastUtil.showToastShort(context, "高清摄像头登录失败");
                 return;
@@ -64,10 +64,10 @@ public class HCSdkManager {
         }
 
         // 热成像摄像头初始化
-        HCSdk hotSdkManager = getHotHCSdk(context);
-        boolean ir = hotSdkManager.init();
+        HCSdk hotHCSdk = getHotHCSdk(context);
+        boolean ir = hotHCSdk.init();
         if (ir) {
-            boolean result = hotSdkManager.login();
+            boolean result = hotHCSdk.login();
             if (!result) {
                 ToastUtil.showToastShort(context, "热成像摄像头登录失败");
                 return;
