@@ -74,7 +74,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
         setContentView(R.layout.activity_palyer);
         ButterKnife.bind(this);
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);
-        Logger.i("播放文件名：" + fileInfo.toString());
+        Logger.i("播放文件名：" + fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
         commonTitleBar.setTitle(fileInfo.startTime.toString() + "～" + fileInfo.stopTime.toString());
 
         resetView(playLayout);

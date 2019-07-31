@@ -403,7 +403,7 @@ public class HCSdk implements SurfaceHolder.Callback {
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                Logger.t(TAG).e("inputData failed with: " +
+                Logger.t(TAG).v("inputData failed with: " +
                         Player.getInstance().getLastError(m_iPort));
 //                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
 //                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {

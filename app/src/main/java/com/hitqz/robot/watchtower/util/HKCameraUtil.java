@@ -31,7 +31,7 @@ public class HKCameraUtil {
         lpSearchInfo.dwUseCardNo = 0;
         lpSearchInfo.struStartTime = start.toNET_DVR_TIME();
         lpSearchInfo.struStopTime = stop.toNET_DVR_TIME();
-        Logger.t(TAG).i(TAG, "查找文件开始时间：" + start.toString() + " 结束时间：" + stop.toString());
+        Logger.t(TAG).i("查找文件开始时间：" + start.toString() + " 结束时间：" + stop.toString());
         iFindHandle = HCNetSDK.getInstance().NET_DVR_FindFile_V30(iUserID, lpSearchInfo);
         if (iFindHandle == -1) {
             Logger.t(TAG).e("NET_DVR_FindFile_V30 failed,Error:" + HCNetSDK.getInstance().NET_DVR_GetLastError());

@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitManager {
 
-    private static final String SEVER_URL = "http://192.168.8.103:8080";
+    private static final String SEVER_URL = "http://192.168.3.8:8080";
 
     private static final int DEFAULT_TIME_OUT = 5;//超时时间 5s
     private static final int DEFAULT_READ_TIME_OUT = 10;
