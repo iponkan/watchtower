@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,9 +34,16 @@ import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.commonlib.rx.RxSchedulers;
 import com.orhanobut.logger.Logger;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -68,9 +76,11 @@ public class CameraActivity extends AppCompatActivity {
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
     ProductionManager productionManager;
+    Handler handler = new Handler();
 
     ISkyNet skyNet;
     boolean isMonitoring;
+    AtomicBoolean sendStop = new AtomicBoolean(false);
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -109,7 +119,15 @@ public class CameraActivity extends AppCompatActivity {
         svCar.setReleaseListener(new SteerView.IReleaseListener() {
             @Override
             public void onRelease() {
-                plateStop();
+                Logger.t("interval").d("sendStop true");
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendStop.set(true);
+                        plateStop();
+                    }
+                }, 500);
             }
         });
 
@@ -410,7 +428,36 @@ public class CameraActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void plateTurn(int direction) {
+        sendStop.set(false);
+        Logger.t("interval").d("sendStop false");
         skyNet.setBaseplateDirection(direction)
+                .repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
+                    @Override
+                    // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
+                    public ObservableSource<?> apply(@NonNull Observable<Object> objectObservable) throws Exception {
+                        // 将原始 Observable 停止发送事件的标识（Complete（） /  Error（））转换成1个 Object 类型数据传递给1个新被观察者（Observable）
+                        // 以此决定是否重新订阅 & 发送原来的 Observable，即轮询
+                        // 此处有2种情况：
+                        // 1. 若返回1个Complete（） /  Error（）事件，则不重新订阅 & 发送原来的 Observable，即轮询结束
+                        // 2. 若返回其余事件，则重新订阅 & 发送原来的 Observable，即继续轮询
+                        return objectObservable.flatMap(new Function<Object, ObservableSource<?>>() {
+                            @Override
+                            public ObservableSource<?> apply(@NonNull Object throwable) throws Exception {
+
+                                Logger.t("interval apply").d("sendStop" + sendStop.get());
+                                // 加入判断条件：当轮询次数 = 5次后，就停止轮询
+                                if (sendStop.get()) {
+                                    // 此处选择发送onError事件以结束轮询，因为可触发下游观察者的onError（）方法回调
+                                    return Observable.error(new Throwable("轮询结束"));
+                                }
+                                // 若轮询次数＜4次，则发送1Next事件以继续轮询
+                                // 注：此处加入了delay操作符，作用 = 延迟一段时间发送（此处设置 = 2s），以实现轮询间间隔设置
+                                return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                            }
+                        });
+
+                    }
+                })
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override

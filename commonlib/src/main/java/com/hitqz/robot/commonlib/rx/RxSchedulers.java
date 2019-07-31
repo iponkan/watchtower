@@ -8,6 +8,7 @@ public class RxSchedulers {
     public static <T> ObservableTransformer<T, T> io_main() {
         return upstream ->
                 upstream.subscribeOn(Schedulers.io())
+                        .unsubscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
     }
 }

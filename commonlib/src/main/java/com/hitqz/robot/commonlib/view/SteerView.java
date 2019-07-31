@@ -124,14 +124,9 @@ public class SteerView extends View {
                             unClick();
                         }
                     }, 50);
-                    postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (SteerView.this.listener != null) {
-                                listener.onRelease();
-                            }
-                        }
-                    }, 500);
+                    if (SteerView.this.listener != null) {
+                        listener.onRelease();
+                    }
                 }
 
                 break;
