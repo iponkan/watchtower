@@ -13,14 +13,16 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitManager {
+
+    private static final String SEVER_URL = "http://192.168.8.103:8080";
+
     private static final int DEFAULT_TIME_OUT = 5;//超时时间 5s
     private static final int DEFAULT_READ_TIME_OUT = 10;
+
     private Retrofit mRetrofit;
     private static RetrofitManager mManager;
-    final private String baseUrl = "http://192.168.8.103:8080";
 
-
-    public RetrofitManager() {
+    private RetrofitManager() {
         if (mRetrofit == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.connectTimeout(DEFAULT_TIME_OUT, TimeUnit.SECONDS);//连接超时时间
@@ -42,7 +44,7 @@ public class RetrofitManager {
 
             // 创建Retrofit
             mRetrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
+                    .baseUrl(SEVER_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(builder.build())
@@ -83,6 +85,7 @@ public class RetrofitManager {
 
         @Override
         public void log(String message) {
+            // 使用Logger打印
             Logger.t("OkHttp").d(message);
         }
     }
