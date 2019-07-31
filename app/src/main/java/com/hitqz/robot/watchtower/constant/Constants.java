@@ -11,6 +11,7 @@ public class Constants {
      *4：右转
      */
     public static final int PLATE_STOP = 0;
+
     public static final int PLATE_FORWORD = 1;
     public static final int PLATE_LEFT = 2;
     public static final int PLATE_BACKWORD = 3;

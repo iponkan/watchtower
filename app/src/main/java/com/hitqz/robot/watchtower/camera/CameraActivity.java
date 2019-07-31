@@ -46,7 +46,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements SteerView.ISteerListener {
 
     public static final String TAG = "CameraActivity";
 
@@ -116,20 +116,7 @@ public class CameraActivity extends AppCompatActivity {
 
         hotHCSdk.setSurfaceView(hotSurfaceView);
         normalHCSdk.setSurfaceView(normalSurfaceView);
-        svCar.setReleaseListener(new SteerView.IReleaseListener() {
-            @Override
-            public void onRelease() {
-                Logger.t("interval").d("sendStop true");
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendStop.set(true);
-                        plateStop();
-                    }
-                }, 500);
-            }
-        });
+        svCar.setSteerListener(this);
 
         isMonitoring();
     }
@@ -381,22 +368,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 地盘方向控制
-     */
-    public void platePressed(View view) {
-        SteerView steerView = (SteerView) view;
-        if (steerView.getPressDirection() == SteerView.LEFT_PRESS) {
-            plateTurn(Constants.PLATE_LEFT);
-        } else if (steerView.getPressDirection() == SteerView.TOP_PRESS) {
-            plateTurn(Constants.PLATE_FORWORD);
-        } else if (steerView.getPressDirection() == SteerView.RIGHT_PRESS) {
-            plateTurn(Constants.PLATE_RIGHT);
-        } else if (steerView.getPressDirection() == SteerView.BOTTOM_PRESS) {
-            plateTurn(Constants.PLATE_BACKWORD);
-        }
-    }
-
 
     private void onStartMonitor() {
         productionView.antiTouch(true);
@@ -444,8 +415,7 @@ public class CameraActivity extends AppCompatActivity {
                             @Override
                             public ObservableSource<?> apply(@NonNull Object throwable) throws Exception {
 
-                                Logger.t("interval apply").d("sendStop" + sendStop.get());
-                                // 加入判断条件：当轮询次数 = 5次后，就停止轮询
+                                // 加入判断条件：但发送停止后停止轮询
                                 if (sendStop.get()) {
                                     // 此处选择发送onError事件以结束轮询，因为可触发下游观察者的onError（）方法回调
                                     return Observable.error(new Throwable("轮询结束"));
@@ -462,12 +432,12 @@ public class CameraActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ToastUtil.showToastShort(CameraActivity.this, "成功");
+                        Logger.t(TAG).d("plateTurn" + direction + "成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtil.showToastShort(CameraActivity.this, "失败");
+                        Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
                     }
 
                 });
@@ -481,14 +451,30 @@ public class CameraActivity extends AppCompatActivity {
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
-                        ToastUtil.showToastShort(CameraActivity.this, "plateStop成功");
+                        Logger.t(TAG).i("plateStop成功");
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        ToastUtil.showToastShort(CameraActivity.this, "plateStop失败");
+                        Logger.t(TAG).e("plateStop失败：" + msg);
                     }
 
                 });
+    }
+
+    @Override
+    public void onPressDirection(int direction) {
+        plateTurn(direction);
+    }
+
+    @Override
+    public void onRelease() {
+        sendStop.set(true);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                plateStop();
+            }
+        }, 200);
     }
 }

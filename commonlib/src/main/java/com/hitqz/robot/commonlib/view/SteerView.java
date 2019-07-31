@@ -21,10 +21,12 @@ import com.hitqz.robot.commonlib.R;
  * SteerView for IR Control or others
  */
 public class SteerView extends View {
-    public static final int LEFT_PRESS = 1;
-    public static final int TOP_PRESS = 2;
-    public static final int RIGHT_PRESS = 3;
-    public static final int BOTTOM_PRESS = 4;
+
+    public static final int TOP_PRESS = 1;
+    public static final int LEFT_PRESS = 2;
+    public static final int BOTTOM_PRESS = 3;
+    public static final int RIGHT_PRESS = 4;
+
     public static final int NONE_PRESS = -1;
 
     private int pressDirection = NONE_PRESS;
@@ -110,6 +112,9 @@ public class SteerView extends View {
                 pressDirection = getPressDirection(event.getX(), event.getY());
                 consumeTouchEvent = shouldIntercept(event.getX(), event.getY());
                 Log.i(TAG, "pressDirection:" + pressDirection);
+                if (listener != null) {
+                    listener.onPressDirection(pressDirection);
+                }
                 if (consumeTouchEvent) {
                     invalidate();
                 }
@@ -308,13 +313,16 @@ public class SteerView extends View {
         canvas.restore();
     }
 
-    public interface IReleaseListener {
+    public interface ISteerListener {
+
+        void onPressDirection(int direction);
+
         void onRelease();
     }
 
-    IReleaseListener listener;
+    ISteerListener listener;
 
-    public void setReleaseListener(IReleaseListener l) {
+    public void setSteerListener(ISteerListener l) {
         this.listener = l;
     }
 }
