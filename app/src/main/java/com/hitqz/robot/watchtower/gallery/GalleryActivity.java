@@ -1,7 +1,5 @@
 package com.hitqz.robot.watchtower.gallery;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
@@ -21,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends BaseActivity {
 
     @BindView(R.id.lv_records)
     ListView listView;
@@ -32,7 +30,6 @@ public class GalleryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.i("----------GalleryActivity--------");
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
 
@@ -51,12 +48,6 @@ public class GalleryActivity extends AppCompatActivity {
                 VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position));
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
     }
 
     public static void go2Gallery(Activity activity) {

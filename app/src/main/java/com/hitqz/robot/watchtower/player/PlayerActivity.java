@@ -1,7 +1,5 @@
 package com.hitqz.robot.watchtower.player;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +14,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
-import com.github.loadingview.LoadingView;
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.commonlib.widget.LoadingView;
+import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
@@ -30,7 +28,7 @@ import butterknife.ButterKnife;
 
 import static com.hitqz.robot.commonlib.util.TimeUtil.formatTimeS;
 
-public class PlayerActivity extends AppCompatActivity implements PlayerCallback, View.OnClickListener
+public class PlayerActivity extends BaseActivity implements PlayerCallback, View.OnClickListener
         , SeekBar.OnSeekBarChangeListener {
 
     public static final String TAG = "PlayerActivity";
@@ -47,7 +45,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     TextView tvCurrent;
     @BindView(R.id.tv_duration_time)
     TextView tvDuration;
-    @BindView(R.id.loading_view)
+    @BindView(R.id.player_loading)
     LoadingView loadingView;
     @BindView(R.id.player_mask)
     View playerMask;
@@ -70,7 +68,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_palyer);
         ButterKnife.bind(this);
         fileInfo = getIntent().getParcelableExtra(EXTRA_PATH);

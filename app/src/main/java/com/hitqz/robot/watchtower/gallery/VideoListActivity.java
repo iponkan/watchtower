@@ -1,7 +1,6 @@
 package com.hitqz.robot.watchtower.gallery;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,8 +13,7 @@ import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.github.loadingview.LoadingView;
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
+import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
@@ -39,7 +37,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint("CheckResult")
-public class VideoListActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener
+public class VideoListActivity extends BaseActivity implements CalendarView.OnDateChangeListener
         , AdapterView.OnItemClickListener, View.OnClickListener {
 
     public static final String EXTRA_NAME = "EXTRA_NAME";
@@ -52,8 +50,6 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     View searchView;
     @BindView(R.id.tv_select_date)
     TextView tvSelectDate;
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
     @BindView(R.id.tv_empty_video)
     TextView tvEmpty;
 
@@ -72,7 +68,6 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_video_list);
         ButterKnife.bind(this);
 
@@ -105,12 +100,6 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
         PlayerActivity.go2Player(VideoListActivity.this, videoList.get(position));
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
-    }
-
 
     public static void go2VideoList(Activity activity, DonghuoRecord donghuoRecord) {
         Intent intent = new Intent(activity, VideoListActivity.class);
@@ -138,14 +127,6 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
 
     }
 
-    private void showDialog() {
-        loadingView.start();
-    }
-
-    private void dismissDialog() {
-        loadingView.stop();
-    }
-
     private String getSelectDate(TimeStruct timeStruct) {
         return timeStruct.dwYear + "." + timeStruct.dwMonth + "." + timeStruct.dwDay;
     }
@@ -167,12 +148,12 @@ public class VideoListActivity extends AppCompatActivity implements CalendarView
                             videoAdapter.notifyDataSetChanged();
                             tvEmpty.setVisibility(View.GONE);
                         }
-                        showDialog();
+                        showLoadingDialog();
                     }
 
                     @Override
                     public void onNext(ArrayList<FileInfo> fileInfos) {
-                        dismissDialog();
+                        dismissLoadingDialog();
 
                         if (fileInfos == null || fileInfos.size() == 0) {
                             tvEmpty.setVisibility(View.VISIBLE);

@@ -1,12 +1,10 @@
 package com.hitqz.robot.watchtower;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
@@ -21,7 +19,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 import static com.hitqz.robot.watchtower.constant.PermissionConstant.STORAGE_PERMISSION;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final String TAG = "MainActivity";
     private static final int RC_STORAGE_PERM = 123;
@@ -29,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_main);
         askForPermissionTask();
     }

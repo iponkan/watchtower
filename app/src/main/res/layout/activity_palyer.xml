@@ -40,8 +40,8 @@
             android:src="@drawable/icon_play" />
 
 
-        <com.github.loadingview.LoadingView
-            android:id="@+id/loading_view"
+        <com.hitqz.robot.commonlib.widget.LoadingView
+            android:id="@+id/player_loading"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_centerInParent="true"

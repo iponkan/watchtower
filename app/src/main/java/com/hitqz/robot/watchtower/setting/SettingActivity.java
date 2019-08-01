@@ -1,7 +1,5 @@
 package com.hitqz.robot.watchtower.setting;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -10,9 +8,8 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.github.loadingview.LoadingView;
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtil;
+import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
 import com.hitqz.robot.commonlib.net.BaseObserver;
@@ -31,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.iv_confirm)
     ImageView ivConfirm;
@@ -44,9 +41,6 @@ public class SettingActivity extends AppCompatActivity {
 
     @BindView(R.id.et_level3)
     EditText etLevel3;
-
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
 
     ISkyNet skyNet;
     boolean isMonitoring;
@@ -67,7 +61,6 @@ public class SettingActivity extends AppCompatActivity {
 
         Logger.i("----------SettingActivity--------");
 
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
 
@@ -80,12 +73,6 @@ public class SettingActivity extends AppCompatActivity {
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
         isMonitoring();
         getAlarmLevelConfig();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(0, 0);
     }
 
     @SuppressLint("CheckResult")
@@ -172,7 +159,7 @@ public class SettingActivity extends AppCompatActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
-        showDialog();
+        showLoadingDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
@@ -190,7 +177,7 @@ public class SettingActivity extends AppCompatActivity {
                         }
                         isMonitoring = model.isMonitor();
                         ivConfirm.setClickable(true);
-                        dismissDialog();
+                        dismissLoadingDialog();
                     }
 
                     @Override
@@ -199,7 +186,7 @@ public class SettingActivity extends AppCompatActivity {
 //                        ToastUtil.showToastShort(SettingActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                         ivConfirm.setClickable(true);
-                        dismissDialog();
+                        dismissLoadingDialog();
                     }
                 });
 
@@ -235,11 +222,4 @@ public class SettingActivity extends AppCompatActivity {
         return right;
     }
 
-    private void showDialog() {
-        loadingView.start();
-    }
-
-    private void dismissDialog() {
-        loadingView.stop();
-    }
 }

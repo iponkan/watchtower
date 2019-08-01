@@ -1,7 +1,5 @@
 package com.hitqz.robot.watchtower.camera;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,11 +15,10 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
-import com.github.loadingview.LoadingView;
-import com.hitqz.robot.commonlib.util.FullScreenUtil;
 import com.hitqz.robot.commonlib.util.ToastUtil;
 
 import com.hitqz.robot.commonlib.view.SteerView;
+import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -48,7 +45,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
 @SuppressLint("CheckResult")
-public class CameraActivity extends AppCompatActivity implements SteerView.ISteerListener {
+public class CameraActivity extends BaseActivity implements SteerView.ISteerListener {
 
     public static final String TAG = "CameraActivity";
 
@@ -70,8 +67,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
     ProductionView productionView;
     @BindView(R.id.iv_camera_clear_alarm)
     ImageView ivClearAlarm;
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
     @BindView(R.id.sv_car)
     SteerView svCar;
     @BindView(R.id.sv_ring)
@@ -105,11 +100,9 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.i("----------CameraActivity--------");
-
-        FullScreenUtil.initFullScreen(this);
         setContentView(R.layout.activity_camera);
-        ButterKnife.bind(this);
 
+        ButterKnife.bind(this);
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
@@ -185,7 +178,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
     @Override
     protected void onPause() {
         super.onPause();
-        overridePendingTransition(0, 0);
         if (hotHCSdk != null) {
             hotHCSdk.stopSinglePreview();
         }
@@ -275,6 +267,7 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
 
                     @Override
                     public void onFailure(String msg) {
+                        ivStartMonitor.setImageResource(R.drawable.btn_start_active);
                         Logger.e("开始监火失败：" + msg);
                         ToastUtil.showToastShort(CameraActivity.this, "开始监火失败：" + msg);
                     }
@@ -306,7 +299,7 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
     }
 
     private void isMonitoring() {
-        showDialog();
+        showLoadingDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<MonitorEntity>() {
@@ -335,14 +328,14 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
                                 productionView.setPoints(new Point[]{point1, point2});
                             }
                         }
-                        dismissDialog();
+                        dismissLoadingDialog();
                     }
 
                     @Override
                     public void onFailure(String msg) {
 //                        ToastUtil.showToastShort(CameraActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
-                        dismissDialog();
+                        dismissLoadingDialog();
                     }
                 });
 
@@ -397,14 +390,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
         ivMinus.setClickable(true);
         ivFar.setClickable(true);
         ivNear.setClickable(true);
-    }
-
-    private void showDialog() {
-        loadingView.start();
-    }
-
-    private void dismissDialog() {
-        loadingView.stop();
     }
 
     @SuppressLint("CheckResult")
