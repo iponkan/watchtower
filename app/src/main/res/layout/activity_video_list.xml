@@ -15,7 +15,7 @@
 
     </com.hitqz.robot.watchtower.widget.CommonTitleBar>
 
-    <com.hitqz.robot.commonlib.view.RCRelativeLayout
+    <com.sonicers.commonlib.view.RCRelativeLayout
         android:id="@+id/rl_select_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             android:textSize="22dp"
             tools:text="2019.6.15" />
 
-    </com.hitqz.robot.commonlib.view.RCRelativeLayout>
+    </com.sonicers.commonlib.view.RCRelativeLayout>
 
     <ListView
         android:id="@+id/lv_videolist"

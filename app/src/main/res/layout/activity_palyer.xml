@@ -40,7 +40,7 @@
             android:src="@drawable/icon_play" />
 
 
-        <com.hitqz.robot.commonlib.widget.LoadingView
+        <com.sonicers.commonlib.widget.LoadingView
             android:id="@+id/player_loading"
             android:layout_width="72dp"
             android:layout_height="72dp"

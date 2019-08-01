@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.hitqz.robot.commonlib.widget.LoadingDialog;
+import com.sonicers.commonlib.widget.LoadingDialog;
 
 public class BaseActivity extends AppCompatActivity {
 

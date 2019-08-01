@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
-import com.hitqz.robot.commonlib.util.ToastUtil;
+import com.sonicers.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.setting.SettingActivity;

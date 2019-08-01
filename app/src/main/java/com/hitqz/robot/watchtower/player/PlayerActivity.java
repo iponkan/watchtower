@@ -14,7 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
-import com.hitqz.robot.commonlib.widget.LoadingView;
+import com.sonicers.commonlib.widget.LoadingView;
 import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -26,7 +26,7 @@ import com.orhanobut.logger.Logger;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.hitqz.robot.commonlib.util.TimeUtil.formatTimeS;
+import static com.sonicers.commonlib.util.TimeUtil.formatTimeS;
 
 public class PlayerActivity extends BaseActivity implements PlayerCallback, View.OnClickListener
         , SeekBar.OnSeekBarChangeListener {

@@ -2,7 +2,7 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
-import com.hitqz.robot.commonlib.util.ToastUtil;
+import com.sonicers.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.constant.LoginInfo;
 
 import java.util.HashMap;

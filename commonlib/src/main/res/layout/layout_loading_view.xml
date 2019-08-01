@@ -6,7 +6,7 @@
     android:layout_margin="24dp"
     android:background="#00000000">
 
-    <com.hitqz.robot.commonlib.widget.LoadingView
+    <com.sonicers.commonlib.widget.LoadingView
         android:id="@+id/loading_view"
         android:layout_width="72dp"
         android:layout_height="72dp"

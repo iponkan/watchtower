@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hitqz.robot.commonlib">
+    package="com.sonicers.commonlib">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!--读写内存块权限-->

@@ -2,7 +2,7 @@ package com.hitqz.robot.watchtower;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.google.gson.reflect.TypeToken;
-import com.hitqz.robot.commonlib.singleton.GsonUtil;
+import com.sonicers.commonlib.singleton.GsonUtil;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.constant.Constants;

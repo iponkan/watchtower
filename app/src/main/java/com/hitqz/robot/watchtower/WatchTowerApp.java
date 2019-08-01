@@ -1,7 +1,7 @@
 package com.hitqz.robot.watchtower;
 
 
-import com.hitqz.robot.commonlib.BaseApplication;
+import com.sonicers.commonlib.BaseApplication;
 
 public class WatchTowerApp extends BaseApplication {
 

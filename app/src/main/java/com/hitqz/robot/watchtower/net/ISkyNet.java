@@ -1,8 +1,8 @@
 package com.hitqz.robot.watchtower.net;
 
 
-import com.hitqz.robot.commonlib.net.BaseRespond;
-import com.hitqz.robot.commonlib.net.DataBean;
+import com.sonicers.commonlib.net.BaseRespond;
+import com.sonicers.commonlib.net.DataBean;
 
 import java.util.List;
 
