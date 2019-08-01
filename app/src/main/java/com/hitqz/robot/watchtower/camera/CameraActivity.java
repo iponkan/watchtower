@@ -12,6 +12,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ScreenUtils;
@@ -32,6 +33,7 @@ import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.commonlib.rx.RxSchedulers;
+import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
@@ -45,7 +47,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
-
+@SuppressLint("CheckResult")
 public class CameraActivity extends AppCompatActivity implements SteerView.ISteerListener {
 
     public static final String TAG = "CameraActivity";
@@ -72,6 +74,17 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
     LoadingView loadingView;
     @BindView(R.id.sv_car)
     SteerView svCar;
+    @BindView(R.id.sv_ring)
+    StateView svRing;
+    @BindView(R.id.sv_cameraplatform)
+    StateView svCameraPlateform;
+    @BindView(R.id.sv_baseplate)
+    StateView svBaseplate;
+    @BindView(R.id.sv_emergencystop)
+    StateView svEmergencyStop;
+    @BindView(R.id.tv_baseplate_electric)
+    TextView tvBaseplateElectric;
+
 
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
@@ -118,13 +131,14 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
         normalHCSdk.setSurfaceView(normalSurfaceView);
         svCar.setSteerListener(this);
 
+        checkState();
         isMonitoring();
     }
 
     private void resetHotCameraView(View... views) {
 
-        int leftMargin = SizeUtils.dp2px(40);
-        int rightMargin = SizeUtils.dp2px(40);
+        int leftMargin = SizeUtils.dp2px(60);
+        int rightMargin = SizeUtils.dp2px(60);
         int topMargin = SizeUtils.dp2px(10);
 
         int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
@@ -151,8 +165,8 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
 
     private void resetNormalCameraView(View normalCameraView) {
 
-        int leftMargin = SizeUtils.dp2px(40);
-        int rightMargin = SizeUtils.dp2px(40);
+        int leftMargin = SizeUtils.dp2px(60);
+        int rightMargin = SizeUtils.dp2px(60);
         int topMargin = SizeUtils.dp2px(10);
 
         int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
@@ -231,7 +245,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
         resetAlarmLevel();
     }
 
-    @SuppressLint("CheckResult")
     private void startMonitor() {
         MonitorEntity monitorEntity = new MonitorEntity();
         Point[] points = productionView.getPoints();
@@ -270,7 +283,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
 
     }
 
-    @SuppressLint("CheckResult")
     private void stopMonitor() {
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.stopMonitor()
@@ -293,7 +305,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
 
     }
 
-    @SuppressLint("CheckResult")
     private void isMonitoring() {
         showDialog();
         skyNet.isMonitoring()
@@ -337,7 +348,6 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
 
     }
 
-    @SuppressLint("CheckResult")
     private void resetAlarmLevel() {
         skyNet.resetAlarmLevel()
                 .compose(RxSchedulers.io_main())
@@ -443,9 +453,7 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
                 });
     }
 
-    @SuppressLint("CheckResult")
     private void plateStop() {
-        Logger.t(TAG).i("-----------------plateStop-----------------");
         skyNet.setBaseplateDirection(Constants.PLATE_STOP)
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>() {
@@ -476,5 +484,84 @@ public class CameraActivity extends AppCompatActivity implements SteerView.IStee
                 plateStop();
             }
         }, 200);
+    }
+
+    private void checkState() {
+        skyNet.getRingState()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        svRing.setState(model);
+                        Logger.t(TAG).i("getRingState success:" + model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getRingState fail：" + msg);
+                    }
+
+                });
+        skyNet.getBaseplateState()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        svBaseplate.setState(model);
+                        Logger.t(TAG).i("getBaseplateState success:" + model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getBaseplateState fail：" + msg);
+                    }
+
+                });
+        skyNet.getCameraPlatformState()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        svCameraPlateform.setState(model);
+                        Logger.t(TAG).i("getCameraPlatformState success:" + model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getCameraPlatformState fail：" + msg);
+                    }
+
+                });
+
+        skyNet.getEmergencyStopState()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        Logger.t(TAG).i("getEmergencyStopState success:" + model);
+                        svEmergencyStop.setState(model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getEmergencyStopState fail：" + msg);
+                    }
+
+                });
+        skyNet.getBaseplateElectric()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Integer>() {
+                    @Override
+                    public void onSuccess(Integer model) {
+                        Logger.t(TAG).i("getBaseplateElectric success:" + model);
+                        tvBaseplateElectric.setText(String.valueOf(model));
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getBaseplateElectric fail：" + msg);
+                    }
+
+                });
     }
 }

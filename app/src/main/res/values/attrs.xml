@@ -4,4 +4,9 @@
         <attr name="backText" format="string" />
         <attr name="titleText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="StateView">
+        <attr name="stateDes" format="string" />
+        <attr name="stateValue" format="boolean" />
+    </declare-styleable>
 </resources>
