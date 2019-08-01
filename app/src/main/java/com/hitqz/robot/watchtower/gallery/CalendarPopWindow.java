@@ -27,12 +27,12 @@ public class CalendarPopWindow extends PopupWindow {
     }
 
     private void initPopupWindow() {
-
-        View decorView = context.getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//        全屏
+//        View decorView = context.getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(
+//                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+//                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+//                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         //使用view来引入布局
         LayoutInflater inflater = (LayoutInflater) context
