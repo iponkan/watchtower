@@ -79,7 +79,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     @BindView(R.id.tv_baseplate_electric)
     TextView tvBaseplateElectric;
 
-
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
     ProductionManager productionManager;
@@ -146,7 +145,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
             view.setLayoutParams(layoutParams);
         }
-
 
         float centerWidth = getResources().getDimension(R.dimen.fr_center_width);
         productionManager = new ProductionManager(width, height, centerWidth);
@@ -270,9 +268,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                         Logger.e("开始监火失败：" + msg);
                         ToastUtil.showToastShort(CameraActivity.this, "开始监火失败：" + msg);
                     }
-
                 });
-
     }
 
     private void stopMonitor() {
@@ -292,9 +288,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                         Logger.e("停止监火失败：" + msg);
                         ToastUtil.showToastShort(CameraActivity.this, "停止监控失败");
                     }
-
                 });
-
     }
 
     private void isMonitoring() {
@@ -337,7 +331,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                         dismissLoadingDialog();
                     }
                 });
-
     }
 
     private void resetAlarmLevel() {
@@ -353,7 +346,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         ToastUtil.showToastShort(CameraActivity.this, "失败");
                     }
-
                 });
     }
 
@@ -369,7 +361,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
             Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void onStartMonitor() {
         productionView.antiTouch(true);
@@ -419,7 +410,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                                 return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
                             }
                         });
-
                     }
                 })
                 .compose(RxSchedulers.io_main())
@@ -433,7 +423,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
                     }
-
                 });
     }
 
@@ -450,7 +439,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("plateStop失败：" + msg);
                     }
-
                 });
     }
 
@@ -484,7 +472,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getRingState fail：" + msg);
                     }
-
                 });
         skyNet.getBaseplateState()
                 .compose(RxSchedulers.io_main())
@@ -499,7 +486,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getBaseplateState fail：" + msg);
                     }
-
                 });
         skyNet.getCameraPlatformState()
                 .compose(RxSchedulers.io_main())
@@ -514,7 +500,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getCameraPlatformState fail：" + msg);
                     }
-
                 });
 
         skyNet.getEmergencyStopState()
@@ -530,7 +515,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getEmergencyStopState fail：" + msg);
                     }
-
                 });
         skyNet.getBaseplateElectric()
                 .compose(RxSchedulers.io_main())
@@ -545,7 +529,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getBaseplateElectric fail：" + msg);
                     }
-
                 });
     }
 }

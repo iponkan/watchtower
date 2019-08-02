@@ -1,6 +1,5 @@
 package com.sonicers.commonlib.util;
 
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,7 +20,6 @@ public class ToastUtil {
         }
         return sMainThreadHandler;
     }
-
 
     public static void showToast(final Context context, final String message, final int duration) {
         if (mToast != null) {
@@ -44,7 +42,5 @@ public class ToastUtil {
     public static void showToastShort(final Context context, final String message) {
         showToast(context, message, Toast.LENGTH_SHORT);
     }
-
-
 }
 
