@@ -1,7 +1,5 @@
 package com.hitqz.robot.watchtower.gallery;
 
-import androidx.annotation.NonNull;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
@@ -64,6 +64,11 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
     Handler handler = new Handler();
     TimeRange dayTimeRange;
 
+    public static void go2VideoList(Activity activity, DonghuoRecord donghuoRecord) {
+        Intent intent = new Intent(activity, VideoListActivity.class);
+        intent.putExtra(EXTRA_NAME, donghuoRecord);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,13 +103,6 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         PlayerActivity.go2Player(VideoListActivity.this, videoList.get(position));
-    }
-
-
-    public static void go2VideoList(Activity activity, DonghuoRecord donghuoRecord) {
-        Intent intent = new Intent(activity, VideoListActivity.class);
-        intent.putExtra(EXTRA_NAME, donghuoRecord);
-        activity.startActivity(intent);
     }
 
     @Override

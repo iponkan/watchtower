@@ -12,7 +12,6 @@ import okio.Okio;
 import okio.Sink;
 
 
-
 public class ProgressRequestBody extends RequestBody {
     private UploadProgressListener mUploadProgressListener;
     private RequestBody mRequestBody;

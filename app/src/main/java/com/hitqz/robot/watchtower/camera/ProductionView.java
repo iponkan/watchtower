@@ -17,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-
 import androidx.annotation.Nullable;
 
 import com.hitqz.robot.watchtower.R;

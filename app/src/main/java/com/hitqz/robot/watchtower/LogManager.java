@@ -2,14 +2,14 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
-import com.sonicers.commonlib.log.CommonDiskLogStrategy;
-import com.sonicers.commonlib.util.CrashUtil;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
+import com.sonicers.commonlib.log.CommonDiskLogStrategy;
+import com.sonicers.commonlib.util.CrashUtil;
 
 public class LogManager {
 

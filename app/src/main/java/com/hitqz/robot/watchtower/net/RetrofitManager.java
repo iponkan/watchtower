@@ -1,8 +1,8 @@
 package com.hitqz.robot.watchtower.net;
 
 
-import com.sonicers.commonlib.net.HttpCommonInterceptor;
 import com.orhanobut.logger.Logger;
+import com.sonicers.commonlib.net.HttpCommonInterceptor;
 
 import java.util.concurrent.TimeUnit;
 

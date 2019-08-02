@@ -2,7 +2,6 @@ package com.sonicers.commonlib.util;
 
 import android.os.Environment;
 
-
 import com.sonicers.commonlib.singleton.OkHttpUtil;
 
 import java.io.File;

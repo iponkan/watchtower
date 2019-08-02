@@ -14,7 +14,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
-import com.sonicers.commonlib.widget.LoadingView;
 import com.hitqz.robot.watchtower.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -22,6 +21,7 @@ import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 import com.orhanobut.logger.Logger;
+import com.sonicers.commonlib.widget.LoadingView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

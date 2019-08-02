@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.blankj.utilcode.util.NetworkUtils;
-import com.sonicers.commonlib.util.ToastUtil;
 import com.hitqz.robot.watchtower.camera.CameraActivity;
 import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.setting.SettingActivity;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
-
+import com.sonicers.commonlib.util.ToastUtil;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
