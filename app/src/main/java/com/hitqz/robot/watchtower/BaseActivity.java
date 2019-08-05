@@ -30,15 +30,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void dismissLoadingDialog() {
-        if (isInvalidContext()) {
-            return;
-        }
         if (loadingDialog != null) {
             loadingDialog.hide();
         }
-    }
-
-    private boolean isInvalidContext() {
-        return (isDestroyed() || isFinishing());
     }
 }
