@@ -1,6 +1,5 @@
 package com.hitqz.robot.watchtower;
 
-
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,7 +15,6 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.hitqz.robot.watchtower.constant.PermissionConstant.STORAGE_PERMISSION;
-
 
 public class MainActivity extends BaseActivity {
 
@@ -53,7 +51,7 @@ public class MainActivity extends BaseActivity {
                     STORAGE_PERMISSION);
         } else {
             LogManager.getInstance().init(this);
-            AlertDialogFragment.showDhpDialog(this);
+            AlertDialogFragment.showSoundDialog(this, "请注意核对动火票！", R.raw.alert);
             if (!NetworkUtils.isConnected()) {
                 ToastUtil.showToastShort(this, "网络未连接");
                 Logger.t(TAG).e("网络未连接");
@@ -63,5 +61,4 @@ public class MainActivity extends BaseActivity {
             }
         }
     }
-
 }

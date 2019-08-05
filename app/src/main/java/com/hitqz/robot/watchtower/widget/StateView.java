@@ -34,7 +34,6 @@ public class StateView extends LinearLayout {
         init(context, attrs);
     }
 
-
     private void init(Context context, @Nullable AttributeSet attrs) {
         this.context = context;
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.StateView);

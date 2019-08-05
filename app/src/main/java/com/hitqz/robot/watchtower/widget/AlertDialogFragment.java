@@ -1,5 +1,6 @@
 package com.hitqz.robot.watchtower.widget;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -18,15 +19,16 @@ import androidx.fragment.app.DialogFragment;
 
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.util.SoundPoolUtil;
+import com.sonicers.commonlib.util.SoundPoolHelper;
 
 public class AlertDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    public static final String ALERT = "ALERT";
     ImageView ivOk;
     TextView tvAlert;
     String alertString;
-    boolean playSound;
     Handler handler = new Handler();
+    SoundPoolHelper soundPoolHelper;
 
     public AlertDialogFragment(String alertText) {
         super();
@@ -42,13 +44,19 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        if (playSound) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SoundPoolUtil.getInstance(getContext()).play(1);
-                }
-            }, 500);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                soundPoolHelper.play(ALERT);
+            }
+        }, 500);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (soundPoolHelper != null) {
+            soundPoolHelper.release();
         }
     }
 
@@ -74,7 +82,6 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
         window.setAttributes(wlp);
         setCancelable(false);
         return rootView;
-
     }
 
     @Override
@@ -84,8 +91,11 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
         }
     }
 
-    public void enablePlaySound() {
-        playSound = true;
+    public void setSoundId(Context context, int soundId) {
+        if (soundPoolHelper == null) {
+            soundPoolHelper = new SoundPoolHelper(context);
+        }
+        soundPoolHelper.load(ALERT, R.raw.alert);
     }
 
     public static void showDialog(AppCompatActivity activity, String alertText) {
@@ -93,9 +103,14 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
         dialog.show(activity.getSupportFragmentManager(), "dhalert");
     }
 
-    public static void showDhpDialog(AppCompatActivity activity) {
-        AlertDialogFragment dialog = new AlertDialogFragment("请注意核对动火票！");
-        dialog.enablePlaySound();
+    /**
+     * 显示dialog并播放提示音
+     *
+     * @param resId 声音id
+     */
+    public static void showSoundDialog(AppCompatActivity activity, String alertText, int resId) {
+        AlertDialogFragment dialog = new AlertDialogFragment(alertText);
+        dialog.setSoundId(activity, resId);
         dialog.show(activity.getSupportFragmentManager(), "dhalert");
     }
 }
