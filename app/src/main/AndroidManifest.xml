@@ -21,7 +21,9 @@
         <activity android:name=".BaseActivity"></activity>
         <activity android:name=".gallery.VideoListActivity" />
         <activity android:name=".gallery.GalleryActivity" />
-        <activity android:name=".setting.SettingActivity" />
+        <activity
+            android:name=".setting.SettingActivity"
+            android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity android:name=".player.PlayerActivity" />
         <activity
             android:name=".camera.CameraActivity"
