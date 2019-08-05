@@ -104,13 +104,13 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
-            finish();
+//            finish();
         }
 
         normalHCSdk = HCSdkManager.getNormalHCSdk(this);
         if (!normalHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
-            finish();
+//            finish();
         }
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
@@ -128,8 +128,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
     private void resetHotCameraView(View... views) {
 
-        int leftMargin = SizeUtils.dp2px(60);
-        int rightMargin = SizeUtils.dp2px(60);
+        int leftMargin = SizeUtils.dp2px(10);
+        int rightMargin = SizeUtils.dp2px(200);
         int topMargin = SizeUtils.dp2px(10);
 
         int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
@@ -155,8 +155,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
     private void resetNormalCameraView(View normalCameraView) {
 
-        int leftMargin = SizeUtils.dp2px(60);
-        int rightMargin = SizeUtils.dp2px(60);
+        int leftMargin = SizeUtils.dp2px(10);
+        int rightMargin = SizeUtils.dp2px(200);
         int topMargin = SizeUtils.dp2px(10);
 
         int width = ScreenUtils.getScreenWidth() - leftMargin - rightMargin;
