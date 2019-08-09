@@ -1,11 +1,11 @@
 # commonlib
 
-这个库用于快速构建android工程，如果想快速构建一个app而不在意依赖的aar细节时，可以使用本库进行快速开发。
+这个库用于快速构建android工程，如果想快速构建一个app而不在意依赖的aar细节时(因为可能引入多余的库)，可以使用本库进行快速开发。
 
 本库依赖一些常用的开源库，并支持kotlin，使用方式
 
 ```groovy
-implementation('com.sonicers:commonlib:0.0.8') {
+implementation('com.sonicers:commonlib:0.0.9') {
     transitive = true//依赖传递为true时才能把依赖的库打进去
 }
 ```
