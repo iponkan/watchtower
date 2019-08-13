@@ -16,4 +16,6 @@ public class Constants {
     public static final int PLATE_LEFT = 2;
     public static final int PLATE_BACKWORD = 3;
     public static final int PLATE_RIGHT = 4;
+
+    public static final String POLL_END = "POLL_END";
 }

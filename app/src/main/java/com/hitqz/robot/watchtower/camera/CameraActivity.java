@@ -403,7 +403,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                                 // 加入判断条件：但发送停止后停止轮询
                                 if (sendStop.get()) {
                                     // 此处选择发送onError事件以结束轮询，因为可触发下游观察者的onError（）方法回调
-                                    return Observable.error(new Throwable("轮询结束"));
+                                    return Observable.error(new Throwable(Constants.POLL_END));
                                 }
                                 // 若轮询次数＜4次，则发送1Next事件以继续轮询
                                 // 注：此处加入了delay操作符，作用 = 延迟一段时间发送（此处设置 = 2s），以实现轮询间间隔设置
@@ -421,7 +421,12 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
                     @Override
                     public void onFailure(String msg) {
-                        Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
+                        if (Constants.POLL_END.equals(msg)) {
+                            Logger.t(TAG).i("plateTurn" + direction + "轮询停止");
+                        }
+                        {
+                            Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
+                        }
                     }
                 });
     }
