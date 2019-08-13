@@ -44,12 +44,14 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                soundPoolHelper.play(ALERT);
-            }
-        }, 500);
+        if (soundPoolHelper != null) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    soundPoolHelper.play(ALERT);
+                }
+            }, 500);
+        }
     }
 
     @Override
