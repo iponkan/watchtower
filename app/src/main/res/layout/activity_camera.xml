@@ -120,6 +120,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:stateDes="手环:"
+            app:stateOff="@string/offline"
+            app:stateOn="@string/online"
             app:stateValue="false">
 
         </com.hitqz.robot.watchtower.widget.StateView>
@@ -129,10 +131,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:stateDes="云台:"
+            app:stateOff="@string/offline"
+            app:stateOn="@string/online"
             app:stateValue="false">
 
         </com.hitqz.robot.watchtower.widget.StateView>
 
+        <com.hitqz.robot.watchtower.widget.StateView
+            android:id="@+id/sv_soundlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:stateDes="声光:"
+            app:stateOff="@string/offline"
+            app:stateOn="@string/online"
+            app:stateValue="false">
+
+        </com.hitqz.robot.watchtower.widget.StateView>
 
     </LinearLayout>
 
@@ -151,6 +165,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:stateDes="底盘:"
+            app:stateOff="@string/offline"
+            app:stateOn="@string/online"
             app:stateValue="false">
 
         </com.hitqz.robot.watchtower.widget.StateView>
@@ -160,6 +176,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:stateDes="底盘急停:"
+            app:stateOff="@string/release"
+            app:stateOn="@string/press"
             app:stateValue="false">
 
         </com.hitqz.robot.watchtower.widget.StateView>

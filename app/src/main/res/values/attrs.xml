@@ -8,5 +8,7 @@
     <declare-styleable name="StateView">
         <attr name="stateDes" format="string" />
         <attr name="stateValue" format="boolean" />
+        <attr name="stateOn" format="string" />
+        <attr name="stateOff" format="string" />
     </declare-styleable>
 </resources>

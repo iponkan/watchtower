@@ -4,4 +4,8 @@
     <string name="title_gallery">视频库</string>
     <string name="title_settings">设置</string>
     <string name="need_permission">需要存储权限</string>
+    <string name="online">在线</string>
+    <string name="offline">掉线</string>
+    <string name="release">松开</string>
+    <string name="press">按下</string>
 </resources>

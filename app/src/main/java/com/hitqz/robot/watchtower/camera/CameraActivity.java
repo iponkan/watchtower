@@ -76,6 +76,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     StateView svBaseplate;
     @BindView(R.id.sv_emergencystop)
     StateView svEmergencyStop;
+    @BindView(R.id.sv_soundlight)
+    StateView svSoundlight;
     @BindView(R.id.tv_baseplate_electric)
     TextView tvBaseplateElectric;
 
@@ -519,6 +521,20 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     @Override
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getEmergencyStopState fail：" + msg);
+                    }
+                });
+        skyNet.getlightAndSoundState()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        Logger.t(TAG).i("getlightAndSoundState success:" + model);
+                        svSoundlight.setState(model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getlightAndSoundState fail：" + msg);
                     }
                 });
         skyNet.getBaseplateElectric()

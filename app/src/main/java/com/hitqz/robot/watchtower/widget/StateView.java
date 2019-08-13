@@ -20,6 +20,8 @@ public class StateView extends LinearLayout {
     TextView tvDes;
     TextView tvState;
     boolean state;
+    String onString;
+    String offString;
 
     public StateView(@NonNull Context context) {
         this(context, null);
@@ -39,6 +41,8 @@ public class StateView extends LinearLayout {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.StateView);
         String des = ta.getString(R.styleable.StateView_stateDes);
         state = ta.getBoolean(R.styleable.StateView_stateValue, false);
+        onString = ta.getString(R.styleable.StateView_stateOn);
+        offString = ta.getString(R.styleable.StateView_stateOff);
         ta.recycle();
         LayoutInflater.from(context).inflate(R.layout.layout_state_view, this, true);
         vpBack = findViewById(R.id.fl_back);
@@ -51,6 +55,6 @@ public class StateView extends LinearLayout {
 
     public void setState(boolean state) {
         this.state = state;
-        tvState.setText(state ? "已连接" : "掉线");
+        tvState.setText(state ? onString : offString);
     }
 }

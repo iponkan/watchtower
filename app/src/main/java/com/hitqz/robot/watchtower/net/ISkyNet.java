@@ -1,6 +1,5 @@
 package com.hitqz.robot.watchtower.net;
 
-
 import com.sonicers.commonlib.net.BaseRespond;
 import com.sonicers.commonlib.net.DataBean;
 
@@ -25,7 +24,6 @@ public interface ISkyNet {
      */
     @GET("/set/alarmLevel")
     Observable<BaseRespond<List<AlarmLevelSettingEntity>>> getAlarmLevelConfig();
-
 
     /**
      * 1.1.3.	开启监控模式
@@ -87,11 +85,20 @@ public interface ISkyNet {
     /**
      * 1.1.12.	查询底盘急停按钮状态
      *
-     * @return false:状态异常
-     * true:状态正常
+     * @return false:松开
+     * true:按下
      */
     @GET("/baseplate/emergencyStop")
     Observable<BaseRespond<Boolean>> getEmergencyStopState();
+
+    /**
+     * 声光状态
+     *
+     * @return false:掉线
+     * true:正常
+     */
+    @GET("system/status/lightAndSound")
+    Observable<BaseRespond<Boolean>> getlightAndSoundState();
 
     /**
      * 1.1.13.	查询底盘电量
@@ -111,5 +118,4 @@ public interface ISkyNet {
      */
     @GET("/baseplate/direction/{direction}")
     Observable<BaseRespond<DataBean>> setBaseplateDirection(@Path("direction") int direction);
-
 }
