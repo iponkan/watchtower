@@ -30,6 +30,11 @@ public class AlertDialogFragment extends DialogFragment implements View.OnClickL
     Handler handler = new Handler();
     SoundPoolHelper soundPoolHelper;
 
+    // fix crash
+    public AlertDialogFragment() {
+        // doesn't do anything special
+    }
+
     public AlertDialogFragment(String alertText) {
         super();
         alertString = alertText;

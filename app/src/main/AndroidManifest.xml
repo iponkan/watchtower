@@ -18,17 +18,24 @@
         android:supportsRtl="true"
         android:theme="@style/WatchTowerTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".BaseActivity"></activity>
-        <activity android:name=".gallery.VideoListActivity" />
-        <activity android:name=".gallery.GalleryActivity" />
+        <activity android:name=".BaseActivity" />
+        <activity
+            android:name=".gallery.VideoListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".gallery.GalleryActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".setting.SettingActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|stateUnchanged" />
         <activity android:name=".player.PlayerActivity" />
         <activity
             android:name=".camera.CameraActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
