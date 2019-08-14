@@ -24,6 +24,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.i("----------MainActivity--------");
         setContentView(R.layout.activity_main);
         askForPermissionTask();
     }

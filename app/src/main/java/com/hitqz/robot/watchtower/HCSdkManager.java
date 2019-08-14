@@ -43,7 +43,6 @@ public class HCSdkManager {
         return getHCSdk(context, LoginInfo.getHotLogInfo());
     }
 
-
     public void initAndLogin(Context context) {
 
         if (init) {
@@ -56,11 +55,9 @@ public class HCSdkManager {
             boolean result = normalHCSdk.login();
             if (!result) {
                 ToastUtil.showToastShort(context, "高清摄像头登录失败");
-                return;
             }
         } else {
             ToastUtil.showToastShort(context, "高清摄像头初始化失败");
-            return;
         }
 
         // 热成像摄像头初始化
@@ -70,13 +67,14 @@ public class HCSdkManager {
             boolean result = hotHCSdk.login();
             if (!result) {
                 ToastUtil.showToastShort(context, "热成像摄像头登录失败");
-                return;
             }
         } else {
             ToastUtil.showToastShort(context, "热成像摄像头初始化失败");
-            return;
         }
 
-        init = true;
+        if (normalHCSdk.isLogin() && hotHCSdk.isLogin()) {
+            init = true;
+        }
+
     }
 }
