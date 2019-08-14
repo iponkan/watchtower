@@ -2,11 +2,10 @@ package com.hitqz.robot.watchtower;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.sonicers.commonlib.widget.LoadingDialog;
+import com.trello.rxlifecycle3.components.support.RxAppCompatActivity;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends RxAppCompatActivity {
 
     LoadingDialog loadingDialog;
 

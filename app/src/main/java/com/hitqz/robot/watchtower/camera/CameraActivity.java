@@ -40,7 +40,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
 @SuppressLint("CheckResult")
@@ -388,33 +387,16 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     private void plateTurn(int direction) {
         sendStop.set(false);
         Logger.t("interval").d("sendStop false");
+        // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setBaseplateDirection(direction)
-                .repeatWhen(new Function<Observable<Object>, ObservableSource<?>>() {
-                    @Override
-                    // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
-                    public ObservableSource<?> apply(@NonNull Observable<Object> objectObservable) throws Exception {
-                        // 将原始 Observable 停止发送事件的标识（Complete（） /  Error（））转换成1个 Object 类型数据传递给1个新被观察者（Observable）
-                        // 以此决定是否重新订阅 & 发送原来的 Observable，即轮询
-                        // 此处有2种情况：
-                        // 1. 若返回1个Complete（） /  Error（）事件，则不重新订阅 & 发送原来的 Observable，即轮询结束
-                        // 2. 若返回其余事件，则重新订阅 & 发送原来的 Observable，即继续轮询
-                        return objectObservable.flatMap(new Function<Object, ObservableSource<?>>() {
-                            @Override
-                            public ObservableSource<?> apply(@NonNull Object throwable) throws Exception {
-
-                                // 加入判断条件：但发送停止后停止轮询
-                                if (sendStop.get()) {
-                                    // 此处选择发送onError事件以结束轮询，因为可触发下游观察者的onError（）方法回调
-                                    return Observable.error(new Throwable(Constants.POLL_END));
-                                }
-                                // 若轮询次数＜4次，则发送1Next事件以继续轮询
-                                // 注：此处加入了delay操作符，作用 = 延迟一段时间发送（此处设置 = 2s），以实现轮询间间隔设置
-                                return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
-                            }
-                        });
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                    if (sendStop.get()) {
+                        return Observable.error(new Throwable(Constants.POLL_END));
                     }
-                })
+                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                }))
                 .compose(RxSchedulers.io_main())
+                .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
@@ -511,6 +493,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
         skyNet.getEmergencyStopState()
                 .compose(RxSchedulers.io_main())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>() {
                     @Override
                     public void onSuccess(Boolean model) {
@@ -525,6 +509,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 });
         skyNet.getlightAndSoundState()
                 .compose(RxSchedulers.io_main())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>() {
                     @Override
                     public void onSuccess(Boolean model) {
@@ -539,6 +525,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 });
         skyNet.getBaseplateElectric()
                 .compose(RxSchedulers.io_main())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Integer>() {
                     @Override
                     public void onSuccess(Integer model) {
