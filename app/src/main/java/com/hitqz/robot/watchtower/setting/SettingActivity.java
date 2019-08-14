@@ -8,15 +8,15 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.sonicers.commonlib.component.BaseActivity;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.hitqz.robot.watchtower.net.base.BaseObserver;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
-import com.sonicers.commonlib.net.BaseObserver;
+import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
 import com.sonicers.commonlib.util.ToastUtil;
@@ -94,7 +94,7 @@ public class SettingActivity extends BaseActivity {
         alarmLevelSettingEntities.add(levle3);
         skyNet.setAlarmLevelConfig(alarmLevelSettingEntities)
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
                         AlertDialogFragment.showDialog(SettingActivity.this, "设置成功");
@@ -105,18 +105,15 @@ public class SettingActivity extends BaseActivity {
                     public void onFailure(String msg) {
                         ToastUtil.showToastShort(SettingActivity.this, "设置失败");
                         Logger.i("设置报警温度失败：" + msg);
-
                     }
-
                 });
-
     }
 
     @SuppressLint("CheckResult")
     private void getAlarmLevelConfig() {
         skyNet.getAlarmLevelConfig()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<List<AlarmLevelSettingEntity>>() {
+                .subscribeWith(new BaseObserver<List<AlarmLevelSettingEntity>>(loadingDialog) {
                     @Override
                     public void onSuccess(List<AlarmLevelSettingEntity> model) {
                         if (model != null && model.size() > 0) {
@@ -145,11 +142,8 @@ public class SettingActivity extends BaseActivity {
                         ToastUtil.showToastShort(SettingActivity.this, "失败:" + msg);
                         setEtText();
                     }
-
                 });
-
     }
-
 
     private void setEtText() {
         etLevel1.setText(String.valueOf(levle1.getAlarmTemperature()));
@@ -159,10 +153,9 @@ public class SettingActivity extends BaseActivity {
 
     @SuppressLint("CheckResult")
     private void isMonitoring() {
-        showLoadingDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<MonitorEntity>() {
+                .subscribeWith(new BaseObserver<MonitorEntity>(loadingDialog) {
                     @Override
                     public void onSuccess(MonitorEntity model) {
                         if (model == null) {
@@ -177,7 +170,6 @@ public class SettingActivity extends BaseActivity {
                         }
                         isMonitoring = model.isMonitor();
                         ivConfirm.setClickable(true);
-                        dismissLoadingDialog();
                     }
 
                     @Override
@@ -186,10 +178,8 @@ public class SettingActivity extends BaseActivity {
 //                        ToastUtil.showToastShort(SettingActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
                         ivConfirm.setClickable(true);
-                        dismissLoadingDialog();
                     }
                 });
-
     }
 
     private boolean checkInput() {
@@ -221,5 +211,4 @@ public class SettingActivity extends BaseActivity {
         }
         return right;
     }
-
 }

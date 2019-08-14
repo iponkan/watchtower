@@ -26,7 +26,7 @@ import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
-import com.sonicers.commonlib.net.BaseObserver;
+import com.hitqz.robot.watchtower.net.base.BaseObserver;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
 import com.sonicers.commonlib.util.ToastUtil;
@@ -248,7 +248,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.startMonitor(monitorEntity)
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
                         onStartMonitor();
@@ -276,7 +276,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.stopMonitor()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
 //                        ToastUtil.showToastShort(CameraActivity.this, "停止监控成功");
@@ -293,10 +293,9 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     }
 
     private void isMonitoring() {
-        showLoadingDialog();
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<MonitorEntity>() {
+                .subscribeWith(new BaseObserver<MonitorEntity>(loadingDialog) {
                     @Override
                     public void onSuccess(MonitorEntity model) {
                         if (model == null) {
@@ -322,14 +321,12 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                                 productionView.setPoints(new Point[]{point1, point2});
                             }
                         }
-                        dismissLoadingDialog();
                     }
 
                     @Override
                     public void onFailure(String msg) {
 //                        ToastUtil.showToastShort(CameraActivity.this, "获取监控失败");
                         Logger.e("获取监火状态失败:" + msg);
-                        dismissLoadingDialog();
                     }
                 });
     }
@@ -337,7 +334,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     private void resetAlarmLevel() {
         skyNet.resetAlarmLevel()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
                         ToastUtil.showToastShort(CameraActivity.this, "成功");
@@ -397,7 +394,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 }))
                 .compose(RxSchedulers.io_main())
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).d("plateTurn" + direction + "成功");
@@ -418,7 +415,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     private void plateStop() {
         skyNet.setBaseplateDirection(Constants.PLATE_STOP)
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>() {
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).i("plateStop成功");
@@ -450,7 +447,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     private void checkState() {
         skyNet.getRingState()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
                         svRing.setState(model);
@@ -464,7 +461,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 });
         skyNet.getBaseplateState()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
                         svBaseplate.setState(model);
@@ -478,7 +475,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 });
         skyNet.getCameraPlatformState()
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
                         svCameraPlateform.setState(model);
@@ -495,7 +492,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 .compose(RxSchedulers.io_main())
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
                         Logger.t(TAG).i("getEmergencyStopState success:" + model);
@@ -511,7 +508,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 .compose(RxSchedulers.io_main())
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<Boolean>() {
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
                         Logger.t(TAG).i("getlightAndSoundState success:" + model);
@@ -527,7 +524,7 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 .compose(RxSchedulers.io_main())
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<Integer>() {
+                .subscribeWith(new BaseObserver<Integer>(loadingDialog) {
                     @Override
                     public void onSuccess(Integer model) {
                         Logger.t(TAG).i("getBaseplateElectric success:" + model);

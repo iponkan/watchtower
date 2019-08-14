@@ -1,4 +1,4 @@
-package com.sonicers.commonlib.net;
+package com.hitqz.robot.watchtower.net.base;
 
 /**
  * 网络请求结果 基类,剥离出数据给上层

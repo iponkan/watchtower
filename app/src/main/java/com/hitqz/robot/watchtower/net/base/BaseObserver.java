@@ -1,5 +1,10 @@
-package com.sonicers.commonlib.net;
+package com.hitqz.robot.watchtower.net.base;
 
+import android.app.Activity;
+
+import androidx.annotation.Nullable;
+
+import com.sonicers.commonlib.widget.LoadingDialog;
 
 import io.reactivex.observers.DisposableObserver;
 import retrofit2.HttpException;
@@ -13,6 +18,19 @@ public abstract class BaseObserver<M> extends DisposableObserver<BaseRespond<M>>
 
     public abstract void onFailure(String msg);
 
+    private LoadingDialog mLoadingDialog;
+
+    /**
+     * @param dialog null
+     */
+    public BaseObserver(@Nullable LoadingDialog dialog) {
+        mLoadingDialog = dialog;
+    }
+
+    @Override
+    protected void onStart() {
+        showLoadingDialog();
+    }
 
     @Override
     public void onError(Throwable throwable) {
@@ -31,7 +49,7 @@ public abstract class BaseObserver<M> extends DisposableObserver<BaseRespond<M>>
         } else {
             onFailure(throwable.getMessage());
         }
-
+        dismissLoadingDialog();
     }
 
     /**
@@ -48,9 +66,32 @@ public abstract class BaseObserver<M> extends DisposableObserver<BaseRespond<M>>
         }
     }
 
-
     @Override
     public void onComplete() {
+        dismissLoadingDialog();
+    }
 
+    public void showLoadingDialog() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.show();
+        }
+    }
+
+    public void dismissLoadingDialog() {
+
+        if (mLoadingDialog != null) {
+            Activity activity = mLoadingDialog.getContext();
+            if (isInvalidContext(activity)) {
+                return;
+            }
+            mLoadingDialog.hide();
+        }
+    }
+
+    private boolean isInvalidContext(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+        return (activity.isDestroyed() || activity.isFinishing());
     }
 }
