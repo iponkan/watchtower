@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.hitqz.robot.watchtower.BaseActivity;
+import com.sonicers.commonlib.component.BaseActivity;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.ISkyNet;

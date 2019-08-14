@@ -9,6 +9,7 @@ import com.hitqz.robot.watchtower.gallery.GalleryActivity;
 import com.hitqz.robot.watchtower.setting.SettingActivity;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
+import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.util.ToastUtil;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;

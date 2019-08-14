@@ -1,4 +1,4 @@
-package com.hitqz.robot.watchtower;
+package com.sonicers.commonlib.component;
 
 import android.os.Bundle;
 
