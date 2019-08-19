@@ -118,4 +118,16 @@ public interface ISkyNet {
      */
     @GET("/baseplate/direction/{direction}")
     Observable<BaseRespond<DataBean>> setBaseplateDirection(@Path("direction") int direction);
+
+    /**
+     * 云台旋转
+     * 0：停止
+     * <p>
+     * 1：上
+     * 2：左
+     * 3：下
+     * 4：右
+     */
+    @GET("/cameraPlatform/direction/{direction}")
+    Observable<BaseRespond<DataBean>> setCameraPlatformDirection(@Path("direction") int direction);
 }

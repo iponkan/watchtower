@@ -227,12 +227,11 @@
                 android:textSize="20dp" />
 
             <com.sonicers.commonlib.view.SteerView
-                android:id="@+id/azimuth_circle"
+                android:id="@+id/steer_camera"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@id/tv_camera_steer"
                 android:layout_marginTop="10dp"
-                android:onClick="cameraPressed"
                 app:bottomImg="@drawable/icon_arrow_down"
                 app:leftImg="@drawable/icon_arrow_left"
                 app:ovalColor="@color/circleColor"
@@ -259,7 +258,7 @@
                 android:textSize="20dp" />
 
             <com.sonicers.commonlib.view.SteerView
-                android:id="@+id/sv_car"
+                android:id="@+id/steer_car"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@id/tv_car_steer"

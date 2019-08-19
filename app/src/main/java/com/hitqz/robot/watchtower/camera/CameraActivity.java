@@ -11,11 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
-import com.sonicers.commonlib.component.BaseActivity;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
@@ -24,16 +22,16 @@ import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.hitqz.robot.watchtower.net.base.BaseObserver;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
-import com.hitqz.robot.watchtower.net.base.BaseObserver;
+import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
 import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +41,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
 @SuppressLint("CheckResult")
-public class CameraActivity extends BaseActivity implements SteerView.ISteerListener {
+public class CameraActivity extends BaseActivity {
 
     public static final String TAG = "CameraActivity";
 
@@ -65,8 +63,10 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
     ProductionView productionView;
     @BindView(R.id.iv_camera_clear_alarm)
     ImageView ivClearAlarm;
-    @BindView(R.id.sv_car)
-    SteerView svCar;
+    @BindView(R.id.steer_camera)
+    SteerView steerCamera;
+    @BindView(R.id.steer_car)
+    SteerView steerCar;
     @BindView(R.id.sv_ring)
     StateView svRing;
     @BindView(R.id.sv_cameraplatform)
@@ -87,7 +87,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
     ISkyNet skyNet;
     boolean isMonitoring;
-    AtomicBoolean sendStop = new AtomicBoolean(false);
+    volatile boolean plateStop = false;
+    volatile boolean cameraStop = false;
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -121,7 +122,8 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
 
         hotHCSdk.setSurfaceView(hotSurfaceView);
         normalHCSdk.setSurfaceView(normalSurfaceView);
-        svCar.setSteerListener(this);
+        steerCamera.setSteerListener(new CameraPlatformSteer());
+        steerCar.setSteerListener(new BasePlateSteer());
 
         checkState();
         isMonitoring();
@@ -347,19 +349,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                 });
     }
 
-    public void cameraPressed(View view) {
-        SteerView steerView = (SteerView) view;
-        if (steerView.getPressDirection() == SteerView.LEFT_PRESS) {
-            Toast.makeText(this, "LEFT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (steerView.getPressDirection() == SteerView.TOP_PRESS) {
-            Toast.makeText(this, "TOP_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (steerView.getPressDirection() == SteerView.RIGHT_PRESS) {
-            Toast.makeText(this, "RIGHT_PRESS", Toast.LENGTH_SHORT).show();
-        } else if (steerView.getPressDirection() == SteerView.BOTTOM_PRESS) {
-            Toast.makeText(this, "BOTTOM_PRESS", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void onStartMonitor() {
         productionView.antiTouch(true);
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
@@ -378,70 +367,6 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
         ivMinus.setClickable(true);
         ivFar.setClickable(true);
         ivNear.setClickable(true);
-    }
-
-    @SuppressLint("CheckResult")
-    private void plateTurn(int direction) {
-        sendStop.set(false);
-        Logger.t("interval").d("sendStop false");
-        // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
-        skyNet.setBaseplateDirection(direction)
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (sendStop.get()) {
-                        return Observable.error(new Throwable(Constants.POLL_END));
-                    }
-                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
-                }))
-                .compose(RxSchedulers.io_main())
-                .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
-                    @Override
-                    public void onSuccess(DataBean model) {
-                        Logger.t(TAG).d("plateTurn" + direction + "成功");
-                    }
-
-                    @Override
-                    public void onFailure(String msg) {
-                        if (Constants.POLL_END.equals(msg)) {
-                            Logger.t(TAG).i("plateTurn" + direction + "轮询停止");
-                        }
-                        {
-                            Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
-                        }
-                    }
-                });
-    }
-
-    private void plateStop() {
-        skyNet.setBaseplateDirection(Constants.PLATE_STOP)
-                .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
-                    @Override
-                    public void onSuccess(DataBean model) {
-                        Logger.t(TAG).i("plateStop成功");
-                    }
-
-                    @Override
-                    public void onFailure(String msg) {
-                        Logger.t(TAG).e("plateStop失败：" + msg);
-                    }
-                });
-    }
-
-    @Override
-    public void onPressDirection(int direction) {
-        plateTurn(direction);
-    }
-
-    @Override
-    public void onRelease() {
-        sendStop.set(true);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                plateStop();
-            }
-        }, 200);
     }
 
     private void checkState() {
@@ -534,6 +459,140 @@ public class CameraActivity extends BaseActivity implements SteerView.ISteerList
                     @Override
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getBaseplateElectric fail：" + msg);
+                    }
+                });
+    }
+
+    private class CameraPlatformSteer implements SteerView.ISteerListener {
+
+        @Override
+        public void onPressDirection(int direction) {
+            cameraTurn(direction);
+        }
+
+        @Override
+        public void onRelease() {
+            cameraStop = true;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    cameraStop();
+                }
+            }, 200);
+        }
+    }
+
+    private class BasePlateSteer implements SteerView.ISteerListener {
+
+        @Override
+        public void onPressDirection(int direction) {
+            plateTurn(direction);
+        }
+
+        @Override
+        public void onRelease() {
+            plateStop = true;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    plateStop();
+                }
+            }, 200);
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private void cameraTurn(int direction) {
+        cameraStop = false;
+        Logger.t("interval").d("plateStop false");
+        // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
+        skyNet.setCameraPlatformDirection(direction)
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                    if (cameraStop) {
+                        return Observable.error(new Throwable(Constants.POLL_END));
+                    }
+                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                }))
+                .compose(RxSchedulers.io_main())
+                .compose(bindToLifecycle())
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        Logger.t(TAG).d("cameraTurn" + direction + "成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        if (Constants.POLL_END.equals(msg)) {
+                            Logger.t(TAG).i("cameraTurn" + direction + "轮询停止");
+                        }
+                        {
+                            Logger.t(TAG).e("cameraTurn" + direction + "失败：" + msg);
+                        }
+                    }
+                });
+    }
+
+    private void cameraStop() {
+        skyNet.setCameraPlatformDirection(Constants.PLATE_STOP)
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        Logger.t(TAG).i("cameraStop成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("cameraStop失败：" + msg);
+                    }
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    private void plateTurn(int direction) {
+        plateStop = false;
+        Logger.t("interval").d("plateStop false");
+        // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
+        skyNet.setBaseplateDirection(direction)
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                    if (plateStop) {
+                        return Observable.error(new Throwable(Constants.POLL_END));
+                    }
+                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                }))
+                .compose(RxSchedulers.io_main())
+                .compose(bindToLifecycle())
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        Logger.t(TAG).d("plateTurn" + direction + "成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        if (Constants.POLL_END.equals(msg)) {
+                            Logger.t(TAG).i("plateTurn" + direction + "轮询停止");
+                        }
+                        {
+                            Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
+                        }
+                    }
+                });
+    }
+
+    private void plateStop() {
+        skyNet.setBaseplateDirection(Constants.PLATE_STOP)
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        Logger.t(TAG).i("plateStop成功");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("plateStop失败：" + msg);
                     }
                 });
     }
