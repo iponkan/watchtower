@@ -106,13 +106,11 @@ public class CameraActivity extends BaseActivity {
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
-//            finish();
         }
 
         normalHCSdk = HCSdkManager.getNormalHCSdk(this);
         if (!normalHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
-//            finish();
         }
 
         skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
@@ -473,12 +471,7 @@ public class CameraActivity extends BaseActivity {
         @Override
         public void onRelease() {
             cameraStop = true;
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    cameraStop();
-                }
-            }, 200);
+            handler.postDelayed(CameraActivity.this::cameraStop, 200);
         }
     }
 
@@ -492,12 +485,7 @@ public class CameraActivity extends BaseActivity {
         @Override
         public void onRelease() {
             plateStop = true;
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    plateStop();
-                }
-            }, 200);
+            handler.postDelayed(CameraActivity.this::plateStop, 200);
         }
     }
 
