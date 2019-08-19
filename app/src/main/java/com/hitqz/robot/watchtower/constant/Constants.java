@@ -18,4 +18,17 @@ public class Constants {
     public static final int PLATE_RIGHT = 4;
 
     public static final String POLL_END = "POLL_END";
+
+    /*0：停止
+     *1：上
+     *2：左
+     *3：下
+     *4：右
+     */
+    public static final int CAMERA_STOP = 0;
+
+    public static final int CAMERA_UP = 1;
+    public static final int CAMERA_LEFT = 2;
+    public static final int CAMERA_DOWN = 3;
+    public static final int CAMERA_RIGHT = 4;
 }

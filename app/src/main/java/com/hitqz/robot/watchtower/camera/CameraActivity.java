@@ -522,7 +522,7 @@ public class CameraActivity extends BaseActivity {
     }
 
     private void cameraStop() {
-        skyNet.setCameraPlatformDirection(Constants.PLATE_STOP)
+        skyNet.setCameraPlatformDirection(Constants.CAMERA_STOP)
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
