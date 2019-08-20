@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.sonicers.commonlib.component.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
@@ -23,6 +22,7 @@ import com.hitqz.robot.watchtower.bean.TimeRange;
 import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
+import com.sonicers.commonlib.component.BaseActivity;
 
 import java.util.ArrayList;
 
@@ -53,7 +53,6 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
     @BindView(R.id.tv_empty_video)
     TextView tvEmpty;
 
-
     VideoAdapter videoAdapter;
     HCSdk hcSdk;
     CalendarPopWindow calendarPopWindow;
@@ -77,8 +76,6 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
         ButterKnife.bind(this);
 
         donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
-        // debug
-        donghuoRecord = DonghuoRecord.getHH();
 
         dayTimeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
         commonTitleBar.setTitle(donghuoRecord.toString());
@@ -112,7 +109,6 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
             @Override
             public void run() {
                 calendarPopWindow.dismiss();
-
             }
         }, 300);
 //        ToastUtil.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
@@ -122,7 +118,6 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
         tvSelectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
 
         findFile();
-
     }
 
     private String getSelectDate(TimeStruct timeStruct) {
