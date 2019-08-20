@@ -49,7 +49,6 @@ public class HCSdk implements SurfaceHolder.Callback {
     private int m_iPort = -1; // play port
     private boolean m_bStopPlayback = false;
 
-
     public static final int STATE_IDLE = 0;
     public static final int STATE_PLAYING = 1;
     public static final int STATE_PAUSE = 2;
@@ -94,8 +93,6 @@ public class HCSdk implements SurfaceHolder.Callback {
                 needPreview = false;
             }
         }
-
-
     }
 
     // @Override
@@ -203,7 +200,6 @@ public class HCSdk implements SurfaceHolder.Callback {
                 return false;
             }
 
-
             Logger.t(TAG).i("Login success");
             return true;
         } else {
@@ -221,7 +217,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         m_iLogID = -1;
         return false;
     }
-
 
     public void setSurfaceView(@NonNull SurfaceView svView) {
         surfaceView = new WeakReference<>(svView);
@@ -242,7 +237,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         } else {
             startPreviewInternal();
         }
-
     }
 
     private boolean startPreviewInternal() {
@@ -320,7 +314,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         };
         return cbf;
     }
-
 
     public void processRealData(int iPlayViewNo, int iDataType,
                                 byte[] pDataBuffer, int iDataSize, int iStreamMode) {
@@ -403,8 +396,8 @@ public class HCSdk implements SurfaceHolder.Callback {
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                Logger.t(TAG).v("inputData failed with: " +
-                        Player.getInstance().getLastError(m_iPort));
+//                Logger.t(TAG).v("inputData failed with: " +
+//                        Player.getInstance().getLastError(m_iPort));
 //                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
 //                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
 //                        break;
@@ -422,7 +415,6 @@ public class HCSdk implements SurfaceHolder.Callback {
 //                    }
 //                }
             }
-
         }
     }
 
@@ -451,7 +443,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         } else {
             playBackInternal(fi.fileName);
         }
-
     }
 
     private void playBackInternal(String fileName) {
@@ -480,7 +471,6 @@ public class HCSdk implements SurfaceHolder.Callback {
                 m_bStopPlayback = false;
 
                 notifyPlayStart();
-
             } else {
                 Logger.t(TAG).i("NET_DVR_PlayBackByName failed, error code: " +
                         HCNetSDK.getInstance().NET_DVR_GetLastError());
@@ -537,7 +527,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         } else {
             Logger.t(TAG).i("NET_DVR_PlayBackControl_V40 seek success");
         }
-
     }
 
     public void stopPlayback() {
@@ -554,7 +543,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         m_iPlaybackID = -1;
     }
 
-
     public List<FileInfo> findFile(TimeStruct startTime, TimeStruct stopTime) {
         if (m_iLogID < 0) {
             Logger.t(TAG).e("findFile please login on a device first");
@@ -569,7 +557,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         stopPlayback();
         logout();
     }
-
 
     public boolean isEnd() {
 
@@ -684,7 +671,6 @@ public class HCSdk implements SurfaceHolder.Callback {
         }
     }
 
-
     public boolean isPlaying() {
         return playState == STATE_PLAYING;
     }
@@ -723,11 +709,9 @@ public class HCSdk implements SurfaceHolder.Callback {
         HKCameraUtil.testGetCompressCfg(m_iPlayID, 1);
     }
 
-
     public void testGetAbility() {
         HKCameraUtil.testGetAbility(m_iLogID, 1);
     }
-
 
     public void startRecord() {
         if (recording) {

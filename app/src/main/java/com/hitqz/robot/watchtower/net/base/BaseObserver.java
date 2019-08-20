@@ -20,6 +20,10 @@ public abstract class BaseObserver<M> extends DisposableObserver<BaseRespond<M>>
 
     private LoadingDialog mLoadingDialog;
 
+    public BaseObserver() {
+
+    }
+
     /**
      * @param dialog null
      */

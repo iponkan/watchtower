@@ -32,6 +32,7 @@ import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -87,8 +88,8 @@ public class CameraActivity extends BaseActivity {
 
     ISkyNet skyNet;
     boolean isMonitoring;
-    volatile boolean plateStop = false;
-    volatile boolean cameraStop = false;
+    AtomicBoolean plateStop = new AtomicBoolean(false);
+    AtomicBoolean cameraStop = new AtomicBoolean(false);
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -413,7 +414,7 @@ public class CameraActivity extends BaseActivity {
 
         skyNet.getEmergencyStopState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
@@ -429,7 +430,7 @@ public class CameraActivity extends BaseActivity {
                 });
         skyNet.getlightAndSoundState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
@@ -470,7 +471,7 @@ public class CameraActivity extends BaseActivity {
 
         @Override
         public void onRelease() {
-            cameraStop = true;
+            cameraStop.set(true);
             handler.postDelayed(CameraActivity.this::cameraStop, 200);
         }
     }
@@ -484,26 +485,27 @@ public class CameraActivity extends BaseActivity {
 
         @Override
         public void onRelease() {
-            plateStop = true;
+            plateStop.set(true);
             handler.postDelayed(CameraActivity.this::plateStop, 200);
         }
     }
 
     @SuppressLint("CheckResult")
     private void cameraTurn(int direction) {
-        cameraStop = false;
+        cameraStop.set(false);
+        ;
         Logger.t("interval").d("plateStop false");
         // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setCameraPlatformDirection(direction)
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (cameraStop) {
+                    if (cameraStop.get()) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
                 }))
                 .compose(RxSchedulers.io_main())
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).d("cameraTurn" + direction + "成功");
@@ -524,7 +526,7 @@ public class CameraActivity extends BaseActivity {
     private void cameraStop() {
         skyNet.setCameraPlatformDirection(Constants.CAMERA_STOP)
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).i("cameraStop成功");
@@ -539,19 +541,19 @@ public class CameraActivity extends BaseActivity {
 
     @SuppressLint("CheckResult")
     private void plateTurn(int direction) {
-        plateStop = false;
+        plateStop.set(false);
         Logger.t("interval").d("plateStop false");
         // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setBaseplateDirection(direction)
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (plateStop) {
+                    if (plateStop.get()) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
                 }))
                 .compose(RxSchedulers.io_main())
                 .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).d("plateTurn" + direction + "成功");
@@ -572,7 +574,7 @@ public class CameraActivity extends BaseActivity {
     private void plateStop() {
         skyNet.setBaseplateDirection(Constants.PLATE_STOP)
                 .compose(RxSchedulers.io_main())
-                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                .subscribeWith(new BaseObserver<DataBean>() {
                     @Override
                     public void onSuccess(DataBean model) {
                         Logger.t(TAG).i("plateStop成功");
