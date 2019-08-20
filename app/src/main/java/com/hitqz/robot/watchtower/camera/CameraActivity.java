@@ -281,6 +281,7 @@ public class CameraActivity extends BaseActivity {
                     @Override
                     public void onSuccess(DataBean model) {
 //                        ToastUtil.showToastShort(CameraActivity.this, "停止监控成功");
+                        DonghuoRecordManager.getInstance().addTimePoint();
                         Logger.i("停止监火成功");
                         onStopMonitor();
                     }
