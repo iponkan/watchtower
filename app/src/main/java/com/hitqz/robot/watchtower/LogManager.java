@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
+import com.hitqz.robot.watchtower.util.PathUtil;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogAdapter;
@@ -31,7 +32,7 @@ public class LogManager {
         return singleton;
     }
 
-    public void init(Context context) {
+    public void init(Context context, String appName) {
         if (init) {
             return;
         }
@@ -39,17 +40,17 @@ public class LogManager {
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
                 .methodCount(0)         // (Optional) How many method line to show. Default 2
                 .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
-                .tag("WatchTower")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .tag(appName)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
                 .build();
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
 
         FormatStrategy csvFormatStrategy = CsvFormatStrategy.newBuilder()      // (Optional) Hides internal method calls up to offset. Default 5
-                .tag("WatchTowerApp")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                .logStrategy(CommonDiskLogStrategy.getInstance())
+                .tag(appName)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .logStrategy(CommonDiskLogStrategy.getInstance(PathUtil.getLogFolderPath()))
                 .build();
         Logger.addLogAdapter(new DiskLogAdapter(csvFormatStrategy));
 
-        CrashUtil.getInstance().init(context.getApplicationContext(), "WatchTower");
+        CrashUtil.getInstance().init(context.getApplicationContext(), appName);
         init = true;
     }
 }
