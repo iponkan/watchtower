@@ -40,6 +40,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 
 @SuppressLint("CheckResult")
@@ -128,7 +130,7 @@ public class CameraActivity extends BaseActivity {
         steerCamera.setSteerListener(new CameraPlatformSteer());
         steerCar.setSteerListener(new BasePlateSteer());
         ivFar.setLongpressListener(new CameraFarListener());
-        ivFar.setLongpressListener(new CameraNearListener());
+        ivNear.setLongpressListener(new CameraNearListener());
 
         checkState();
         isMonitoring();
@@ -614,26 +616,74 @@ public class CameraActivity extends BaseActivity {
     }
 
     void cameraFar() {
-        nearStop.set(false);
-        Observable.create(emitter -> hotHCSdk.focusNear())
+        farStop.set(false);
+        Observable.create(emitter -> {
+            hotHCSdk.focusFar();
+            emitter.onComplete();
+        })
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
                     if (farStop.get()) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
-                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                    return Observable.just(1).delay(50, TimeUnit.MILLISECONDS);
                 }))
-                .compose(RxSchedulers.io_main());
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new Observer<Object>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     void cameraNear() {
         nearStop.set(false);
-        Observable.create(emitter -> hotHCSdk.focusNear())
+        Observable.create(emitter -> {
+            hotHCSdk.focusNear();
+            emitter.onComplete();
+        })
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
                     if (nearStop.get()) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
-                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                    return Observable.just(1).delay(50, TimeUnit.MILLISECONDS);
                 }))
-                .compose(RxSchedulers.io_main());
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new Observer<Object>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

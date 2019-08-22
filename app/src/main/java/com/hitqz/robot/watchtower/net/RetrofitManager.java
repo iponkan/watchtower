@@ -1,7 +1,6 @@
 package com.hitqz.robot.watchtower.net;
 
 
-import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.net.HttpCommonInterceptor;
 
 import java.util.concurrent.TimeUnit;
@@ -86,7 +85,7 @@ public class RetrofitManager {
         @Override
         public void log(String message) {
             // 使用Logger打印
-            Logger.t("OkHttp").d(message);
+//            Logger.t("OkHttp").d(message);
         }
     }
 }
