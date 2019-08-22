@@ -23,6 +23,7 @@ import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
+import com.hitqz.robot.watchtower.widget.LongPressImageView;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.component.BaseActivity;
@@ -51,9 +52,9 @@ public class CameraActivity extends BaseActivity {
     @BindView(R.id.iv_camera_plus)
     ImageView ivPlus;
     @BindView(R.id.iv_camera_far)
-    ImageView ivFar;
+    LongPressImageView ivFar;
     @BindView(R.id.iv_camera_near)
-    ImageView ivNear;
+    LongPressImageView ivNear;
     @BindView(R.id.iv_camera_start_monitor)
     ImageView ivStartMonitor;
     @BindView(R.id.sv_hot_camera)
@@ -90,6 +91,8 @@ public class CameraActivity extends BaseActivity {
     boolean isMonitoring;
     AtomicBoolean plateStop = new AtomicBoolean(false);
     AtomicBoolean cameraStop = new AtomicBoolean(false);
+    AtomicBoolean farStop = new AtomicBoolean(false);
+    AtomicBoolean nearStop = new AtomicBoolean(false);
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -104,6 +107,7 @@ public class CameraActivity extends BaseActivity {
         setContentView(R.layout.activity_camera);
 
         ButterKnife.bind(this);
+        HCSdkManager.getInstance().initAndLogin(this);
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
@@ -123,6 +127,8 @@ public class CameraActivity extends BaseActivity {
         normalHCSdk.setSurfaceView(normalSurfaceView);
         steerCamera.setSteerListener(new CameraPlatformSteer());
         steerCar.setSteerListener(new BasePlateSteer());
+        ivFar.setLongpressListener(new CameraFarListener());
+        ivFar.setLongpressListener(new CameraNearListener());
 
         checkState();
         isMonitoring();
@@ -200,16 +206,6 @@ public class CameraActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @OnClick(R.id.iv_camera_near)
-    void cameraNear() {
-        hotHCSdk.focusNear();
-    }
-
-    @OnClick(R.id.iv_camera_far)
-    void cameraFar() {
-        hotHCSdk.focusFar();
     }
 
     @OnClick(R.id.iv_camera_plus)
@@ -589,5 +585,56 @@ public class CameraActivity extends BaseActivity {
                         Logger.t(TAG).e("plateStop失败：" + msg);
                     }
                 });
+    }
+
+    private class CameraFarListener implements LongPressImageView.ILongPressListener {
+
+        @Override
+        public void onPress() {
+            cameraFar();
+        }
+
+        @Override
+        public void onRelease() {
+            farStop.set(true);
+        }
+    }
+
+    private class CameraNearListener implements LongPressImageView.ILongPressListener {
+
+        @Override
+        public void onPress() {
+            cameraNear();
+        }
+
+        @Override
+        public void onRelease() {
+            nearStop.set(true);
+        }
+    }
+
+    void cameraFar() {
+        nearStop.set(false);
+        Observable.create(emitter -> hotHCSdk.focusNear())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                    if (farStop.get()) {
+                        return Observable.error(new Throwable(Constants.POLL_END));
+                    }
+                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                }))
+                .compose(RxSchedulers.io_main());
+    }
+
+    void cameraNear() {
+        nearStop.set(false);
+        Observable.create(emitter -> hotHCSdk.focusNear())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                    if (nearStop.get()) {
+                        return Observable.error(new Throwable(Constants.POLL_END));
+                    }
+                    return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
+                }))
+                .compose(RxSchedulers.io_main());
+        ;
     }
 }

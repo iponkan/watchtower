@@ -76,7 +76,7 @@
             android:textColor="@android:color/white"
             android:textSize="20dp" />
 
-        <ImageView
+        <com.hitqz.robot.watchtower.widget.LongPressImageView
             android:id="@+id/iv_camera_far"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
             android:clickable="true"
             android:src="@drawable/camera_far_selector" />
 
-        <ImageView
+        <com.hitqz.robot.watchtower.widget.LongPressImageView
             android:id="@+id/iv_camera_near"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
