@@ -635,6 +635,5 @@ public class CameraActivity extends BaseActivity {
                     return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
                 }))
                 .compose(RxSchedulers.io_main());
-        ;
     }
 }
