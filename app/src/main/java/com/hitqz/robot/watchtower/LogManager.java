@@ -2,11 +2,15 @@ package com.hitqz.robot.watchtower;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.hitqz.robot.watchtower.util.PathUtil;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.CsvFormatStrategy;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
+import com.orhanobut.logger.LogcatLogStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
 import com.sonicers.commonlib.log.CommonDiskLogStrategy;
@@ -41,6 +45,14 @@ public class LogManager {
                 .methodCount(0)         // (Optional) How many method line to show. Default 2
                 .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
                 .tag(appName)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
+                .logStrategy(new LogcatLogStrategy() {
+                    @Override
+                    public void log(int priority, @Nullable String tag, @NonNull String message) {
+                        if (priority > 2) {
+                            super.log(priority, tag, message);
+                        }
+                    }
+                })
                 .build();
         Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy));
 

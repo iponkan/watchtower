@@ -370,7 +370,7 @@ public class CameraActivity extends BaseActivity {
     private void checkState() {
         skyNet.getRingState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
@@ -385,7 +385,7 @@ public class CameraActivity extends BaseActivity {
                 });
         skyNet.getBaseplateState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
@@ -400,7 +400,7 @@ public class CameraActivity extends BaseActivity {
                 });
         skyNet.getCameraPlatformState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
                     public void onSuccess(Boolean model) {
@@ -416,7 +416,7 @@ public class CameraActivity extends BaseActivity {
 
         skyNet.getEmergencyStopState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
@@ -432,7 +432,7 @@ public class CameraActivity extends BaseActivity {
                 });
         skyNet.getlightAndSoundState()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.SECONDS)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
                     @Override
@@ -448,7 +448,7 @@ public class CameraActivity extends BaseActivity {
                 });
         skyNet.getBaseplateElectric()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Integer>(loadingDialog) {
                     @Override

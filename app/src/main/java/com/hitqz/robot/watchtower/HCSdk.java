@@ -254,7 +254,12 @@ public class HCSdk implements SurfaceHolder.Callback {
 
         NET_DVR_PREVIEWINFO previewInfo = new NET_DVR_PREVIEWINFO();
         previewInfo.lChannel = m_iStartChan;
-        previewInfo.dwStreamType = 0; // substream
+        if (TAG.contains("normal")) {
+            previewInfo.dwStreamType = 2; // substream
+        } else {
+            previewInfo.dwStreamType = 1; // substream
+        }
+
         previewInfo.bBlocked = 1;
 
         m_iPlayID = HCNetSDK.getInstance().NET_DVR_RealPlay_V40(m_iLogID, previewInfo, fRealDataCallBack);
