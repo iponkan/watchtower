@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
-import com.hitqz.robot.watchtower.bean.TimeStruct;
 
 import java.util.List;
 
@@ -42,9 +41,8 @@ public class DonghuoRecordAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(mContext).inflate(R.layout.item_list_video, parent, false);
         TextView tv = convertView.findViewById(R.id.tv_fileName);
-        TimeStruct timeStruct = mData.get(position).struStartTime;
 
-        tv.setText("动火记录 " + (position + 1) + ". " + timeStruct);
+        tv.setText("动火记录: " + mData.get(position).toString());
         return convertView;
     }
 }

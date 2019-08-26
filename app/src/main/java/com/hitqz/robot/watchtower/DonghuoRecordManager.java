@@ -18,7 +18,7 @@ public class DonghuoRecordManager {
     public static final String TAG = "DonghuoRecordManager";
 
     private DonghuoRecordManager() {
-        clearRecods();
+
     }
 
     private static DonghuoRecordManager singleton;

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,12 +24,12 @@ import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.rx.RxSchedulers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -47,6 +46,8 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
     @BindView(R.id.tv_select_date)
     TextView tvSelectDate;
     HCSdk hcSdk;
+    List<DonghuoRecord> donghuoRecords = new ArrayList<>();
+    List<DonghuoRecord> showList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,6 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
         hcSdk = HCSdkManager.getNormalHCSdk(this);
         initDonghuaRecords();
         searchView.setOnClickListener(this);
-        tvSelectDate.setText(getSelectDate(donghuoRecord.struStartTime));
     }
 
     private String getSelectDate(TimeStruct timeStruct) {
@@ -69,51 +69,46 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
         if (v == searchView) {
             if (calendarPopWindow == null) {
                 calendarPopWindow = new CalendarPopWindow(GalleryActivity.this, GalleryActivity.this);
-                calendarPopWindow.setRange(donghuoRecord.struStartTime.toMillSeconds(), donghuoRecord.struStopTime.toMillSeconds());
+                if (!donghuoRecords.isEmpty()) {
+                    long start = donghuoRecords.get(0).struStartTime.toMillSeconds();
+                    long stop = donghuoRecords.get(donghuoRecords.size() - 1).struStartTime.toMillSeconds();
+                    calendarPopWindow.setRange(start, stop);
+                }
             }
-            calendarPopWindow.showPopupWindow(searchView, dayTimeRange.struStartTime.toMillSeconds());
+            calendarPopWindow.showPopupWindow(searchView, timeRange.struStartTime.toMillSeconds());
         }
     }
 
     private void initDonghuaRecords() {
-        Observable.create(new ObservableOnSubscribe<Integer>() {
-            @Override
-            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
-                ArrayList<FileInfo> fileInfos = (ArrayList<FileInfo>) hcSdk.findFile(TimeStruct.farPast(), TimeStruct.today());
-                if (fileInfos != null && fileInfos.size() > 0) {
-                    FileInfo fileInfo = fileInfos.get(0);
-                    long time = fileInfo.startTime.toMillSeconds();// SD卡存储的视频最早时间
+        Observable.create((ObservableOnSubscribe<List<DonghuoRecord>>) emitter -> {
+            ArrayList<FileInfo> fileInfos = (ArrayList<FileInfo>) hcSdk.findFile(TimeStruct.farPast(), TimeStruct.today());
+            if (fileInfos != null && fileInfos.size() > 0) {
+                FileInfo fileInfo = fileInfos.get(0);
+                long time = fileInfo.startTime.toMillSeconds();// SD卡存储的视频最早时间
 //                    DonghuoRecordManager.getInstance().removeTimePointBefore(time);
-                    List<DonghuoRecord> donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
-                    if (donghuoRecords == null || donghuoRecords.size() == 0) {
-                        tvEmpty.setVisibility(View.VISIBLE);
-                    } else {
-                        tvEmpty.setVisibility(View.GONE);
-                    }
-                    DonghuoRecordAdapter donghuoRecordAdapter = new DonghuoRecordAdapter(donghuoRecords, GalleryActivity.this);
-                    listView.setAdapter(donghuoRecordAdapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            VideoListActivity.go2VideoList(GalleryActivity.this, donghuoRecords.get(position));
-                        }
-                    });
-                }
+                donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
+                emitter.onNext(donghuoRecords);
             }
-        }).compose(RxSchedulers.io_main()).subscribe(new Observer<Integer>() { // 第三步：订阅
-
-            // 第二步：初始化Observer
-            private int i;
-            private Disposable mDisposable;
+        }).compose(RxSchedulers.io_main()).subscribe(new Observer<List<DonghuoRecord>>() {
 
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-                mDisposable = d;
+
             }
 
             @Override
-            public void onNext(@NonNull Integer integer) {
+            public void onNext(List<DonghuoRecord> donghuoRecords) {
+                if (donghuoRecords == null || donghuoRecords.size() == 0) {
+                    showEmpty("暂时还没有动火记录哦");
+                    tvSelectDate.setText(getSelectDate(TimeStruct.today()));
+                } else {
+                    tvEmpty.setVisibility(View.GONE);
+                    DonghuoRecord newest = donghuoRecords.get(donghuoRecords.size() - 1);
 
+                    timeRange = TimeRange.getDayTimeRange(newest.struStartTime.dwYear, newest.struStartTime.dwMonth, newest.struStartTime.dwDay, 0, 0, 0);
+                    filterDonghuoRecord();
+                    tvSelectDate.setText(getSelectDate(newest.struStartTime));
+                }
             }
 
             @Override
@@ -130,35 +125,49 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
 
     CalendarPopWindow calendarPopWindow;
 
-    DonghuoRecord donghuoRecord;
     Handler handler = new Handler();
-    TimeRange dayTimeRange;
+
+    TimeRange timeRange = new TimeRange();
 
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                calendarPopWindow.dismiss();
-            }
-        }, 300);
+        handler.postDelayed(() -> calendarPopWindow.dismiss(), 300);
 //        ToastUtil.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
 
-        dayTimeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
+        timeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
 
         tvSelectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
 
-        findFile();
+        filterDonghuoRecord();
     }
 
-    private void findFile() {
-
+    private void filterDonghuoRecord() {
+        showList.clear();
+        for (int i = 0; i < donghuoRecords.size(); i++) {
+            DonghuoRecord donghuoRecord = donghuoRecords.get(i);
+            if (donghuoRecord.struStartTime.toMillSeconds() >= timeRange.struStartTime.toMillSeconds()
+                    && donghuoRecord.struStartTime.toMillSeconds() < timeRange.struStopTime.toMillSeconds()) {
+                showList.add(donghuoRecord);
+            }
+            Collections.reverse(showList);
+        }
+        if (showList.isEmpty()) {
+            showEmpty("该日期下没有动火记录哦");
+        }
+        DonghuoRecordAdapter donghuoRecordAdapter = new DonghuoRecordAdapter(showList, GalleryActivity.this);
+        listView.setAdapter(donghuoRecordAdapter);
+        listView.setOnItemClickListener((parent, view, position, id) -> VideoListActivity.go2VideoList(GalleryActivity.this, showList.get(position)));
     }
 
     public static void go2Gallery(Activity activity) {
         Intent intent = new Intent(activity, GalleryActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
+    }
+
+    private void showEmpty(String msg) {
+        tvEmpty.setText(msg);
+        tvEmpty.setVisibility(View.VISIBLE);
     }
 }

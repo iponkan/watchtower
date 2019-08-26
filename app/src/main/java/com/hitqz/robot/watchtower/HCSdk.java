@@ -539,6 +539,7 @@ public class HCSdk implements SurfaceHolder.Callback {
 
     public void stopPlayback() {
         m_bStopPlayback = true;
+        dataTime = Long.MAX_VALUE;
         if (!HCNetSDK.getInstance().NET_DVR_StopPlayBack(m_iPlaybackID)) {
             Logger.t(TAG).e("net sdk stop playback failed! error code:" + HCNetSDK.getInstance().NET_DVR_GetLastError());
         } // player stop play
