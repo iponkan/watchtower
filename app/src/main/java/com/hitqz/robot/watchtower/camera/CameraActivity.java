@@ -156,7 +156,7 @@ public class CameraActivity extends BaseActivity {
             view.setLayoutParams(layoutParams);
         }
 
-        float centerWidth = getResources().getDimension(R.dimen.fr_center_width);
+        float centerWidth = getResources().getDimension(R.dimen.center_width);
         productionManager = new ProductionManager(width, height, centerWidth);
 
         productionView.setParentSize(width, height);
@@ -594,11 +594,13 @@ public class CameraActivity extends BaseActivity {
         @Override
         public void onPress() {
             cameraFar();
+            productionView.drawText(true);
         }
 
         @Override
         public void onRelease() {
             farStop.set(true);
+            productionView.drawText(false);
         }
     }
 
@@ -607,11 +609,13 @@ public class CameraActivity extends BaseActivity {
         @Override
         public void onPress() {
             cameraNear();
+            productionView.drawText(true);
         }
 
         @Override
         public void onRelease() {
             nearStop.set(true);
+            productionView.drawText(false);
         }
     }
 

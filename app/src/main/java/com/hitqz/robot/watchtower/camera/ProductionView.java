@@ -23,7 +23,6 @@ import com.hitqz.robot.watchtower.R;
 
 import java.util.ArrayList;
 
-
 public class ProductionView extends View {
 
     public static final String TAG = ProductionView.class.getSimpleName();
@@ -35,6 +34,7 @@ public class ProductionView extends View {
     private NormalizedRect mBorderRect;
     private ArrayList<RectF> mCenterRectFs = new ArrayList<>();
     private Paint mPaint;
+    private Paint mTextPaint;
     private Paint mCenterPaint;
     private float mCenterWidth;
     private GestureDetector mGestureDetector;
@@ -58,12 +58,22 @@ public class ProductionView extends View {
         init(context);
     }
 
+    boolean drawText = false;
+
+    public void drawText(boolean drawText) {
+        this.drawText = drawText;
+        invalidate();
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBorderRect.mRatio < 1.0f) {
             canvas.drawRect(mBorderRect.mRectF, mPaint);
+        }
+
+        if (drawText) {
+            canvas.drawText("聚焦中", getWidth() / 2f - 50, getHeight() / 2f + 20, mTextPaint);
         }
 //        for (int i = 0; i < mCenterRectFs.size(); i++) {
 //            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
@@ -89,17 +99,23 @@ public class ProductionView extends View {
 
     private void init(Context context) {
         mPaint = new Paint();
+        mTextPaint = new Paint();
         mCenterPaint = new Paint();
         Resources resources = context.getResources();
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(resources.getDimension(R.dimen.fr_director_production_lw));
+        mPaint.setStrokeWidth(resources.getDimension(R.dimen.production_lw));
+        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setStrokeWidth(resources.getDimension(R.dimen.center_lw));
+        mTextPaint.setTextSize(50);
+        mTextPaint.setAntiAlias(true);
         mCenterPaint.setColor(resources.getColor(R.color.fr_storage_photo));
         mCenterPaint.setStyle(Paint.Style.STROKE);
-        mCenterPaint.setStrokeWidth(resources.getDimension(R.dimen.fr_director_center_lw));
+        mCenterPaint.setStrokeWidth(resources.getDimension(R.dimen.center_lw));
         mCenterPaint.setAntiAlias(true);
-        mCenterWidth = getResources().getDimension(R.dimen.fr_center_width);
-        mCenterRoundRadius = getResources().getDimension(R.dimen.fr_director_center_radius);
+        mCenterWidth = getResources().getDimension(R.dimen.center_width);
+        mCenterRoundRadius = getResources().getDimension(R.dimen.center_radius);
 
         mGestureDetector = new GestureDetector(context,
                 new GestureDetector.SimpleOnGestureListener() {
@@ -147,7 +163,6 @@ public class ProductionView extends View {
                                 }
                             }
                         }
-
                     }
 
                     @Override
@@ -160,8 +175,6 @@ public class ProductionView extends View {
 
                         return true;
                     }
-
-
                 });
 
         mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
@@ -209,7 +222,6 @@ public class ProductionView extends View {
         float centerX = rectF.centerX();
         float centerY = rectF.centerY();
 
-
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -245,7 +257,6 @@ public class ProductionView extends View {
         }
         invalidate();
     }
-
 
     private RectF createCenterRect(Production production) {
         float left = production.mRawX - mCenterWidth / 2;
@@ -326,7 +337,6 @@ public class ProductionView extends View {
                 mScreenHeight - mScreenHeight * production.mY, production.mRatio);
     }
 
-
     private void changeDrawRect(float centerX, float centerY, float scale) {
 
         float width = mScreenWidth * scale;
@@ -344,9 +354,7 @@ public class ProductionView extends View {
 
         mBorderRect.set(left, top, right, bottom, scale);
         invalidate();
-
     }
-
 
     public void moveDrawRect(float centerX, float centerY) {
 
