@@ -4,22 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 import com.hitqz.robot.watchtower.bean.FileInfo;
-import com.hitqz.robot.watchtower.bean.TimeRange;
-import com.hitqz.robot.watchtower.bean.TimeStruct;
 import com.hitqz.robot.watchtower.player.PlayerActivity;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 import com.sonicers.commonlib.component.BaseActivity;
@@ -37,8 +31,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint("CheckResult")
-public class VideoListActivity extends BaseActivity implements CalendarView.OnDateChangeListener
-        , AdapterView.OnItemClickListener, View.OnClickListener {
+public class VideoListActivity extends BaseActivity
+        implements AdapterView.OnItemClickListener {
 
     public static final String EXTRA_NAME = "EXTRA_NAME";
 
@@ -46,28 +40,19 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
     CommonTitleBar commonTitleBar;
     @BindView(R.id.lv_videolist)
     ListView listView;
-    @BindView(R.id.rl_select_date)
-    View searchView;
-    @BindView(R.id.tv_select_date)
-    TextView tvSelectDate;
     @BindView(R.id.tv_empty_video)
     TextView tvEmpty;
 
     VideoAdapter videoAdapter;
     HCSdk hcSdk;
-    CalendarPopWindow calendarPopWindow;
-
-    ArrayList<FileInfo> videoList;
-
-    DonghuoRecord donghuoRecord;
-    Handler handler = new Handler();
-    TimeRange dayTimeRange;
 
     public static void go2VideoList(Activity activity, DonghuoRecord donghuoRecord) {
         Intent intent = new Intent(activity, VideoListActivity.class);
         intent.putExtra(EXTRA_NAME, donghuoRecord);
         activity.startActivity(intent);
     }
+
+    DonghuoRecord donghuoRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,24 +62,10 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
 
         donghuoRecord = getIntent().getParcelableExtra(EXTRA_NAME);
 
-        dayTimeRange = TimeRange.getDayTimeRange(donghuoRecord.struStartTime);
-        commonTitleBar.setTitle(donghuoRecord.toString());
+        commonTitleBar.setTitle("动火记录:" + donghuoRecord.toString());
         listView.setOnItemClickListener(this);
         hcSdk = HCSdkManager.getNormalHCSdk(this);
         findFile();
-        searchView.setOnClickListener(this);
-        tvSelectDate.setText(getSelectDate(donghuoRecord.struStartTime));
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == searchView) {
-            if (calendarPopWindow == null) {
-                calendarPopWindow = new CalendarPopWindow(VideoListActivity.this, VideoListActivity.this);
-                calendarPopWindow.setRange(donghuoRecord.struStartTime.toMillSeconds(), donghuoRecord.struStopTime.toMillSeconds());
-            }
-            calendarPopWindow.showPopupWindow(searchView, dayTimeRange.struStartTime.toMillSeconds());
-        }
     }
 
     @Override
@@ -102,33 +73,13 @@ public class VideoListActivity extends BaseActivity implements CalendarView.OnDa
         PlayerActivity.go2Player(VideoListActivity.this, videoList.get(position));
     }
 
-    @Override
-    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                calendarPopWindow.dismiss();
-            }
-        }, 300);
-//        ToastUtil.showToastShort(this, "" + year + " " + (month + 1) + " " + dayOfMonth);
-
-        dayTimeRange = TimeRange.getDayTimeRange(year, month + 1, dayOfMonth, 0, 0, 0);
-
-        tvSelectDate.setText(year + "." + (month + 1) + "." + dayOfMonth);
-
-        findFile();
-    }
-
-    private String getSelectDate(TimeStruct timeStruct) {
-        return timeStruct.dwYear + "." + timeStruct.dwMonth + "." + timeStruct.dwDay;
-    }
+    ArrayList<FileInfo> videoList;
 
     private void findFile() {
         Observable.create(new ObservableOnSubscribe<ArrayList<FileInfo>>() {
             @Override
             public void subscribe(ObservableEmitter<ArrayList<FileInfo>> emitter) throws Exception {
-                videoList = (ArrayList<FileInfo>) hcSdk.findFile(dayTimeRange.struStartTime, dayTimeRange.struStopTime);
+                videoList = (ArrayList<FileInfo>) hcSdk.findFile(donghuoRecord.struStartTime, donghuoRecord.struStopTime);
                 emitter.onNext(videoList);
             }
         }).subscribeOn(Schedulers.io())

@@ -253,7 +253,7 @@ public class CameraActivity extends BaseActivity {
                         onStartMonitor();
                         Logger.i("开始监火成功");
                         // 添加动火记录点
-                        DonghuoRecordManager.getInstance().addTimePoint();
+                        DonghuoRecordManager.getInstance().addDonghuoRecord();
                         // 高清摄像头开始录像
 //                        if (!normalHCSdk.recording) {
 //                            normalHCSdk.startRecord();
@@ -279,7 +279,7 @@ public class CameraActivity extends BaseActivity {
                     @Override
                     public void onSuccess(DataBean model) {
 //                        ToastUtil.showToastShort(CameraActivity.this, "停止监控成功");
-                        DonghuoRecordManager.getInstance().addTimePoint();
+                        DonghuoRecordManager.getInstance().updateDonghuoRecord();
                         Logger.i("停止监火成功");
                         onStopMonitor();
                     }

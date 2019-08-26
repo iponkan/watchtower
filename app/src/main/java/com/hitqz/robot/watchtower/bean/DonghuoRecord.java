@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -25,10 +26,13 @@ public class DonghuoRecord implements Parcelable {
      * 动火操作开始时间
      */
     public TimeStruct struStartTime = new TimeStruct();
+    public long start;
     /**
      * 动火操作结束时间
      */
     public TimeStruct struStopTime = new TimeStruct();
+    public long stop;
+
     public String name;
 
     public DonghuoRecord() {
@@ -40,33 +44,10 @@ public class DonghuoRecord implements Parcelable {
         this.name = in.readString();
     }
 
-    public static DonghuoRecord getHH() {
-        DonghuoRecord donghuoRecord = new DonghuoRecord();
-        TimeStruct start = new TimeStruct();
-        start.dwYear = 2019;
-        start.dwMonth = 7;
-        start.dwDay = 2;
-        start.dwHour = 0;
-        start.dwMinute = 0;
-        start.dwSecond = 0;
-
-        TimeStruct stop = new TimeStruct();
-        stop.dwYear = 2019;
-        stop.dwMonth = 8;
-        stop.dwDay = 3;
-        stop.dwHour = 0;
-        stop.dwMinute = 0;
-        stop.dwSecond = 0;
-
-        donghuoRecord.struStartTime = start;
-        donghuoRecord.struStopTime = stop;
-        return donghuoRecord;
-    }
-
     @NonNull
     @Override
     public String toString() {
-        return "动火记录:" + struStartTime.toString() + "～" + struStopTime.toString();
+        return struStartTime.toString() + "～" + struStopTime.toString();
     }
 
     @Override
@@ -81,5 +62,28 @@ public class DonghuoRecord implements Parcelable {
         dest.writeString(this.name);
     }
 
+    public String toXml() {
+        if (stop == 0) {
+            return start + "～" + TimeStruct.farFeature().toMillSeconds();
+        } else {
+            return start + "～" + TimeStruct.farFeature().toMillSeconds();
+        }
+    }
 
+    public static DonghuoRecord fromXml(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        }
+        String[] strings = str.split("～");
+        DonghuoRecord donghuoRecord = new DonghuoRecord();
+        donghuoRecord.start = Long.parseLong(strings[0]);
+        donghuoRecord.stop = Long.parseLong(strings[1]);
+        donghuoRecord.struStartTime = TimeStruct.fromMillSeconds(donghuoRecord.start);
+        donghuoRecord.struStopTime = TimeStruct.fromMillSeconds(donghuoRecord.stop);
+        return donghuoRecord;
+    }
+
+    public static String newDonghuoRecordXml() {
+        return System.currentTimeMillis() + "～" + TimeStruct.farFeature().toMillSeconds();
+    }
 }

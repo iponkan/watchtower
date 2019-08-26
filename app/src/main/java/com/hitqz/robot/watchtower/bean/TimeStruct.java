@@ -21,7 +21,6 @@ public class TimeStruct implements Parcelable {
     public int dwMinute;
     public int dwSecond;
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -105,7 +104,6 @@ public class TimeStruct implements Parcelable {
 
     public static final String TAG = "TimeStruct";
 
-
     public static int getDurationSeconds(@NonNull TimeStruct startTime, @NonNull TimeStruct stopTime) {
         SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd HH:mm:ss", Locale.CHINA);
         try {
@@ -120,7 +118,6 @@ public class TimeStruct implements Parcelable {
             int stopSeconds = (int) (stopDate.getTime() / 1000);
 //            Log.i(TAG, "startSeconds=============" + startSeconds);
 //            Log.i(TAG, "stopSeconds=============" + stopSeconds);
-
 
             return stopSeconds - startSeconds;
         } catch (ParseException e) {
@@ -151,6 +148,28 @@ public class TimeStruct implements Parcelable {
         struct.dwHour = calendar.get(Calendar.HOUR_OF_DAY);
         struct.dwMinute = calendar.get(Calendar.MINUTE);
         struct.dwSecond = calendar.get(Calendar.SECOND);
+        return struct;
+    }
+
+    public static TimeStruct farPast() {
+        TimeStruct struct = new TimeStruct();
+        struct.dwYear = 2019;
+        struct.dwMonth = 1;
+        struct.dwDay = 1;
+        struct.dwHour = 0;
+        struct.dwMinute = 0;
+        struct.dwSecond = 0;
+        return struct;
+    }
+
+    public static TimeStruct today() {
+        TimeStruct struct = new TimeStruct();
+        struct.dwYear = Calendar.getInstance().get(Calendar.YEAR);
+        struct.dwMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        struct.dwDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        struct.dwHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        struct.dwMinute = Calendar.getInstance().get(Calendar.MINUTE);
+        struct.dwSecond = Calendar.getInstance().get(Calendar.SECOND);
         return struct;
     }
 
