@@ -44,7 +44,7 @@ public class DonghuoRecordAdapter extends BaseAdapter {
         TextView tv = convertView.findViewById(R.id.tv_fileName);
         TimeStruct timeStruct = mData.get(position).struStartTime;
 
-        tv.setText(" " + (position + 1) + ". " + timeStruct);
+        tv.setText("动火记录 " + (position + 1) + ". " + timeStruct);
         return convertView;
     }
 }

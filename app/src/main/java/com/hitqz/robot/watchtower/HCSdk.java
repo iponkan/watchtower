@@ -38,7 +38,6 @@ public class HCSdk implements SurfaceHolder.Callback {
     boolean init = false;
     private LoginInfo loginInfo;
 
-    private int preFrameNumber = -100;
     private int m_iLogID = -1; // return by NET_DVR_Login_v30
 
     private NET_DVR_DEVICEINFO_V30 m_oNetDvrDeviceInfoV30;
@@ -306,7 +305,6 @@ public class HCSdk implements SurfaceHolder.Callback {
             return;
         }
 
-        preFrameNumber = -100;
         m_iPort = -1;
     }
 
@@ -401,8 +399,11 @@ public class HCSdk implements SurfaceHolder.Callback {
             }
         } else {
             if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                Logger.t(TAG).e("inputData failed with: " +
-                        Player.getInstance().getLastError(m_iPort));
+                if (isPreviewing()) {
+                    Logger.t(TAG).e("inputData failed with: " +
+                            Player.getInstance().getLastError(m_iPort));
+                }
+
 //                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
 //                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
 //                        break;
@@ -423,10 +424,13 @@ public class HCSdk implements SurfaceHolder.Callback {
         }
     }
 
+    long dataTime = Long.MAX_VALUE;
+
     private PlaybackCallBack getPlayerbackPlayerCbf() {
         PlaybackCallBack cbf = new PlaybackCallBack() {
             @Override
             public void fPlayDataCallBack(int iPlaybackHandle, int iDataType, byte[] pDataBuffer, int iDataSize) {
+                dataTime = System.currentTimeMillis();
                 // player channel 1
                 processRealData(1, iDataType, pDataBuffer, iDataSize, Player.STREAM_FILE);
             }
@@ -516,7 +520,6 @@ public class HCSdk implements SurfaceHolder.Callback {
     public void playbackSeekTo(float percent) {
 
         seeking = true;
-        preFrameNumber = -100;
 
         // 需要把缓冲流清掉，不然播放器在这个时候会继续播放缓冲内容
         Player.getInstance().resetSourceBuffer(m_iPort);
@@ -565,23 +568,11 @@ public class HCSdk implements SurfaceHolder.Callback {
 
     public boolean isEnd() {
 
-//        int total = Player.getInstance().getFileTotalFrames(m_iPort);
-//        Log.i(TAG, "Player getFileTotalFrames====" + total);
-
-        int current = Player.getInstance().getCurrentFrameNum(m_iPort);
-
-//        Logger.t(TAG).i(TAG, "Player getCurrentFrameNum====" + current);
-//        Logger.t(TAG).i(TAG, "Player preFrameNumber====" + preFrameNumber);
-//
-//        Logger.t(TAG).i(TAG, "Player Frame isEnd====" + (current == preFrameNumber));
-
-        boolean result = current == preFrameNumber;
-
-        if (current > 0) {
-            preFrameNumber = current;
+        if (!seeking && System.currentTimeMillis() - dataTime > 5000) {
+            return true;
+        } else {
+            return false;
         }
-
-        return result;
     }
 
     public int getPlayBackTime() {
