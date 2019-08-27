@@ -95,6 +95,8 @@ public class CameraActivity extends BaseActivity {
     AtomicBoolean cameraStop = new AtomicBoolean(false);
     AtomicBoolean farStop = new AtomicBoolean(false);
     AtomicBoolean nearStop = new AtomicBoolean(false);
+    @BindView(R.id.tv_lightSound_electric)
+    TextView tvLightSoundElectric;
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -456,6 +458,22 @@ public class CameraActivity extends BaseActivity {
                     @Override
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getBaseplateElectric fail：" + msg);
+                    }
+                });
+        skyNet.getLightSoundElectric()
+                .compose(RxSchedulers.io_main())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
+                .compose(bindToLifecycle())
+                .subscribeWith(new BaseObserver<Integer>(loadingDialog) {
+                    @Override
+                    public void onSuccess(Integer model) {
+                        Logger.t(TAG).i("getLightSoundElectric success:" + model);
+                        tvLightSoundElectric.setText(String.valueOf(model));
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getLightSoundElectric fail：" + msg);
                     }
                 });
     }

@@ -109,6 +109,14 @@ public interface ISkyNet {
     Observable<BaseRespond<Integer>> getBaseplateElectric();
 
     /**
+     * 云台电量
+     *
+     * @return 0~100
+     */
+    @GET("/lightSound/electric")
+    Observable<BaseRespond<Integer>> getLightSoundElectric();
+
+    /**
      * 1.1.14.	设置底盘方向
      * 0：停止
      * 1：前进
