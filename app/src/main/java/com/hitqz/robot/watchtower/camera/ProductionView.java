@@ -73,7 +73,7 @@ public class ProductionView extends View {
         }
 
         if (drawText) {
-            canvas.drawText("聚焦中", getWidth() / 2f - 50, getHeight() / 2f + 20, mTextPaint);
+            canvas.drawText("聚焦中", getWidth() / 2f - 60, getHeight() / 2f + 20, mTextPaint);
         }
 //        for (int i = 0; i < mCenterRectFs.size(); i++) {
 //            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
@@ -108,7 +108,7 @@ public class ProductionView extends View {
         mTextPaint.setColor(Color.WHITE);
         mTextPaint.setStyle(Paint.Style.FILL);
         mTextPaint.setStrokeWidth(resources.getDimension(R.dimen.center_lw));
-        mTextPaint.setTextSize(50);
+        mTextPaint.setTextSize(30);
         mTextPaint.setAntiAlias(true);
         mCenterPaint.setColor(resources.getColor(R.color.fr_storage_photo));
         mCenterPaint.setStyle(Paint.Style.STROKE);
