@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.SizeUtils;
 import com.hitqz.robot.watchtower.DonghuoRecordManager;
@@ -22,18 +24,15 @@ import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
-import com.hitqz.robot.watchtower.net.bean.MockBean;
 import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
 import com.hitqz.robot.watchtower.net.bean.RegionTemperatureList;
 import com.hitqz.robot.watchtower.net.bean.TemperatureList;
-import com.hitqz.robot.watchtower.util.AssetUtil;
 import com.hitqz.robot.watchtower.widget.LongPressImageView;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
-import com.sonicers.commonlib.singleton.GsonUtil;
 import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
@@ -102,6 +101,8 @@ public class CameraActivity extends BaseActivity {
     AtomicBoolean nearStop = new AtomicBoolean(false);
     @BindView(R.id.tv_lightSound_electric)
     TextView tvLightSoundElectric;
+    @BindView(R.id.lv_temperature)
+    ListView lvTemperature;
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
@@ -139,9 +140,12 @@ public class CameraActivity extends BaseActivity {
         ivFar.setLongpressListener(new CameraFarListener());
         ivNear.setLongpressListener(new CameraNearListener());
 
-//        checkState();
-//        isMonitoring();
-        refreshTemperature();
+        checkState();
+        isMonitoring();
+//        String json = AssetUtil.loadJSONFromAsset(CameraActivity.this, "mockdata.json");
+//        MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
+//        RegionTemperatureList model = mockBean.getData();
+//        showModel(model);
     }
 
     private void resetHotCameraView(View... views) {
@@ -356,6 +360,7 @@ public class CameraActivity extends BaseActivity {
     }
 
     private void onStartMonitor() {
+        refreshTemperature();
         productionView.antiTouch(true);
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
         isMonitoring = true;
@@ -366,6 +371,7 @@ public class CameraActivity extends BaseActivity {
     }
 
     private void onStopMonitor() {
+        lvTemperature.setVisibility(View.GONE);
         productionView.antiTouch(false);
         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
         isMonitoring = false;
@@ -515,7 +521,6 @@ public class CameraActivity extends BaseActivity {
     @SuppressLint("CheckResult")
     private void cameraTurn(int direction) {
         cameraStop.set(false);
-        ;
         Logger.t("interval").d("plateStop false");
         // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setCameraPlatformDirection(direction)
@@ -716,26 +721,33 @@ public class CameraActivity extends BaseActivity {
     private void refreshTemperature() {
         skyNet.regionTemperature()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<RegionTemperatureList>() {
                     @Override
                     public void onSuccess(RegionTemperatureList model) {
+                        showModel(model);
                         Logger.t(TAG).i("regionTemperature success:" + model);
                     }
 
                     @Override
                     public void onFailure(String msg) {
-                        String json = AssetUtil.loadJSONFromAsset(CameraActivity.this, "mockdata.json");
-                        MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
-                        RegionTemperatureList model = mockBean.getData();
-                        if (model != null) {
-                            temperatureList = TemperatureList.fromRegionTemperatureList(model);
-                            productionView.showTemperature(temperatureList);
-                        }
-
                         Logger.t(TAG).e("regionTemperature fail：" + msg);
                     }
                 });
+    }
+
+    private void showModel(RegionTemperatureList model) {
+        boolean b = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
+        if (!b) {
+            return;
+        }
+        if (model != null) {
+            lvTemperature.setVisibility(View.VISIBLE);
+            temperatureList = TemperatureList.fromRegionTemperatureList(model);
+            productionView.showTemperature(temperatureList);
+            TemperatureAdapter temperatureAdapter = new TemperatureAdapter(temperatureList.toList(), CameraActivity.this);
+            lvTemperature.setAdapter(temperatureAdapter);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.hitqz.robot.watchtower.constant;
 public class Constants {
     public static final String SP_FILE_NAME = "jianhuo";
     public static final String ROCORD_KEY = "record";
+    public static final String SHOWTEMPERATURE = "show_temperature";
 
     /*0：停止
      *1：前进

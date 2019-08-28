@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.util.PathUtil;
-import com.sonicers.commonlib.R;
 import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.rx.RxSchedulers;
 import com.sonicers.commonlib.util.UploadUtil;
@@ -19,32 +20,30 @@ import com.sonicers.commonlib.util.ZipUtils;
 
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
-public class DebugActivity extends BaseActivity implements View.OnClickListener {
+public class DebugActivity extends BaseActivity {
 
     public static final String TAG = "DebugActivity";
-
-    private Button mBtnUpload;
+    @BindView(R.id.btn_upload)
+    Button btnUpload;
+    @BindView(R.id.show_temperature)
+    Button showTemperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
-        mBtnUpload = findViewById(R.id.btn_upload);
-        mBtnUpload.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (mBtnUpload == v) {
-            String folser = PathUtil.getLogFolderPath();
-            upload(folser);
-        }
+        ButterKnife.bind(this);
+        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
+        showTemperature.setText(now ? "不显示温度" : "显示温度");
     }
 
     public static final String URL = "http://47.92.118.121:4000/files/uploads?folder=WatchTower";
@@ -95,5 +94,18 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
         Intent intent = new Intent(activity, DebugActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
+    }
+
+    @OnClick(R.id.btn_upload)
+    public void onBtnUploadClicked() {
+        String folser = PathUtil.getLogFolderPath();
+        upload(folser);
+    }
+
+    @OnClick(R.id.show_temperature)
+    public void onShowTemperatureClicked() {
+        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
+        SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.SHOWTEMPERATURE, !now);
+        showTemperature.setText(!now ? "不显示温度" : "显示温度");
     }
 }

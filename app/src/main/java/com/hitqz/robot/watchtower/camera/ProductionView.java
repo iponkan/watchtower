@@ -76,6 +76,13 @@ public class ProductionView extends View {
         if (drawText) {
             canvas.drawText("聚焦中", getWidth() / 2f - 60, getHeight() / 2f + 20, mTextPaint);
         }
+
+        if(drawExtra){
+            if (mBorderRect.mRatio < 1.0f) {
+//                canvas.drawLine(0, );
+            }
+
+        }
 //        for (int i = 0; i < mCenterRectFs.size(); i++) {
 //            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
 //        }
@@ -400,7 +407,10 @@ public class ProductionView extends View {
         invalidate();
     }
 
+    boolean drawExtra;
+
     public void showTemperature(TemperatureList temperatureList) {
+        drawExtra = true;
         invalidate();
     }
 }

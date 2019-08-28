@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower.net.bean;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TemperatureList {
@@ -86,5 +87,37 @@ public class TemperatureList {
             sum = sum + list.get(i).maxTemperature;
         }
         return sum / list.size();
+    }
+
+    public List<Float> toList() {
+        List<Float> list = new ArrayList<>();
+        if (_$1 != 0) {
+            list.add(_$1);
+        }
+        if (_$2 != 0) {
+            list.add(_$1);
+        }
+        if (_$3 != 0) {
+            list.add(_$1);
+        }
+        if (_$4 != 0) {
+            list.add(_$1);
+        }
+        if (_$5 != 0) {
+            list.add(_$1);
+        }
+        if (_$6 != 0) {
+            list.add(_$1);
+        }
+        if (_$7 != 0) {
+            list.add(_$1);
+        }
+        if (_$8 != 0) {
+            list.add(_$1);
+        }
+        if (_$9 != 0) {
+            list.add(_$1);
+        }
+        return list;
     }
 }
