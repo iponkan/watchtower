@@ -61,6 +61,7 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
         }
         initDonghuaRecords();
         searchView.setOnClickListener(this);
+        tvSelectDate.setText(getSelectDate(TimeStruct.today()));
     }
 
     private String getSelectDate(TimeStruct timeStruct) {
@@ -92,18 +93,18 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
                 donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
                 emitter.onNext(donghuoRecords);
             }
+            emitter.onComplete();
         }).compose(RxSchedulers.io_main()).subscribe(new Observer<List<DonghuoRecord>>() {
 
             @Override
             public void onSubscribe(@NonNull Disposable d) {
-
+                showLoadingDialog();
             }
 
             @Override
             public void onNext(List<DonghuoRecord> donghuoRecords) {
                 if (donghuoRecords == null || donghuoRecords.size() == 0) {
                     showEmpty("暂时还没有动火记录哦");
-                    tvSelectDate.setText(getSelectDate(TimeStruct.today()));
                 } else {
                     tvEmpty.setVisibility(View.GONE);
                     DonghuoRecord newest = donghuoRecords.get(donghuoRecords.size() - 1);
@@ -121,7 +122,7 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
 
             @Override
             public void onComplete() {
-
+                dismissLoadingDialog();
             }
         });
     }
