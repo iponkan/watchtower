@@ -34,16 +34,21 @@ public class DebugActivity extends BaseActivity {
     public static final String TAG = "DebugActivity";
     @BindView(R.id.btn_upload)
     Button btnUpload;
-    @BindView(R.id.show_temperature)
-    Button showTemperature;
+    @BindView(R.id.btn_show_temperature)
+    Button btnTemperature;
+    @BindView(R.id.btn_debug)
+    Button btnDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
         ButterKnife.bind(this);
-        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
-        showTemperature.setText(now ? "不显示温度" : "显示温度");
+        boolean showTemperature = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
+        btnTemperature.setText(showTemperature ? "不显示温度" : "显示温度");
+
+        boolean debug = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.DEBUG, false);
+        btnDebug.setText(debug ? "正常模式" : "Debug模式");
     }
 
     public static final String URL = "http://47.92.118.121:4000/files/uploads?folder=WatchTower";
@@ -102,10 +107,17 @@ public class DebugActivity extends BaseActivity {
         upload(folser);
     }
 
-    @OnClick(R.id.show_temperature)
+    @OnClick(R.id.btn_show_temperature)
     public void onShowTemperatureClicked() {
         boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
         SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.SHOWTEMPERATURE, !now);
-        showTemperature.setText(!now ? "不显示温度" : "显示温度");
+        btnTemperature.setText(!now ? "不显示温度" : "显示温度");
+    }
+
+    @OnClick(R.id.btn_debug)
+    public void onViewClicked() {
+        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.DEBUG, false);
+        SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.DEBUG, !now);
+        btnDebug.setText(!now ? "正常模式" : "Debug模式");
     }
 }

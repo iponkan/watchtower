@@ -24,15 +24,18 @@ import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.ISkyNet;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
+import com.hitqz.robot.watchtower.net.bean.MockBean;
 import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
 import com.hitqz.robot.watchtower.net.bean.RegionTemperatureList;
 import com.hitqz.robot.watchtower.net.bean.TemperatureList;
+import com.hitqz.robot.watchtower.util.AssetUtil;
 import com.hitqz.robot.watchtower.widget.LongPressImageView;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
+import com.sonicers.commonlib.singleton.GsonUtil;
 import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
@@ -142,10 +145,22 @@ public class CameraActivity extends BaseActivity {
 
         checkState();
         isMonitoring();
-//        String json = AssetUtil.loadJSONFromAsset(CameraActivity.this, "mockdata.json");
-//        MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
-//        RegionTemperatureList model = mockBean.getData();
-//        showModel(model);
+        if (SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.DEBUG, false)) {
+            String json = AssetUtil.loadJSONFromAsset(CameraActivity.this, "mockdata.json");
+            MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
+            RegionTemperatureList model = mockBean.getData();
+            debugShow(model);
+        }
+    }
+
+    private void debugShow(RegionTemperatureList model) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showModel(model);
+                debugShow(model);
+            }
+        }, 1000);
     }
 
     private void resetHotCameraView(View... views) {
