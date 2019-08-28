@@ -56,6 +56,9 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
         setContentView(R.layout.activity_gallery);
         ButterKnife.bind(this);
         hcSdk = HCSdkManager.getNormalHCSdk(this);
+        if (!hcSdk.isLogin()) {
+            showEmpty("未连接摄像头哦");
+        }
         initDonghuaRecords();
         searchView.setOnClickListener(this);
     }
