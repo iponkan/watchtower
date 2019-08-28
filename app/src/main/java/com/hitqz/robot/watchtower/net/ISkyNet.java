@@ -1,6 +1,9 @@
 package com.hitqz.robot.watchtower.net;
 
 import com.hitqz.robot.watchtower.net.base.BaseRespond;
+import com.hitqz.robot.watchtower.net.bean.AlarmLevelSettingEntity;
+import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
+import com.hitqz.robot.watchtower.net.bean.RegionTemperatureList;
 import com.sonicers.commonlib.net.DataBean;
 
 import java.util.List;
@@ -138,4 +141,12 @@ public interface ISkyNet {
      */
     @GET("/cameraPlatform/direction/{direction}")
     Observable<BaseRespond<DataBean>> setCameraPlatformDirection(@Path("direction") int direction);
+
+    /**
+     * 区域温度
+     *
+     * @return
+     */
+    @GET("/monitor/region/temperature")
+    Observable<BaseRespond<RegionTemperatureList>> regionTemperature();
 }

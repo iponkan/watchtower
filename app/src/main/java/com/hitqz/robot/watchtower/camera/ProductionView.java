@@ -20,6 +20,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.net.bean.TemperatureList;
 
 import java.util.ArrayList;
 
@@ -396,6 +397,10 @@ public class ProductionView extends View {
         }
         float finalRatio = Math.max(MIN_SCALE, mBorderRect.mRatio * 0.9f);
         mBorderRect.setRatio(finalRatio);
+        invalidate();
+    }
+
+    public void showTemperature(TemperatureList temperatureList) {
         invalidate();
     }
 }

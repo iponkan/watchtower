@@ -1,4 +1,4 @@
-package com.hitqz.robot.watchtower.net;
+package com.hitqz.robot.watchtower.net.bean;
 
 import android.graphics.Point;
 

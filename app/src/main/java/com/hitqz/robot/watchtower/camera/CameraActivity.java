@@ -20,15 +20,20 @@ import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.ISkyNet;
-import com.hitqz.robot.watchtower.net.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
+import com.hitqz.robot.watchtower.net.bean.MockBean;
+import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
+import com.hitqz.robot.watchtower.net.bean.RegionTemperatureList;
+import com.hitqz.robot.watchtower.net.bean.TemperatureList;
+import com.hitqz.robot.watchtower.util.AssetUtil;
 import com.hitqz.robot.watchtower.widget.LongPressImageView;
 import com.hitqz.robot.watchtower.widget.StateView;
 import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.net.DataBean;
 import com.sonicers.commonlib.rx.RxSchedulers;
+import com.sonicers.commonlib.singleton.GsonUtil;
 import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
@@ -134,8 +139,9 @@ public class CameraActivity extends BaseActivity {
         ivFar.setLongpressListener(new CameraFarListener());
         ivNear.setLongpressListener(new CameraNearListener());
 
-        checkState();
-        isMonitoring();
+//        checkState();
+//        isMonitoring();
+        refreshTemperature();
     }
 
     private void resetHotCameraView(View... views) {
@@ -701,6 +707,34 @@ public class CameraActivity extends BaseActivity {
                     @Override
                     public void onComplete() {
 
+                    }
+                });
+    }
+
+    TemperatureList temperatureList;
+
+    private void refreshTemperature() {
+        skyNet.regionTemperature()
+                .compose(RxSchedulers.io_main())
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
+                .compose(bindToLifecycle())
+                .subscribeWith(new BaseObserver<RegionTemperatureList>() {
+                    @Override
+                    public void onSuccess(RegionTemperatureList model) {
+                        Logger.t(TAG).i("regionTemperature success:" + model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        String json = AssetUtil.loadJSONFromAsset(CameraActivity.this, "mockdata.json");
+                        MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
+                        RegionTemperatureList model = mockBean.getData();
+                        if (model != null) {
+                            temperatureList = TemperatureList.fromRegionTemperatureList(model);
+                            productionView.showTemperature(temperatureList);
+                        }
+
+                        Logger.t(TAG).e("regionTemperature fail：" + msg);
                     }
                 });
     }

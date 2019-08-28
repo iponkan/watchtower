@@ -9,9 +9,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.net.AlarmLevelSettingEntity;
+import com.hitqz.robot.watchtower.net.bean.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.ISkyNet;
-import com.hitqz.robot.watchtower.net.MonitorEntity;
+import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
