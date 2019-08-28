@@ -398,33 +398,32 @@ public class HCSdk implements SurfaceHolder.Callback {
 //                });
             }
         } else {
-            if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-                if (isPreviewing()) {
+            if (isPreviewing()) {
+                if (!Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
                     Logger.t(TAG).e("inputData failed with: " +
                             Player.getInstance().getLastError(m_iPort));
                 }
+            } else {
+                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
+                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
+                        break;
+                    }
 
-//                for (int i = 0; i < 4000 && m_iPlaybackID >= 0 && !m_bStopPlayback; i++) {
-//                    if (Player.getInstance().inputData(m_iPort, pDataBuffer, iDataSize)) {
-//                        break;
+//                    if (i % 100 == 0) {
+//                        Log.e(TAG, "inputData failed with: " + Player.getInstance().getLastError(m_iPort) + ", i:" + i);
 //                    }
-//
-////                    if (i % 100 == 0) {
-////                        Log.e(TAG, "inputData failed with: " + Player.getInstance().getLastError(m_iPort) + ", i:" + i);
-////                    }
-//
-//                    try {
-//                        Thread.sleep(10);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//
-//                    }
-//                }
+
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
 
-    long dataTime = Long.MAX_VALUE;
+    private long dataTime = Long.MAX_VALUE;
 
     private PlaybackCallBack getPlayerbackPlayerCbf() {
         PlaybackCallBack cbf = new PlaybackCallBack() {
