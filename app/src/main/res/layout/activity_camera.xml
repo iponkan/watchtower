@@ -322,7 +322,7 @@
         android:visibility="gone"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/common_title_bar">
+        android:layout_alignParentBottom="true">
 
     </ListView>
 

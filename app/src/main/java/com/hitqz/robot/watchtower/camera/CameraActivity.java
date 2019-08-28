@@ -94,7 +94,7 @@ public class CameraActivity extends BaseActivity {
     Handler handler = new Handler();
 
     ISkyNet skyNet;
-    boolean isMonitoring;
+    volatile boolean isMonitoring;
     AtomicBoolean plateStop = new AtomicBoolean(false);
     AtomicBoolean cameraStop = new AtomicBoolean(false);
     AtomicBoolean farStop = new AtomicBoolean(false);
@@ -360,7 +360,7 @@ public class CameraActivity extends BaseActivity {
     }
 
     private void onStartMonitor() {
-        refreshTemperature();
+        refreshTemperature(true);
         productionView.antiTouch(true);
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
         isMonitoring = true;
@@ -371,7 +371,7 @@ public class CameraActivity extends BaseActivity {
     }
 
     private void onStopMonitor() {
-        lvTemperature.setVisibility(View.GONE);
+        refreshTemperature(false);
         productionView.antiTouch(false);
         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
         isMonitoring = false;
@@ -716,35 +716,39 @@ public class CameraActivity extends BaseActivity {
                 });
     }
 
-    TemperatureList temperatureList;
+    private void refreshTemperature(boolean refresh) {
+        boolean showTemperature = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
+        if (!refresh || !showTemperature) {
+            lvTemperature.setVisibility(View.GONE);
+        } else {
+            skyNet.regionTemperature()
+                    .compose(RxSchedulers.io_main())
+                    .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+                        if (!isMonitoring) {
+                            return Observable.error(new Throwable(Constants.POLL_END));
+                        }
+                        return Observable.just(1).delay(1, TimeUnit.SECONDS);
+                    }))
+                    .compose(bindToLifecycle())
+                    .subscribeWith(new BaseObserver<RegionTemperatureList>() {
+                        @Override
+                        public void onSuccess(RegionTemperatureList model) {
+                            showModel(model);
+                            Logger.t(TAG).i("regionTemperature success:" + model);
+                        }
 
-    private void refreshTemperature() {
-        skyNet.regionTemperature()
-                .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(1, TimeUnit.MINUTES)))
-                .compose(bindToLifecycle())
-                .subscribeWith(new BaseObserver<RegionTemperatureList>() {
-                    @Override
-                    public void onSuccess(RegionTemperatureList model) {
-                        showModel(model);
-                        Logger.t(TAG).i("regionTemperature success:" + model);
-                    }
-
-                    @Override
-                    public void onFailure(String msg) {
-                        Logger.t(TAG).e("regionTemperature fail：" + msg);
-                    }
-                });
+                        @Override
+                        public void onFailure(String msg) {
+                            Logger.t(TAG).e("regionTemperature fail：" + msg);
+                        }
+                    });
+        }
     }
 
     private void showModel(RegionTemperatureList model) {
-        boolean b = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
-        if (!b) {
-            return;
-        }
         if (model != null) {
             lvTemperature.setVisibility(View.VISIBLE);
-            temperatureList = TemperatureList.fromRegionTemperatureList(model);
+            TemperatureList temperatureList = TemperatureList.fromRegionTemperatureList(model);
             productionView.showTemperature(temperatureList);
             TemperatureAdapter temperatureAdapter = new TemperatureAdapter(temperatureList.toList(), CameraActivity.this);
             lvTemperature.setAdapter(temperatureAdapter);

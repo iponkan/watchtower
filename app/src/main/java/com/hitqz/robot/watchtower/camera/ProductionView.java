@@ -22,7 +22,9 @@ import androidx.annotation.Nullable;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.bean.TemperatureList;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductionView extends View {
 
@@ -66,6 +68,8 @@ public class ProductionView extends View {
         invalidate();
     }
 
+    List<RectF> rectFS = new ArrayList<>();
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -77,11 +81,19 @@ public class ProductionView extends View {
             canvas.drawText("聚焦中", getWidth() / 2f - 60, getHeight() / 2f + 20, mTextPaint);
         }
 
-        if(drawExtra){
-            if (mBorderRect.mRatio < 1.0f) {
-//                canvas.drawLine(0, );
+        if (drawExtra) {
+            if (rectFS.size() == 0 || texts == null || texts.size() == 0) {
+                //
+            } else {
+                int size = Math.min(rectFS.size(), texts.size());
+                Log.d(TAG, "draw min size:" + size);
+                for (int i = 0; i < size; i++) {
+                    RectF rectF = rectFS.get(i);
+                    String temperature = texts.get(i);
+                    Log.d(TAG, "draw temperature:" + temperature);
+                    canvas.drawText(temperature, rectF.centerX(), rectF.centerY(), mTextPaint);
+                }
             }
-
         }
 //        for (int i = 0; i < mCenterRectFs.size(); i++) {
 //            canvas.drawRoundRect(mCenterRectFs.get(i), mCenterRoundRadius, mCenterRoundRadius, mCenterPaint);
@@ -408,9 +420,82 @@ public class ProductionView extends View {
     }
 
     boolean drawExtra;
+    List<String> texts = new ArrayList<>();
 
     public void showTemperature(TemperatureList temperatureList) {
+        List<Float> floats = temperatureList.toList();
+
+        if (floats == null || floats.size() == 0) {
+            return;
+        } else {
+            for (int i = 0; i < floats.size(); i++) {
+                DecimalFormat decimalFormat = new DecimalFormat(".0");
+                String p = decimalFormat.format(floats.get(i));
+                texts.add(p);
+            }
+        }
+        rectFS.clear();
+        if (mBorderRect.mRatio < 1.0f) {
+            rect1.set(0, 0, mBorderRect.mRectF.left, mBorderRect.mRectF.top);
+            if (rect1.width() > 0 && rect1.height() > 0) {
+                rectFS.add(rect1);
+            }
+
+            rect2.set(mBorderRect.mRectF.left, 0, mBorderRect.mRectF.right, mBorderRect.mRectF.top);
+            if (rect2.width() > 0 && rect2.height() > 0) {
+                rectFS.add(rect2);
+            }
+
+            rect3.set(mBorderRect.mRectF.right, 0, mBorderRect.totalWidth, mBorderRect.mRectF.top);
+            if (rect3.width() > 0 && rect3.height() > 0) {
+                rectFS.add(rect3);
+            }
+
+            rect4.set(0, mBorderRect.mRectF.top, mBorderRect.mRectF.left, mBorderRect.mRectF.bottom);
+            if (rect4.width() > 0 && rect4.height() > 0) {
+                rectFS.add(rect4);
+            }
+
+            rectFS.add(mBorderRect.mRectF);
+
+            rect6.set(mBorderRect.mRectF.right, mBorderRect.mRectF.top, mBorderRect.totalWidth, mBorderRect.mRectF.bottom);
+            if (rect6.width() > 0 && rect6.height() > 0) {
+                rectFS.add(rect6);
+            }
+
+            rect7.set(0, mBorderRect.mRectF.bottom, mBorderRect.mRectF.left, mBorderRect.totalHeight);
+            if (rect7.width() > 0 && rect7.height() > 0) {
+                rectFS.add(rect7);
+            }
+
+            rect8.set(mBorderRect.mRectF.left, mBorderRect.mRectF.bottom, mBorderRect.mRectF.right, mBorderRect.totalHeight);
+            if (rect8.width() > 0 && rect8.height() > 0) {
+                rectFS.add(rect8);
+            }
+
+            rect9.set(mBorderRect.mRectF.right, mBorderRect.mRectF.bottom, mBorderRect.totalWidth, mBorderRect.totalHeight);
+            if (rect9.width() > 0 && rect9.height() > 0) {
+                rectFS.add(rect9);
+            }
+        } else {
+            wholeRectF.set(0, 0, mBorderRect.totalWidth, mBorderRect.totalHeight);
+            rectFS.add(wholeRectF);
+        }
+
+        Log.d(TAG, "size 是否相等：" + (rectFS.size() == floats.size()));
         drawExtra = true;
         invalidate();
     }
+
+    RectF rect1 = new RectF();
+    RectF rect2 = new RectF();
+    RectF rect3 = new RectF();
+    RectF rect4 = new RectF();
+
+    RectF rect6 = new RectF();
+    RectF rect7 = new RectF();
+    RectF rect8 = new RectF();
+    RectF rect9 = new RectF();
+
+    RectF wholeRectF = new RectF();
 }

@@ -6,8 +6,8 @@ import android.graphics.RectF;
 
 public class NormalizedRect {
 
-    private float mScreenWidth;
-    private float mScreenHeight;
+    float totalWidth;
+    float totalHeight;
 
     public RectF mRectF;
 
@@ -18,13 +18,13 @@ public class NormalizedRect {
     float widthR;
     float heightR;
 
-    public NormalizedRect(float screenWidth, float screenheight) {
-        mScreenWidth = screenWidth;
-        mScreenHeight = screenheight;
+    public NormalizedRect(float width, float height) {
+        totalWidth = width;
+        totalHeight = height;
         mRectF = new RectF();
 
-        widthR = mScreenWidth / 1000f;
-        heightR = mScreenHeight / 1000f;
+        widthR = totalWidth / 1000f;
+        heightR = totalHeight / 1000f;
     }
 
     public void set(float left, float top, float right, float bottom, float ratio) {
@@ -62,13 +62,13 @@ public class NormalizedRect {
         }
         mRatio = ratio;
 
-        float width = mScreenWidth * ratio;
-        float height = mScreenHeight * ratio;
+        float width = totalWidth * ratio;
+        float height = totalHeight * ratio;
 
         centerX = Math.max(centerX, width / 2);
-        centerX = Math.min(centerX, mScreenWidth - width / 2);
+        centerX = Math.min(centerX, totalWidth - width / 2);
         centerY = Math.max(centerY, height / 2);
-        centerY = Math.min(centerY, mScreenHeight - height / 2);
+        centerY = Math.min(centerY, totalHeight - height / 2);
 
         float left = centerX - width / 2;
         float top = centerY - height / 2;
@@ -91,11 +91,11 @@ public class NormalizedRect {
     }
 
     public int commonTop() {
-        return (int) ((mScreenHeight - mRectF.top) / heightR);
+        return (int) ((totalHeight - mRectF.top) / heightR);
     }
 
     public int commonBottom() {
-        return (int) ((mScreenHeight - mRectF.bottom) / heightR);
+        return (int) ((totalHeight - mRectF.bottom) / heightR);
     }
 
     public void setPoints(Point[] points) {
@@ -105,10 +105,10 @@ public class NormalizedRect {
 
         float left = points[0].x * widthR;
         float right = points[1].x * widthR;
-        float top = mScreenHeight - points[1].y * heightR;
-        float bottom = mScreenHeight - points[0].y * heightR;
+        float top = totalHeight - points[1].y * heightR;
+        float bottom = totalHeight - points[0].y * heightR;
 
-        float ratio = (right - left) / mScreenWidth;
+        float ratio = (right - left) / totalWidth;
         set(left, top, right, bottom, ratio);
 
     }

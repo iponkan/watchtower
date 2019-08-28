@@ -95,28 +95,28 @@ public class TemperatureList {
             list.add(_$1);
         }
         if (_$2 != 0) {
-            list.add(_$1);
+            list.add(_$2);
         }
         if (_$3 != 0) {
-            list.add(_$1);
+            list.add(_$3);
         }
         if (_$4 != 0) {
-            list.add(_$1);
+            list.add(_$4);
         }
         if (_$5 != 0) {
-            list.add(_$1);
+            list.add(_$5);
         }
         if (_$6 != 0) {
-            list.add(_$1);
+            list.add(_$6);
         }
         if (_$7 != 0) {
-            list.add(_$1);
+            list.add(_$7);
         }
         if (_$8 != 0) {
-            list.add(_$1);
+            list.add(_$8);
         }
         if (_$9 != 0) {
-            list.add(_$1);
+            list.add(_$9);
         }
         return list;
     }
