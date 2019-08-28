@@ -98,6 +98,10 @@ public class TimeStruct implements Parcelable {
         return this.dwYear + "/" + this.dwMonth + "/" + this.dwDay + " " + this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
     }
 
+    public String toMonthAndDay() {
+        return this.dwMonth + "/" + this.dwDay + " " + this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
+    }
+
     public String toHMS() {
         return this.dwHour + ":" + this.dwMinute + ":" + this.dwSecond;
     }

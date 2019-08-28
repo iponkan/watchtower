@@ -47,7 +47,7 @@ public class DonghuoRecord implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        return struStartTime.toString() + "～" + struStopTime.toString();
+        return struStartTime.toMonthAndDay() + "～" + struStopTime.toMonthAndDay();
     }
 
     @Override
