@@ -89,14 +89,16 @@ public class DonghuoRecordManager {
         Logger.t(TAG).i("before addTimePoint gsonString " + gsonString);
         List<String> list = GsonUtil.getInstance().fromJson(gsonString, new TypeToken<List<String>>() {
         }.getType());
-        if (list == null) {
-            return;
-        } else {
+
+        if (list != null && list.size() > 0) {
             List<String> remove = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                String element = list.get(i);
-                if (Integer.parseInt(element) < time) {
-                    remove.add(element);
+                String str = list.get(i);
+                String[] strings = str.split("～");
+                if (strings.length > 0) {
+                    if (Long.parseLong(strings[0]) < time) {
+                        remove.add(str);
+                    }
                 }
             }
             list.removeAll(remove);

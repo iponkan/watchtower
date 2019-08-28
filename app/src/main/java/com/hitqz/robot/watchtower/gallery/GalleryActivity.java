@@ -88,7 +88,7 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
             if (fileInfos != null && fileInfos.size() > 0) {
                 FileInfo fileInfo = fileInfos.get(0);
                 long time = fileInfo.startTime.toMillSeconds();// SD卡存储的视频最早时间
-//                    DonghuoRecordManager.getInstance().removeTimePointBefore(time);
+                DonghuoRecordManager.getInstance().removeTimePointBefore(time);
                 donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
                 emitter.onNext(donghuoRecords);
             }
