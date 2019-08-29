@@ -347,11 +347,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                             return;
                         }
                         if (model.isMonitor()) {
-                            isMonitoring = true;
                             onStartMonitor();
                             Logger.i("正在监火");
                         } else {
-                            isMonitoring = false;
                             onStopMonitor();
                             Logger.i("不在监火");
                         }
@@ -394,10 +392,10 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     }
 
     private void onStartMonitor() {
-        refreshTemperature(true);
         productionView.antiTouch(true);
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
         isMonitoring = true;
+        refreshTemperature(true);
         ivPlus.setClickable(false);
         ivMinus.setClickable(false);
         ivFar.setClickable(false);
@@ -405,10 +403,10 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     }
 
     private void onStopMonitor() {
-        refreshTemperature(false);
         productionView.antiTouch(false);
         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
         isMonitoring = false;
+        refreshTemperature(false);
         ivPlus.setClickable(true);
         ivMinus.setClickable(true);
         ivFar.setClickable(true);
@@ -756,6 +754,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         boolean showTemperature = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
         if (!refresh || !showTemperature) {
             lvTemperature.setVisibility(View.GONE);
+            productionView.showTemperature(null);
         } else {
             skyNet.regionTemperature()
                     .compose(RxSchedulers.io_main())

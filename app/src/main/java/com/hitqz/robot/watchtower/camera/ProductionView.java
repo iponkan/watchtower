@@ -422,10 +422,21 @@ public class ProductionView extends View {
     boolean drawExtra;
     List<String> texts = new ArrayList<>();
 
+    private void notDrawExtra() {
+        drawExtra = false;
+        texts.clear();
+        invalidate();
+    }
+
     public void showTemperature(TemperatureList temperatureList) {
+        if (temperatureList == null) {
+            notDrawExtra();
+            return;
+        }
         List<Float> floats = temperatureList.toList();
 
         if (floats == null || floats.size() == 0) {
+            notDrawExtra();
             return;
         } else {
             texts.clear();
