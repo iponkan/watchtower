@@ -78,7 +78,7 @@ public class ProductionView extends View {
         }
 
         if (drawText) {
-            canvas.drawText("聚焦中", getWidth() / 2f - 60, getHeight() / 2f + 20, mTextPaint);
+            canvas.drawText("聚焦中", getWidth() / 2f - 55, getHeight() / 2f + 10, mTextPaint);
         }
 
         if (drawExtra) {
