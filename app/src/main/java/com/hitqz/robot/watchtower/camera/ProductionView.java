@@ -82,7 +82,7 @@ public class ProductionView extends View {
         }
 
         if (drawExtra) {
-            if (rectFS.size() == 0 || texts == null || texts.size() == 0) {
+            if (rectFS.size() == 0 || texts.size() == 0) {
                 //
             } else {
                 int size = Math.min(rectFS.size(), texts.size());

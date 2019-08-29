@@ -41,7 +41,6 @@ import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,11 +97,11 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     Handler handler = new Handler();
 
     ISkyNet skyNet;
-    volatile boolean isMonitoring;
-    AtomicBoolean plateStop = new AtomicBoolean(false);
-    AtomicBoolean cameraStop = new AtomicBoolean(false);
-    AtomicBoolean farStop = new AtomicBoolean(false);
-    AtomicBoolean nearStop = new AtomicBoolean(false);
+    volatile boolean isMonitoring = false;
+    volatile boolean plateStop = false;
+    volatile boolean cameraStop = false;
+    volatile boolean farStop = false;
+    volatile boolean nearStop = false;
     @BindView(R.id.tv_lightSound_electric)
     TextView tvLightSoundElectric;
     @BindView(R.id.lv_temperature)
@@ -533,7 +532,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
         @Override
         public void onRelease() {
-            cameraStop.set(true);
+            cameraStop = true;
             handler.postDelayed(CameraActivity.this::cameraStop, 200);
         }
     }
@@ -547,19 +546,19 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
         @Override
         public void onRelease() {
-            plateStop.set(true);
+            plateStop = true;
             handler.postDelayed(CameraActivity.this::plateStop, 200);
         }
     }
 
     @SuppressLint("CheckResult")
     private void cameraTurn(int direction) {
-        cameraStop.set(false);
+        cameraStop = false;
         Logger.t("interval").d("plateStop false");
         // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setCameraPlatformDirection(direction)
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (cameraStop.get()) {
+                    if (cameraStop) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
@@ -576,8 +575,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                     public void onFailure(String msg) {
                         if (Constants.POLL_END.equals(msg)) {
                             Logger.t(TAG).i("cameraTurn" + direction + "轮询停止");
-                        }
-                        {
+                        } else {
                             Logger.t(TAG).e("cameraTurn" + direction + "失败：" + msg);
                         }
                     }
@@ -602,12 +600,12 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     @SuppressLint("CheckResult")
     private void plateTurn(int direction) {
-        plateStop.set(false);
+        plateStop = false;
         Logger.t("interval").d("plateStop false");
         // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
         skyNet.setBaseplateDirection(direction)
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (plateStop.get()) {
+                    if (plateStop) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(200, TimeUnit.MILLISECONDS);
@@ -624,8 +622,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                     public void onFailure(String msg) {
                         if (Constants.POLL_END.equals(msg)) {
                             Logger.t(TAG).i("plateTurn" + direction + "轮询停止");
-                        }
-                        {
+                        } else {
                             Logger.t(TAG).e("plateTurn" + direction + "失败：" + msg);
                         }
                     }
@@ -658,7 +655,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
         @Override
         public void onRelease() {
-            farStop.set(true);
+            farStop = true;
             productionView.drawText(false);
         }
     }
@@ -673,19 +670,19 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
         @Override
         public void onRelease() {
-            nearStop.set(true);
+            nearStop = true;
             productionView.drawText(false);
         }
     }
 
     void cameraFar() {
-        farStop.set(false);
+        farStop = false;
         Observable.create(emitter -> {
             hotHCSdk.focusFar();
             emitter.onComplete();
         })
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (farStop.get()) {
+                    if (farStop) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(50, TimeUnit.MILLISECONDS);
@@ -715,13 +712,13 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     }
 
     void cameraNear() {
-        nearStop.set(false);
+        nearStop = false;
         Observable.create(emitter -> {
             hotHCSdk.focusNear();
             emitter.onComplete();
         })
                 .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
-                    if (nearStop.get()) {
+                    if (nearStop) {
                         return Observable.error(new Throwable(Constants.POLL_END));
                     }
                     return Observable.just(1).delay(50, TimeUnit.MILLISECONDS);
@@ -757,13 +754,13 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             productionView.showTemperature(null);
         } else {
             skyNet.regionTemperature()
-                    .compose(RxSchedulers.io_main())
                     .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
                         if (!isMonitoring) {
                             return Observable.error(new Throwable(Constants.POLL_END));
                         }
                         return Observable.just(1).delay(1, TimeUnit.SECONDS);
                     }))
+                    .compose(RxSchedulers.io_main())
                     .compose(bindToLifecycle())
                     .subscribeWith(new BaseObserver<RegionTemperatureList>() {
                         @Override
