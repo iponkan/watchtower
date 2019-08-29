@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity {
                 Logger.t(TAG).e("网络未连接");
             } else {
                 // 会占用主线程资源，这里不管
-                HCSdkManager.getInstance().initAndLogin(this);
+                HCSdkManager.getInstance().initAndLogin(this, null);
             }
         }
     }

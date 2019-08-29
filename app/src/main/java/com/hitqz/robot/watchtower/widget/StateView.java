@@ -57,6 +57,8 @@ public class StateView extends LinearLayout {
     public void setState(boolean state) {
         this.state = state;
         tvState.setText(state ? onString : offString);
-        tvState.setTextColor(state ? Color.parseColor("#00de72") : Color.RED);
+        if ("在线".equals(onString)) {
+            tvState.setTextColor(state ? Color.parseColor("#00de72") : Color.parseColor("#CD5C5C"));
+        }
     }
 }

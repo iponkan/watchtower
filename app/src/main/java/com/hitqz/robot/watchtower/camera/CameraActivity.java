@@ -52,7 +52,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 
 @SuppressLint("CheckResult")
-public class CameraActivity extends BaseActivity {
+public class CameraActivity extends BaseActivity implements HCSdkManager.Callback {
 
     public static final String TAG = "CameraActivity";
 
@@ -106,11 +106,30 @@ public class CameraActivity extends BaseActivity {
     TextView tvLightSoundElectric;
     @BindView(R.id.lv_temperature)
     ListView lvTemperature;
+    boolean sdkInit = false;
+    boolean resume = false;
 
     public static void go2Camera(Activity activity) {
         Intent intent = new Intent(activity, CameraActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onComplete() {
+        sdkInit = true;
+        startPreview();
+    }
+
+    private void startPreview() {
+        if (resume && sdkInit) {
+            if (hotHCSdk != null) {
+                hotHCSdk.startSinglePreview();
+            }
+            if (normalHCSdk != null) {
+                normalHCSdk.startSinglePreview();
+            }
+        }
     }
 
     @Override
@@ -120,7 +139,7 @@ public class CameraActivity extends BaseActivity {
         setContentView(R.layout.activity_camera);
 
         ButterKnife.bind(this);
-        HCSdkManager.getInstance().initAndLogin(this);
+        HCSdkManager.getInstance().initAndLogin(this, this);
         hotHCSdk = HCSdkManager.getHotHCSdk(this);
         if (!hotHCSdk.isInit()) {
             ToastUtil.showToastShort(this, "摄像头未连接");
@@ -219,17 +238,14 @@ public class CameraActivity extends BaseActivity {
         if (normalHCSdk != null) {
             normalHCSdk.stopSinglePreview();
         }
+        resume = false;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (hotHCSdk != null) {
-            hotHCSdk.startSinglePreview();
-        }
-        if (normalHCSdk != null) {
-            normalHCSdk.startSinglePreview();
-        }
+        resume = true;
+        startPreview();
     }
 
     @Override
