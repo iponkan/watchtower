@@ -425,7 +425,7 @@ public class ProductionView extends View {
     private void notDrawExtra() {
         drawExtra = false;
         texts.clear();
-        invalidate();
+        postInvalidate();
     }
 
     public void showTemperature(TemperatureList temperatureList) {
@@ -496,7 +496,7 @@ public class ProductionView extends View {
 
         Log.d(TAG, "size 是否相等：" + (rectFS.size() == floats.size()));
         drawExtra = true;
-        invalidate();
+        postInvalidate();
     }
 
     RectF rect1 = new RectF();

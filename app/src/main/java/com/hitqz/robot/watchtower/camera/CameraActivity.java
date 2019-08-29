@@ -773,12 +773,13 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             lvTemperature.setVisibility(View.GONE);
             productionView.showTemperature(null);
         } else {
-            skyNet.regionTemperature()
-                    .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> {
+            handler.postDelayed(() -> skyNet.regionTemperature()
+                    .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) o -> {
                         if (!isMonitoring) {
-                            return Observable.error(new Throwable(Constants.POLL_END));
+                            return Observable.empty();
+                        } else {
+                            return Observable.timer(1, TimeUnit.SECONDS);
                         }
-                        return Observable.just(1).delay(1, TimeUnit.SECONDS);
                     }))
                     .compose(RxSchedulers.io_main())
                     .compose(bindToLifecycle())
@@ -793,7 +794,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                         public void onFailure(String msg) {
                             Logger.t(TAG).e("regionTemperature fail：" + msg);
                         }
-                    });
+                    }), 4000);
         }
     }
 
