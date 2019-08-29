@@ -3,6 +3,7 @@ package com.hitqz.robot.watchtower.camera;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -496,6 +497,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                     public void onSuccess(Integer model) {
                         Logger.t(TAG).i("getBaseplateElectric success:" + model);
                         tvBaseplateElectric.setText(String.valueOf(model));
+                        tvBaseplateElectric.setTextColor(model >= 10 ? Color.parseColor("#00de72") : Color.parseColor("#CD5C5C"));
                     }
 
                     @Override
@@ -512,6 +514,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                     public void onSuccess(Integer model) {
                         Logger.t(TAG).i("getLightSoundElectric success:" + model);
                         tvLightSoundElectric.setText(String.valueOf(model));
+                        tvLightSoundElectric.setTextColor(model >= 10 ? Color.parseColor("#00de72") : Color.parseColor("#CD5C5C"));
                     }
 
                     @Override
