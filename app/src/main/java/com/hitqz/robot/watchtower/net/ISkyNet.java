@@ -149,4 +149,11 @@ public interface ISkyNet {
      */
     @GET("/monitor/region/temperature")
     Observable<BaseRespond<RegionTemperatureList>> regionTemperature();
+
+    /**
+     * 开关灯
+     * 0,关 ，1 开
+     */
+    @GET("/cameraPlatform/light/{action}")
+    Observable<BaseRespond<DataBean>> cameraPlatformLight(@Path("action") int action);
 }

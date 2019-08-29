@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -108,29 +109,8 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     ListView lvTemperature;
     boolean sdkInit = false;
     boolean resume = false;
-
-    public static void go2Camera(Activity activity) {
-        Intent intent = new Intent(activity, CameraActivity.class);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(0, 0);
-    }
-
-    @Override
-    public void onComplete() {
-        sdkInit = true;
-        startPreview();
-    }
-
-    private void startPreview() {
-        if (resume && sdkInit) {
-            if (hotHCSdk != null) {
-                hotHCSdk.startSinglePreview();
-            }
-            if (normalHCSdk != null) {
-                normalHCSdk.startSinglePreview();
-            }
-        }
-    }
+    @BindView(R.id.iv_light)
+    Button ivLight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -169,6 +149,54 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
             RegionTemperatureList model = mockBean.getData();
             debugShow(model);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resume = true;
+        startPreview();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (hotHCSdk != null) {
+            hotHCSdk.stopSinglePreview();
+        }
+
+        if (normalHCSdk != null) {
+            normalHCSdk.stopSinglePreview();
+        }
+        resume = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public static void go2Camera(Activity activity) {
+        Intent intent = new Intent(activity, CameraActivity.class);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onComplete() {
+        sdkInit = true;
+        startPreview();
+    }
+
+    private void startPreview() {
+        if (resume && sdkInit) {
+            if (hotHCSdk != null) {
+                hotHCSdk.startSinglePreview();
+            }
+            if (normalHCSdk != null) {
+                normalHCSdk.startSinglePreview();
+            }
         }
     }
 
@@ -226,31 +254,6 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         layoutParams.topMargin = topMargin;
 
         normalCameraView.setLayoutParams(layoutParams);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (hotHCSdk != null) {
-            hotHCSdk.stopSinglePreview();
-        }
-
-        if (normalHCSdk != null) {
-            normalHCSdk.stopSinglePreview();
-        }
-        resume = false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        resume = true;
-        startPreview();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @OnClick(R.id.iv_camera_plus)
@@ -519,6 +522,23 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                     @Override
                     public void onFailure(String msg) {
                         Logger.t(TAG).e("getLightSoundElectric fail：" + msg);
+                    }
+                });
+    }
+
+    @OnClick(R.id.iv_light)
+    public void onViewClicked() {
+        skyNet.cameraPlatformLight(0)
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(DataBean model) {
+                        Logger.t(TAG).i("cameraPlatformLight success:" + model);
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("cameraPlatformLight fail：" + msg);
                     }
                 });
     }
