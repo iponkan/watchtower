@@ -347,9 +347,11 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                             return;
                         }
                         if (model.isMonitor()) {
+                            isMonitoring = true;
                             onStartMonitor();
                             Logger.i("正在监火");
                         } else {
+                            isMonitoring = false;
                             onStopMonitor();
                             Logger.i("不在监火");
                         }

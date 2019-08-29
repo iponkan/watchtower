@@ -428,8 +428,9 @@ public class ProductionView extends View {
         if (floats == null || floats.size() == 0) {
             return;
         } else {
+            texts.clear();
             for (int i = 0; i < floats.size(); i++) {
-                DecimalFormat decimalFormat = new DecimalFormat(".0");
+                DecimalFormat decimalFormat = new DecimalFormat(".000");
                 String p = decimalFormat.format(floats.get(i));
                 texts.add(p);
             }
@@ -456,7 +457,7 @@ public class ProductionView extends View {
                 rectFS.add(rect4);
             }
 
-            rectFS.add(mBorderRect.mRectF);
+//            rectFS.add(mBorderRect.mRectF);
 
             rect6.set(mBorderRect.mRectF.right, mBorderRect.mRectF.top, mBorderRect.totalWidth, mBorderRect.mRectF.bottom);
             if (rect6.width() > 0 && rect6.height() > 0) {
