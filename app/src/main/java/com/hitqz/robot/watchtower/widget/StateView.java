@@ -2,6 +2,7 @@ package com.hitqz.robot.watchtower.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -56,5 +57,6 @@ public class StateView extends LinearLayout {
     public void setState(boolean state) {
         this.state = state;
         tvState.setText(state ? onString : offString);
+        tvState.setTextColor(state ? Color.parseColor("#00de72") : Color.RED);
     }
 }

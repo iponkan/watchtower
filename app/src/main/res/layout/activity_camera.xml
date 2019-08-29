@@ -109,8 +109,9 @@
         android:id="@+id/ll_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ll_camera_control"
+        android:layout_marginTop="20dp"
         android:layout_alignLeft="@id/ll_camera_control"
-        android:layout_alignTop="@id/sv_normal_camera"
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
@@ -237,12 +238,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="100dp">
+            android:layout_marginLeft="80dp">
 
             <TextView
                 android:id="@+id/tv_camera_steer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:text="角度调整"
                 android:textColor="@android:color/white"
@@ -253,6 +255,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@id/tv_camera_steer"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 app:bottomImg="@drawable/icon_arrow_down"
                 app:leftImg="@drawable/icon_arrow_left"
@@ -262,18 +265,29 @@
                 app:topImg="@drawable/icon_arrow_up">
 
             </com.sonicers.commonlib.view.SteerView>
+
+
+            <ImageView
+                android:id="@+id/iv_camera_start_monitor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/steer_camera"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:src="@drawable/btn_start_active" />
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="100dp">
+            android:layout_marginRight="80dp">
 
             <TextView
                 android:id="@+id/tv_car_steer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:text="移动调整"
                 android:textColor="@android:color/white"
@@ -284,6 +298,7 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_below="@id/tv_car_steer"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 app:bottomImg="@drawable/icon_arrow_down"
                 app:leftImg="@drawable/icon_arrow_left"
@@ -293,36 +308,25 @@
                 app:topImg="@drawable/icon_arrow_up">
 
             </com.sonicers.commonlib.view.SteerView>
+
+            <ImageView
+                android:id="@+id/iv_camera_clear_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/steer_car"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:src="@drawable/clear_alarm_selector" />
         </RelativeLayout>
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/iv_camera_start_monitor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="80dp"
-        android:layout_marginBottom="40dp"
-        android:clickable="true"
-        android:src="@drawable/btn_start_active" />
-
-    <ImageView
-        android:id="@+id/iv_camera_clear_alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="80dp"
-        android:layout_marginBottom="40dp"
-        android:clickable="true"
-        android:src="@drawable/clear_alarm_selector" />
-
     <ListView
         android:id="@+id/lv_temperature"
-        android:visibility="gone"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
     </ListView>
 

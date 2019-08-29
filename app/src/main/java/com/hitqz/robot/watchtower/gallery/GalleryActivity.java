@@ -77,6 +77,11 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
                     long start = donghuoRecords.get(0).struStartTime.toMillSeconds();
                     long stop = donghuoRecords.get(donghuoRecords.size() - 1).struStartTime.toMillSeconds();
                     calendarPopWindow.setRange(start, stop);
+                } else {
+                    long start = TimeStruct.farPast().toMillSeconds();
+                    long stop = TimeStruct.farFeature().toMillSeconds();
+                    calendarPopWindow.setRange(start, stop);
+                    timeRange.struStartTime = TimeStruct.today();
                 }
             }
             calendarPopWindow.showPopupWindow(searchView, timeRange.struStartTime.toMillSeconds());
@@ -91,6 +96,8 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
                 long time = fileInfo.startTime.toMillSeconds();// SD卡存储的视频最早时间
                 DonghuoRecordManager.getInstance().removeTimePointBefore(time);
                 donghuoRecords = DonghuoRecordManager.getInstance().getDonghuoRecords();
+                emitter.onNext(donghuoRecords);
+            } else {
                 emitter.onNext(donghuoRecords);
             }
             emitter.onComplete();
