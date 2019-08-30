@@ -654,16 +654,15 @@ public class ProductionView extends View {
         if (floats == null || floats.size() == 0) {
             notDrawExtra();
             return;
-        } else {
-            texts.clear();
+        }
+        rectFS.clear();
+        texts.clear();
+        if (mBorderRect.mRatio < 1.0f) {
             for (int i = 0; i < floats.size(); i++) {
                 DecimalFormat decimalFormat = new DecimalFormat(".000");
                 String p = decimalFormat.format(floats.get(i));
                 texts.add(p);
             }
-        }
-        rectFS.clear();
-        if (mBorderRect.mRatio < 1.0f) {
             rect1.set(0, 0, mBorderRect.mRectF.left, mBorderRect.mRectF.top);
             if (rect1.width() > 0 && rect1.height() > 0) {
                 rectFS.add(rect1);
@@ -706,11 +705,18 @@ public class ProductionView extends View {
                 rectFS.add(rect9);
             }
         } else {
+            float sum = 0;
+            for (int i = 0; i < floats.size(); i++) {
+                sum += floats.get(i);
+            }
+            DecimalFormat decimalFormat = new DecimalFormat(".000");
+            String p = decimalFormat.format(sum / floats.size());
+            texts.add(p);
             wholeRectF.set(0, 0, mBorderRect.totalWidth, mBorderRect.totalHeight);
             rectFS.add(wholeRectF);
         }
 
-        Log.d(TAG, "size 是否相等：" + (rectFS.size() == floats.size()));
+        Log.d(TAG, "size 是否相等：" + (rectFS.size() == texts.size()));
         drawExtra = true;
         postInvalidate();
     }
