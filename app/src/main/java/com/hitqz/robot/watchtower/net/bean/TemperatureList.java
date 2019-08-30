@@ -37,7 +37,7 @@ public class TemperatureList {
         temperatureList.size = 0;
 
         if (model.get_$1() != null && model.get_$1().size() > 0) {
-            temperatureList._$1 = getTemperatureFromList(model.get_$2());
+            temperatureList._$1 = getTemperatureFromList(model.get_$1());
             temperatureList.size++;
         }
         if (model.get_$2() != null && model.get_$2().size() > 0) {
@@ -56,7 +56,7 @@ public class TemperatureList {
         }
 
         if (model.get_$5() != null && model.get_$5().size() > 0) {
-            temperatureList._$5 = getTemperatureFromList(model.get_$3());
+            temperatureList._$5 = getTemperatureFromList(model.get_$5());
             temperatureList.size++;
         }
 
