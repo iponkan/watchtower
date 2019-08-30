@@ -151,6 +151,7 @@ public class ProductionView extends View {
                             if (mProductionListener != null) {
                                 mProductionListener.onChangeRect(x, y, false, DEFAULT_RATIO);
                             }
+                            status = STATUS_READY;
                         } else {
                             changeDrawRect(x, y, production.mRatio);
                         }
@@ -288,6 +289,34 @@ public class ProductionView extends View {
         return rect;
     }
 
+    /**
+     * 是否选中控制点
+     * <p>
+     * -1为没有
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    private int isSeletedControllerCircle(float x, float y) {
+//        Log.d("yrclog", "mLeftTopTouchRect.left=============" + mLeftTopTouchRect.left);
+//        Log.d("yrclog", "mRightTopTouchRect.top=============" + mRightTopTouchRect.top);
+//        Log.d("yrclog", "mLeftBottomTouchRect.right=============" + mLeftBottomTouchRect.right);
+//        Log.d("yrclog", "mRightBottomTouchRect.bottom=============" + mRightBottomTouchRect.bottom);
+//        Log.d("yrclog", "x==============" + x + "y=================" + y);
+        if (mLeftTopTouchRect.contains(x, y))// 选中左上角
+            return 1;
+        if (mRightTopTouchRect.contains(x, y))// 选中右上角
+            return 2;
+        if (mLeftBottomTouchRect.contains(x, y))// 选中左下角
+            return 3;
+        if (mRightBottomTouchRect.contains(x, y))// 选中右下角
+            return 4;
+        return -1;
+    }
+
+    private int selectedControllerCicle;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -304,22 +333,206 @@ public class ProductionView extends View {
                 mGestureDetector.onTouchEvent(event);
             }
         } else if (event.getPointerCount() == 1 && !mIsScale) {
+            float x = event.getX();
+            float y = event.getY();
             Log.d(TAG, "mGestureDetector.onTouchEvent");
-            mGestureDetector.onTouchEvent(event);
-            if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                final float x = event.getX();
-                final float y = event.getY();
-                onUp(x, y);
+            if (status == STATUS_READY) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int selectCircle = isSeletedControllerCircle(x, y);
+                    switch (selectCircle) {
+                        case 1:
+                            x = mBorderRect.mRectF.left;
+                            y = mBorderRect.mRectF.top;
+                            break;
+                        case 2:
+                            x = mBorderRect.mRectF.right;
+                            y = mBorderRect.mRectF.top;
+                            break;
+                        case 3:
+                            x = mBorderRect.mRectF.left;
+                            y = mBorderRect.mRectF.bottom;
+                            break;
+                        case 4:
+                            x = mBorderRect.mRectF.right;
+                            y = mBorderRect.mRectF.bottom;
+                            break;
+                    }
+                    Log.d(TAG, " 选择控制点;" + selectCircle);
+                    if (selectCircle > 0) {// 选择控制点
+                        selectedControllerCicle = selectCircle;// 记录选中控制点编号
+                        status = STATUS_SCALE;// 进入缩放状态
+                        mPaint.setColor(Color.RED);
+                    } else if (mBorderRect.mRectF.contains(x, y)) {// 选择缩放框内部
+                        status = STATUS_MOVE;// 进入移动状态
+                        mPaint.setColor(Color.RED);
+                    }
+                }
+//                else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//                    if (status == STATUS_SCALE) {// 缩放控制
+//                        Log.d(TAG, "缩放控制");
+//                        scaleCropController(x - oldx, y - oldy);
+//                    } else if (status == STATUS_MOVE) {// 移动控制
+//                        Log.d(TAG, "移动控制");
+//                        translateCrop(x - oldx, y - oldy);
+//                    }
+//                }
+            } else if (status == STATUS_IDLE) {
+                mGestureDetector.onTouchEvent(event);
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    onUp(x, y);
+                }
             }
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                if (status == STATUS_SCALE) {// 缩放控制
+                    Log.d(TAG, "缩放控制");
+                    scaleCropController(x - oldx, y - oldy);
+                } else if (status == STATUS_MOVE) {// 移动控制
+                    Log.d(TAG, "移动控制");
+                    translateCrop(x - oldx, y - oldy);
+                }
+            }
+
+            // 记录上一次动作点
+            oldx = x;
+            oldy = y;
         }
         if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
+            if (status == STATUS_SCALE || status == STATUS_MOVE) {
+                status = STATUS_READY;
+                mPaint.setColor(Color.WHITE);
+                invalidate();
+            }
             Log.d(TAG, "onTouchEvent: ACTION_UP");
             mIsScale = false;
         }
 
         return true;
     }
+
+    /**
+     * 操作控制点 控制缩放
+     */
+    private void scaleCropController(float dx, float dy) {
+        float realDx = dx;
+        float realDy = dy;
+
+//        if (dx < 0) {
+//            realDx = Math.max(realDx, -mBorderRect.mRectF.left);
+//        } else {
+//            realDx = Math.min(realDx, mBorderRect.totalWidth - mBorderRect.mRectF.right);
+//        }
+//
+//        if (dy < 0) {
+//            realDy = Math.max(realDy, -mBorderRect.mRectF.top);
+//        } else {
+//            realDy = Math.min(realDy, mBorderRect.totalHeight - mBorderRect.mRectF.bottom);
+//        }
+
+//        mBorderRect.mRectF.left += realDx;
+//        mBorderRect.mRectF.right += realDx;
+//        mBorderRect.mRectF.top += realDy;
+//        mBorderRect.mRectF.bottom += realDy;
+//        temp.set(mBorderRect.mRectF);
+        switch (selectedControllerCicle) {
+
+            case 1:// 左上角控制点
+                if (realDx > 0) {
+                    realDx = Math.min(realDx, mBorderRect.mRectF.width() - 50);
+                } else {
+                    realDx = Math.max(realDx, -mBorderRect.mRectF.left);
+                }
+
+                if (realDy > 0) {
+                    realDy = Math.min(realDy, mBorderRect.mRectF.height() - 50);
+                } else {
+                    realDy = Math.max(realDy, -mBorderRect.mRectF.top);
+                }
+
+                mBorderRect.mRectF.left += realDx;
+                mBorderRect.mRectF.top += realDy;
+                break;
+            case 2:// 右上角控制点
+                if (realDx < 0) {
+                    realDx = Math.max(realDx, 50 - mBorderRect.mRectF.width());
+                } else {
+                    realDx = Math.min(realDx, mBorderRect.totalWidth - mBorderRect.mRectF.right);
+                }
+                if (realDy > 0) {
+                    realDy = Math.min(realDy, mBorderRect.mRectF.height() - 50);
+                } else {
+                    realDy = Math.max(realDy, -mBorderRect.mRectF.top);
+                }
+
+                mBorderRect.mRectF.right += realDx;
+                mBorderRect.mRectF.top += realDy;
+                break;
+            case 3:// 左下角控制点
+                if (realDx > 0) {
+                    realDx = Math.min(realDx, mBorderRect.mRectF.width() - 50);
+                } else {
+                    realDx = Math.max(realDx, -mBorderRect.mRectF.left);
+                }
+
+                if (realDy < 0) {
+                    realDy = Math.max(realDy, 50 - mBorderRect.mRectF.height());
+                } else {
+                    realDy = Math.min(realDy, mBorderRect.totalHeight - mBorderRect.mRectF.bottom);
+                }
+
+                mBorderRect.mRectF.left += realDx;
+                mBorderRect.mRectF.bottom += realDy;
+                break;
+            case 4:// 右下角控制点
+                if (realDx < 0) {
+                    realDx = Math.max(realDx, 50 - mBorderRect.mRectF.width());
+                } else {
+                    realDx = Math.min(realDx, mBorderRect.totalWidth - mBorderRect.mRectF.right);
+                }
+                if (realDy < 0) {
+                    realDy = Math.max(realDy, 50 - mBorderRect.mRectF.height());
+                } else {
+                    realDy = Math.min(realDy, mBorderRect.totalHeight - mBorderRect.mRectF.bottom);
+                }
+                mBorderRect.mRectF.right += realDx;
+                mBorderRect.mRectF.bottom += realDy;
+                break;
+        }// end switch
+        resetCorner();
+        invalidate();
+    }
+
+    /**
+     * 移动剪切框
+     *
+     * @param dx
+     * @param dy
+     */
+    private void translateCrop(float dx, float dy) {
+        float realDx = dx;
+        float realDy = dy;
+
+        if (dx < 0) {
+            realDx = Math.max(realDx, -mBorderRect.mRectF.left);
+        } else {
+            realDx = Math.min(realDx, mBorderRect.totalWidth - mBorderRect.mRectF.right);
+        }
+
+        if (dy < 0) {
+            realDy = Math.max(realDy, -mBorderRect.mRectF.top);
+        } else {
+            realDy = Math.min(realDy, mBorderRect.totalHeight - mBorderRect.mRectF.bottom);
+        }
+
+        mBorderRect.mRectF.left += realDx;
+        mBorderRect.mRectF.right += realDx;
+        mBorderRect.mRectF.top += realDy;
+        mBorderRect.mRectF.bottom += realDy;
+        resetCorner();
+        invalidate();
+    }
+
+    private float oldx, oldy;
 
     private void onUp(float x, float y) {
         if (mProductionListener != null) {
@@ -373,6 +586,7 @@ public class ProductionView extends View {
         float bottom = centerY + height / 2;
 
         mBorderRect.set(left, top, right, bottom, scale);
+        resetCorner();
         invalidate();
     }
 
@@ -510,4 +724,30 @@ public class ProductionView extends View {
     RectF rect9 = new RectF();
 
     RectF wholeRectF = new RectF();
+
+    private static int STATUS_IDLE = 1;// 空闲状态
+    private static int STATUS_READY = 2;// 就绪状态
+    private static int STATUS_MOVE = 3;// 移动状态
+    private static int STATUS_SCALE = 4;// 缩放状态
+    private int status = STATUS_IDLE;
+
+    //四个点触摸区域
+    private RectF mLeftTopTouchRect = new RectF();
+    private RectF mRightTopTouchRect = new RectF();
+    private RectF mLeftBottomTouchRect = new RectF();
+    private RectF mRightBottomTouchRect = new RectF();
+
+    private void resetCorner() {
+
+        //设置触摸区域
+        int touchRadius = 25;//触摸半径
+        mLeftTopTouchRect.set(mBorderRect.mRectF.left - touchRadius, mBorderRect.mRectF.top - touchRadius,
+                mBorderRect.mRectF.left + touchRadius, mBorderRect.mRectF.top + touchRadius);
+        mRightTopTouchRect.set(mBorderRect.mRectF.right - touchRadius, mBorderRect.mRectF.top - touchRadius,
+                mBorderRect.mRectF.right + touchRadius, mBorderRect.mRectF.top + touchRadius);
+        mLeftBottomTouchRect.set(mBorderRect.mRectF.left - touchRadius, mBorderRect.mRectF.bottom - touchRadius,
+                mBorderRect.mRectF.left + touchRadius, mBorderRect.mRectF.bottom + touchRadius);
+        mRightBottomTouchRect.set(mBorderRect.mRectF.right - touchRadius, mBorderRect.mRectF.bottom - touchRadius,
+                mBorderRect.mRectF.right + touchRadius, mBorderRect.mRectF.bottom + touchRadius);
+    }
 }
