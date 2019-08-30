@@ -112,7 +112,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     @BindView(R.id.iv_light)
     Button ivLight;
     @BindView(R.id.iv_cancel_kuang)
-    Button ivCancelKuang;
+    ImageView ivCancelKuang;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
