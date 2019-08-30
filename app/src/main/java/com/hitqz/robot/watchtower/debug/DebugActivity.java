@@ -38,6 +38,8 @@ public class DebugActivity extends BaseActivity {
     Button btnTemperature;
     @BindView(R.id.btn_debug)
     Button btnDebug;
+    @BindView(R.id.btn_light_switch)
+    Button btnLightSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class DebugActivity extends BaseActivity {
 
         boolean debug = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.DEBUG, false);
         btnDebug.setText(debug ? "正常模式" : "Debug模式");
+
+        boolean aBoolean = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.LIGHT_SWITCH, false);
+        btnLightSwitch.setText(aBoolean ? "不显示灯开关" : "显示灯开关");
     }
 
     public static final String URL = "http://47.92.118.121:4000/files/uploads?folder=WatchTower";
@@ -119,5 +124,12 @@ public class DebugActivity extends BaseActivity {
         boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.DEBUG, false);
         SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.DEBUG, !now);
         btnDebug.setText(!now ? "正常模式" : "Debug模式");
+    }
+
+    @OnClick(R.id.btn_light_switch)
+    public void onLightSwitchClick() {
+        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.LIGHT_SWITCH, false);
+        SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.LIGHT_SWITCH, !now);
+        btnLightSwitch.setText(!now ? "不显示灯开关" : "显示灯开关");
     }
 }

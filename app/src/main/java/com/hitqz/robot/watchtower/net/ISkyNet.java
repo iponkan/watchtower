@@ -154,6 +154,15 @@ public interface ISkyNet {
      * 开关灯
      * 0,关 ，1 开
      */
-    @GET("/cameraPlatform/light/{action}")
+    @POST("/cameraPlatform/light/{action}")
     Observable<BaseRespond<DataBean>> cameraPlatformLight(@Path("action") int action);
+
+    /**
+     * 灯光状态
+     *
+     * @return false:掉线
+     * true:正常
+     */
+    @GET("/cameraPlatform/light")
+    Observable<BaseRespond<Boolean>> getCameraPlatformLight();
 }

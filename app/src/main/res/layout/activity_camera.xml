@@ -258,8 +258,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_baseplate"
         android:layout_alignLeft="@id/ll_baseplate"
-        android:text="开灯"
-        android:visibility="gone" />
+        android:text="开灯" />
 
 
     <FrameLayout

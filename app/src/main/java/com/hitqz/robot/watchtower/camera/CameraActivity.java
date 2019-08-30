@@ -113,6 +113,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     Button ivLight;
     @BindView(R.id.iv_cancel_kuang)
     ImageView ivCancelKuang;
+    boolean lightTurnOn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,6 +152,12 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             MockBean mockBean = GsonUtil.getInstance().fromJson(json, MockBean.class);
             RegionTemperatureList model = mockBean.getData();
             debugShow(model);
+        }
+
+        if (SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.LIGHT_SWITCH, false)) {
+            ivLight.setVisibility(View.VISIBLE);
+        } else {
+            ivLight.setVisibility(View.GONE);
         }
     }
 
@@ -526,15 +533,34 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                         Logger.t(TAG).e("getLightSoundElectric fail：" + msg);
                     }
                 });
+        skyNet.getCameraPlatformLight()
+                .compose(RxSchedulers.io_main())
+                .compose(bindToLifecycle())
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        Logger.t(TAG).i("getCameraPlatformLight success:" + model);
+                        lightTurnOn = model;
+                        ivLight.setText(lightTurnOn ? "关灯" : "开灯");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        Logger.t(TAG).e("getCameraPlatformLight fail：" + msg);
+                    }
+                });
     }
 
     @OnClick(R.id.iv_light)
     public void onIvLightClicked() {
-        skyNet.cameraPlatformLight(0)
+
+        skyNet.cameraPlatformLight(lightTurnOn ? 0 : 1)
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
                     @Override
                     public void onSuccess(DataBean model) {
+                        lightTurnOn = !lightTurnOn;
+                        ivLight.setText(lightTurnOn ? "关灯" : "开灯");
                         Logger.t(TAG).i("cameraPlatformLight success:" + model);
                     }
 

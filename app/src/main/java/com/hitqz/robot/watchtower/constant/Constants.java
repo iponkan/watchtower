@@ -5,6 +5,7 @@ public class Constants {
     public static final String ROCORD_KEY = "record";
     public static final String SHOWTEMPERATURE = "show_temperature";
     public static final String DEBUG = "debug";
+    public static final String LIGHT_SWITCH = "lightSwitch";
 
     /*0：停止
      *1：前进
