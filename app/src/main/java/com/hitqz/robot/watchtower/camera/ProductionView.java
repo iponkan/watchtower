@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.net.bean.TemperatureList;
+import com.sonicers.commonlib.util.ToastUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -321,6 +322,7 @@ public class ProductionView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         if (antiTouch) {
+            ToastUtil.showToastShort(getContext(), "请停止监火方能移动选框");
             return true;
         }
 
@@ -362,10 +364,10 @@ public class ProductionView extends View {
                     if (selectCircle > 0) {// 选择控制点
                         selectedControllerCicle = selectCircle;// 记录选中控制点编号
                         status = STATUS_SCALE;// 进入缩放状态
-                        mPaint.setColor(Color.RED);
+                        mPaint.setColor(Color.BLUE);
                     } else if (mBorderRect.mRectF.contains(x, y)) {// 选择缩放框内部
                         status = STATUS_MOVE;// 进入移动状态
-                        mPaint.setColor(Color.RED);
+                        mPaint.setColor(Color.BLUE);
                     }
                 }
 //                else if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -749,5 +751,15 @@ public class ProductionView extends View {
                 mBorderRect.mRectF.left + touchRadius, mBorderRect.mRectF.bottom + touchRadius);
         mRightBottomTouchRect.set(mBorderRect.mRectF.right - touchRadius, mBorderRect.mRectF.bottom - touchRadius,
                 mBorderRect.mRectF.right + touchRadius, mBorderRect.mRectF.bottom + touchRadius);
+    }
+
+    public void reset() {
+        mBorderRect.set(0, 0, mScreenWidth, mScreenHeight, 1.0f);
+        mLeftTopTouchRect.set(0, 0, 0, 0);
+        mRightTopTouchRect.set(0, 0, 0, 0);
+        mLeftBottomTouchRect.set(0, 0, 0, 0);
+        mRightBottomTouchRect.set(0, 0, 0, 0);
+        status = STATUS_IDLE;
+        postInvalidate();
     }
 }

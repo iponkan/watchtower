@@ -111,6 +111,8 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     boolean resume = false;
     @BindView(R.id.iv_light)
     Button ivLight;
+    @BindView(R.id.iv_cancel_kuang)
+    Button ivCancelKuang;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -527,7 +529,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     }
 
     @OnClick(R.id.iv_light)
-    public void onViewClicked() {
+    public void onIvLightClicked() {
         skyNet.cameraPlatformLight(0)
                 .compose(RxSchedulers.io_main())
                 .subscribeWith(new BaseObserver<DataBean>(loadingDialog) {
@@ -541,6 +543,17 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                         Logger.t(TAG).e("cameraPlatformLight fail：" + msg);
                     }
                 });
+    }
+
+    @OnClick(R.id.iv_cancel_kuang)
+    public void onViewClicked() {
+        if (isMonitoring) {
+            ToastUtil.showToastShort(this, "请停止监火方能取消选框");
+        } else {
+            if (productionView != null) {
+                productionView.reset();
+            }
+        }
     }
 
     private class CameraPlatformSteer implements SteerView.ISteerListener {

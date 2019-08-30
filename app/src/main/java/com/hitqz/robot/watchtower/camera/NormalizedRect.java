@@ -112,4 +112,8 @@ public class NormalizedRect {
         set(left, top, right, bottom, ratio);
 
     }
+
+    public void reset(){
+
+    }
 }
