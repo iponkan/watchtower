@@ -663,32 +663,6 @@ public class ProductionView extends View {
                 String p = decimalFormat.format(floats.get(i));
                 texts.add(p);
             }
-            rect1.set(0, 0, mBorderRect.mRectF.left, mBorderRect.mRectF.top);
-            if (rect1.width() > 0 && rect1.height() > 0) {
-                rectFS.add(rect1);
-            }
-
-            rect2.set(mBorderRect.mRectF.left, 0, mBorderRect.mRectF.right, mBorderRect.mRectF.top);
-            if (rect2.width() > 0 && rect2.height() > 0) {
-                rectFS.add(rect2);
-            }
-
-            rect3.set(mBorderRect.mRectF.right, 0, mBorderRect.totalWidth, mBorderRect.mRectF.top);
-            if (rect3.width() > 0 && rect3.height() > 0) {
-                rectFS.add(rect3);
-            }
-
-            rect4.set(0, mBorderRect.mRectF.top, mBorderRect.mRectF.left, mBorderRect.mRectF.bottom);
-            if (rect4.width() > 0 && rect4.height() > 0) {
-                rectFS.add(rect4);
-            }
-
-//            rectFS.add(mBorderRect.mRectF);
-
-            rect6.set(mBorderRect.mRectF.right, mBorderRect.mRectF.top, mBorderRect.totalWidth, mBorderRect.mRectF.bottom);
-            if (rect6.width() > 0 && rect6.height() > 0) {
-                rectFS.add(rect6);
-            }
 
             rect7.set(0, mBorderRect.mRectF.bottom, mBorderRect.mRectF.left, mBorderRect.totalHeight);
             if (rect7.width() > 0 && rect7.height() > 0) {
@@ -703,6 +677,33 @@ public class ProductionView extends View {
             rect9.set(mBorderRect.mRectF.right, mBorderRect.mRectF.bottom, mBorderRect.totalWidth, mBorderRect.totalHeight);
             if (rect9.width() > 0 && rect9.height() > 0) {
                 rectFS.add(rect9);
+            }
+
+            rect4.set(0, mBorderRect.mRectF.top, mBorderRect.mRectF.left, mBorderRect.mRectF.bottom);
+            if (rect4.width() > 0 && rect4.height() > 0) {
+                rectFS.add(rect4);
+            }
+
+//            rectFS.add(mBorderRect.mRectF);
+
+            rect6.set(mBorderRect.mRectF.right, mBorderRect.mRectF.top, mBorderRect.totalWidth, mBorderRect.mRectF.bottom);
+            if (rect6.width() > 0 && rect6.height() > 0) {
+                rectFS.add(rect6);
+            }
+
+            rect1.set(0, 0, mBorderRect.mRectF.left, mBorderRect.mRectF.top);
+            if (rect1.width() > 0 && rect1.height() > 0) {
+                rectFS.add(rect1);
+            }
+
+            rect2.set(mBorderRect.mRectF.left, 0, mBorderRect.mRectF.right, mBorderRect.mRectF.top);
+            if (rect2.width() > 0 && rect2.height() > 0) {
+                rectFS.add(rect2);
+            }
+
+            rect3.set(mBorderRect.mRectF.right, 0, mBorderRect.totalWidth, mBorderRect.mRectF.top);
+            if (rect3.width() > 0 && rect3.height() > 0) {
+                rectFS.add(rect3);
             }
         } else {
             float sum = 0;
