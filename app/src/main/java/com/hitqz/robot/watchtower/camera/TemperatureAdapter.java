@@ -1,6 +1,7 @@
 package com.hitqz.robot.watchtower.camera;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class TemperatureAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(mContext).inflate(R.layout.item_list_video, parent, false);
         TextView tv = convertView.findViewById(R.id.tv_fileName);
+        tv.setTextColor(Color.RED);
         tv.setText(position + 1 + ": " + mData.get(position));
 
         return convertView;

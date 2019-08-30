@@ -34,7 +34,7 @@
         android:layout_below="@id/common_title_bar"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="20dp">
 
         <ImageView
@@ -343,7 +343,7 @@
 
     <ListView
         android:id="@+id/lv_temperature"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/ll_state"
         android:layout_alignParentRight="true"

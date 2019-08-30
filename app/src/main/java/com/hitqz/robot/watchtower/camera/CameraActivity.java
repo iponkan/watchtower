@@ -260,12 +260,20 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     @OnClick(R.id.iv_camera_plus)
     void rectPlus() {
-        productionView.zoomIn();
+        if (isMonitoring) {
+            ToastUtil.showToastShort(this, "请停止监火方能放大选框");
+        } else {
+            productionView.zoomIn();
+        }
     }
 
     @OnClick(R.id.iv_camera_minus)
     void rectMinus() {
-        productionView.zoomOut();
+        if (isMonitoring) {
+            ToastUtil.showToastShort(this, "请停止监火方能缩小选框");
+        } else {
+            productionView.zoomOut();
+        }
     }
 
     @OnClick(R.id.iv_camera_start_monitor)
@@ -400,10 +408,6 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
         isMonitoring = true;
         refreshTemperature(true);
-        ivPlus.setClickable(false);
-        ivMinus.setClickable(false);
-        ivFar.setClickable(false);
-        ivNear.setClickable(false);
     }
 
     private void onStopMonitor() {
@@ -411,10 +415,6 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
         isMonitoring = false;
         refreshTemperature(false);
-        ivPlus.setClickable(true);
-        ivMinus.setClickable(true);
-        ivFar.setClickable(true);
-        ivNear.setClickable(true);
     }
 
     private void checkState() {
@@ -546,7 +546,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     }
 
     @OnClick(R.id.iv_cancel_kuang)
-    public void onViewClicked() {
+    public void onCancelKuangClicked() {
         if (isMonitoring) {
             ToastUtil.showToastShort(this, "请停止监火方能取消选框");
         } else {
