@@ -3,22 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/common_bg"
     android:focusableInTouchMode="true">
-
-
-    <ListView
-        android:id="@+id/lv_temperature"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/ll_state"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:clickable="false"
-        android:focusable="false"
-        android:visibility="gone">
-
-    </ListView>
 
     <com.hitqz.robot.watchtower.widget.CommonTitleBar
         android:id="@+id/common_title_bar"
@@ -354,5 +341,35 @@
                 android:src="@drawable/clear_alarm_selector" />
         </RelativeLayout>
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_debug_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignTop="@id/ll_state"
+        android:layout_alignParentRight="true"
+        android:background="@color/white"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/btn_debug_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开关">
+
+        </Button>
+
+        <ListView
+            android:id="@+id/lv_temperature"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+
+            android:clickable="false"
+            android:focusable="false">
+
+        </ListView>
+    </LinearLayout>
 
 </RelativeLayout>

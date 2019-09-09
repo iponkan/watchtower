@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -114,6 +115,10 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     @BindView(R.id.iv_cancel_kuang)
     ImageView ivCancelKuang;
     boolean lightTurnOn;
+    @BindView(R.id.btn_debug_switch)
+    Button btnDebugSwitch;
+    @BindView(R.id.ll_debug_layout)
+    LinearLayout llDebugLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -582,6 +587,15 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    @OnClick(R.id.btn_debug_switch)
+    public void onViewClicked() {
+        if (lvTemperature.getVisibility() == View.VISIBLE) {
+            lvTemperature.setVisibility(View.GONE);
+        } else if (lvTemperature.getVisibility() == View.GONE) {
+            lvTemperature.setVisibility(View.VISIBLE);
+        }
+    }
+
     private class CameraPlatformSteer implements SteerView.ISteerListener {
 
         @Override
@@ -809,7 +823,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
     private void refreshTemperature(boolean refresh) {
         boolean showTemperature = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
         if (!refresh || !showTemperature) {
-            lvTemperature.setVisibility(View.GONE);
+            llDebugLayout.setVisibility(View.GONE);
             productionView.showTemperature(null);
         } else {
             handler.postDelayed(() -> skyNet.regionTemperature()
@@ -839,7 +853,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     private void showModel(RegionTemperatureList model) {
         if (model != null) {
-            lvTemperature.setVisibility(View.VISIBLE);
+            llDebugLayout.setVisibility(View.VISIBLE);
             TemperatureList temperatureList = TemperatureList.fromRegionTemperatureList(model);
             productionView.showTemperature(temperatureList);
             TemperatureAdapter temperatureAdapter = new TemperatureAdapter(temperatureList.toList(), CameraActivity.this);
