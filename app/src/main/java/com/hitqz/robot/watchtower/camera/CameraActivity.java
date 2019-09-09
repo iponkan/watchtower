@@ -506,7 +506,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
         skyNet.getBaseplateElectric()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Integer>(loadingDialog) {
                     @Override
@@ -523,7 +523,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
         skyNet.getLightSoundElectric()
                 .compose(RxSchedulers.io_main())
-                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.MINUTES)))
+                .repeatWhen(objectObservable -> objectObservable.flatMap((Function<Object, ObservableSource<?>>) throwable -> Observable.just(1).delay(3, TimeUnit.SECONDS)))
                 .compose(bindToLifecycle())
                 .subscribeWith(new BaseObserver<Integer>(loadingDialog) {
                     @Override
