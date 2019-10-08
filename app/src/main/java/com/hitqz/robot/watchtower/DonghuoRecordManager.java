@@ -44,7 +44,7 @@ public class DonghuoRecordManager {
 
         donghuoRecords = new ArrayList<>();
         if (list != null) {
-            for (int i = 0; i < list.size() - 1; i++) {
+            for (int i = 0; i < list.size(); i++) {
                 DonghuoRecord donghuoRecord = DonghuoRecord.fromXml(list.get(i));
                 donghuoRecords.add(donghuoRecord);
             }
