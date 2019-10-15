@@ -99,7 +99,9 @@ public class ProductionView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (normalizedRect.mRatio < 1.0f) {
+        if (drawRectState == STATE_NONE) {
+            return;
+        } else if (drawRectState == STATE_ONE) {
             canvas.drawRect(normalizedRect.mRectF, paint);
         }
 
@@ -159,16 +161,17 @@ public class ProductionView extends View {
                     public boolean onSingleTapUp(MotionEvent event) {
                         final float x = event.getX();
                         final float y = event.getY();
-                        Production production = mProductionManager.contains(x, y);
-                        normalizedRect.setProduction(production);
-                        if (production == null) {
+//                        Production production = mProductionManager.contains(x, y);
+//                        normalizedRect.setProduction(production);
+                        if (normalizedRect == null) {
+                            normalizedRect = new NormalizedRect(borderWidth, borderHeight);
                             changeDrawRect(x, y, DEFAULT_RATIO);
-                            if (mProductionListener != null) {
-                                mProductionListener.onChangeRect(x, y, false, DEFAULT_RATIO);
-                            }
+                            drawRectState = STATE_ONE;
                             operateState = STATUS_READY;
                         } else {
-                            changeDrawRect(x, y, production.mRatio);
+                            if (normalizedRect.mRectF.contains(x, y)) {
+
+                            }
                         }
                         return true;
                     }
@@ -194,9 +197,6 @@ public class ProductionView extends View {
                                         normalizedRect.mRatio);
                                 normalizedRect.setProduction(newP);
                                 notifyItemSetChanged();
-                                if (mProductionListener != null) {
-                                    mProductionListener.onChangeRect(x, y, false, DEFAULT_RATIO);
-                                }
                             }
                         }
                     }
@@ -231,10 +231,7 @@ public class ProductionView extends View {
 
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
-                if (mProductionListener != null) {
-                    mProductionListener.onScale(normalizedRect.centerX(),
-                            normalizedRect.centerY(), normalizedRect.mRatio);
-                }
+
             }
         });
     }
@@ -242,8 +239,6 @@ public class ProductionView extends View {
     public void setParentSize(float width, float height) {
         borderWidth = width;
         borderHeight = height;
-        normalizedRect = new NormalizedRect(borderWidth, borderHeight);
-        normalizedRect.set(0, 0, borderWidth, borderHeight, 1.0f);
     }
 
     private ProductionManager mProductionManager;
@@ -346,20 +341,8 @@ public class ProductionView extends View {
                         paint.setColor(Color.BLUE);
                     }
                 }
-//                else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//                    if (operateState == STATUS_SCALE) {// 缩放控制
-//                        Log.d(TAG, "缩放控制");
-//                        scaleCropController(x - oldx, y - oldy);
-//                    } else if (operateState == STATUS_MOVE) {// 移动控制
-//                        Log.d(TAG, "移动控制");
-//                        translateCrop(x - oldx, y - oldy);
-//                    }
-//                }
             } else if (operateState == STATUS_IDLE) {
                 gestureDetector.onTouchEvent(event);
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    onUp(x, y);
-                }
             }
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 if (operateState == STATUS_SCALE) {// 缩放控制
@@ -494,28 +477,10 @@ public class ProductionView extends View {
 
     private float oldx, oldy;
 
-    private void onUp(float x, float y) {
-        if (mProductionListener != null) {
-            mProductionListener.onChangeRect(x, y, true, normalizedRect.mRatio);
-        }
-    }
-
-    private ProductionListener mProductionListener;
-
-    public void setProductionListener(ProductionListener l) {
-        mProductionListener = l;
-    }
-
     boolean antiTouch;
 
     public void antiTouch(boolean b) {
         antiTouch = b;
-    }
-
-    public interface ProductionListener {
-        void onChangeRect(float x, float y, boolean animate, float ratio);
-
-        void onScale(float x, float y, float scale);
     }
 
     private void changeDrawRect(float centerX, float centerY, float scale) {

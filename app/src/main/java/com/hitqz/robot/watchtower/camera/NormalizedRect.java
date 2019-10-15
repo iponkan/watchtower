@@ -3,20 +3,17 @@ package com.hitqz.robot.watchtower.camera;
 import android.graphics.Point;
 import android.graphics.RectF;
 
-
 public class NormalizedRect {
 
     float totalWidth;
     float totalHeight;
+    float widthR;
+    float heightR;
 
     public RectF mRectF;
 
     public Production mProduction;
     public float mRatio = 1.0f;// 默认初始态，这个状态不会去绘制，只有设置了框选区域(此时ratio不为1)才会绘制
-
-
-    float widthR;
-    float heightR;
 
     public NormalizedRect(float width, float height) {
         totalWidth = width;
@@ -25,6 +22,7 @@ public class NormalizedRect {
 
         widthR = totalWidth / 1000f;
         heightR = totalHeight / 1000f;
+        set(0, 0, width, height, 1.0f);
     }
 
     public void set(float left, float top, float right, float bottom, float ratio) {
@@ -110,10 +108,5 @@ public class NormalizedRect {
 
         float ratio = (right - left) / totalWidth;
         set(left, top, right, bottom, ratio);
-
-    }
-
-    public void reset(){
-
     }
 }
