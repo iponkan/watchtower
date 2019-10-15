@@ -26,25 +26,28 @@ import java.util.List;
 
 public class ProductionView extends View {
 
+    public static final String TAG = ProductionView.class.getSimpleName();
+
+    private int drawRectState = STATE_NONE;
+
     public static final int STATE_NONE = 0x00;
     public static final int STATE_ONE = 0x01;
     public static final int STATE_TWO = 0x02;
-
-    public static final String TAG = ProductionView.class.getSimpleName();
 
     public static final float DEFAULT_RATIO = 1f / 3;
     private static final float MIN_SCALE = 0.1f;
     private static final float MAX_SCALE = 0.6f;
 
-    private NormalizedRect mNormalizedRect;
-    private ArrayList<RectF> mCenterRectFs = new ArrayList<>();
-    private Paint mPaint;
-    private Paint mTextPaint;
-    private GestureDetector mGestureDetector;
-    private ScaleGestureDetector mScaleGestureDetector;
-    private float mScreenWidth;
-    private float mScreenHeight;
-    private boolean mIsScale;
+    private NormalizedRect normalizedRect;
+    private ArrayList<NormalizedRect> normalizedRects = new ArrayList<>();
+    private Paint paint;
+    private Paint textPaint;
+    private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
+    private float borderWidth;
+    private float borderHeight;
+    private boolean isScale;
+    boolean drawFocusText = false;
 
     RectF rect1 = new RectF();
     RectF rect2 = new RectF();
@@ -58,19 +61,21 @@ public class ProductionView extends View {
 
     RectF wholeRectF = new RectF();
 
-    List<RectF> mTextRectFS = new ArrayList<>();
+    List<RectF> textRectFS = new ArrayList<>();
 
+    private int operateState = STATUS_IDLE;
     private static int STATUS_IDLE = 1;// 空闲状态
     private static int STATUS_READY = 2;// 就绪状态
     private static int STATUS_MOVE = 3;// 移动状态
     private static int STATUS_SCALE = 4;// 缩放状态
-    private int status = STATUS_IDLE;
 
     //四个点触摸区域
     private RectF mLeftTopTouchRect = new RectF();
     private RectF mRightTopTouchRect = new RectF();
     private RectF mLeftBottomTouchRect = new RectF();
     private RectF mRightBottomTouchRect = new RectF();
+
+    private int selectedControllerCicle;
 
     public ProductionView(Context context) {
         this(context, null);
@@ -86,70 +91,68 @@ public class ProductionView extends View {
         init(context);
     }
 
-    boolean drawText = false;
-
     public void drawText(boolean drawText) {
-        this.drawText = drawText;
+        this.drawFocusText = drawText;
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mNormalizedRect.mRatio < 1.0f) {
-            canvas.drawRect(mNormalizedRect.mRectF, mPaint);
+        if (normalizedRect.mRatio < 1.0f) {
+            canvas.drawRect(normalizedRect.mRectF, paint);
+        }
+
+        if (drawFocusText) {
+            canvas.drawText("聚焦中", getWidth() / 2f - 55, getHeight() / 2f + 10, textPaint);
         }
 
         if (drawText) {
-            canvas.drawText("聚焦中", getWidth() / 2f - 55, getHeight() / 2f + 10, mTextPaint);
-        }
-
-        if (drawExtra) {
-            if (mTextRectFS.size() == 0 || texts.size() == 0) {
+            if (textRectFS.size() == 0 || texts.size() == 0) {
                 //
             } else {
-                int size = Math.min(mTextRectFS.size(), texts.size());
+                int size = Math.min(textRectFS.size(), texts.size());
                 Log.d(TAG, "draw min size:" + size);
                 for (int i = 0; i < size; i++) {
-                    RectF rectF = mTextRectFS.get(i);
+                    RectF rectF = textRectFS.get(i);
                     String temperature = texts.get(i);
                     Log.d(TAG, "draw temperature:" + temperature);
-                    canvas.drawText(temperature, rectF.centerX(), rectF.centerY(), mTextPaint);
+                    canvas.drawText(temperature, rectF.centerX(), rectF.centerY(), textPaint);
                 }
             }
         }
     }
 
     public Point[] getPoints() {
-        if (mNormalizedRect.mRatio == 1.0f) {
+        if (normalizedRect.mRatio == 1.0f) {
             return null;
         }
 
         Point[] points = new Point[2];
-        points[0] = new Point(mNormalizedRect.commonLeft(), mNormalizedRect.commonBottom());
-        points[1] = new Point(mNormalizedRect.commonRight(), mNormalizedRect.commonTop());
+        points[0] = new Point(normalizedRect.commonLeft(), normalizedRect.commonBottom());
+        points[1] = new Point(normalizedRect.commonRight(), normalizedRect.commonTop());
         return points;
     }
 
     public void setPoints(Point[] points) {
-        mNormalizedRect.setPoints(points);
+        normalizedRect.setPoints(points);
         postInvalidate();
     }
 
     private void init(Context context) {
-        mPaint = new Paint();
-        mTextPaint = new Paint();
+        paint = new Paint();
+        textPaint = new Paint();
         Resources resources = context.getResources();
-        mPaint.setColor(Color.WHITE);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(resources.getDimension(R.dimen.production_lw));
-        mTextPaint.setColor(Color.WHITE);
-        mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setStrokeWidth(resources.getDimension(R.dimen.center_lw));
-        mTextPaint.setTextSize(30);
-        mTextPaint.setAntiAlias(true);
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(resources.getDimension(R.dimen.production_lw));
+        textPaint.setColor(Color.WHITE);
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setStrokeWidth(resources.getDimension(R.dimen.center_lw));
+        textPaint.setTextSize(30);
+        textPaint.setAntiAlias(true);
 
-        mGestureDetector = new GestureDetector(context,
+        gestureDetector = new GestureDetector(context,
                 new GestureDetector.SimpleOnGestureListener() {
 
                     @Override
@@ -157,13 +160,13 @@ public class ProductionView extends View {
                         final float x = event.getX();
                         final float y = event.getY();
                         Production production = mProductionManager.contains(x, y);
-                        mNormalizedRect.setProduction(production);
+                        normalizedRect.setProduction(production);
                         if (production == null) {
                             changeDrawRect(x, y, DEFAULT_RATIO);
                             if (mProductionListener != null) {
                                 mProductionListener.onChangeRect(x, y, false, DEFAULT_RATIO);
                             }
-                            status = STATUS_READY;
+                            operateState = STATUS_READY;
                         } else {
                             changeDrawRect(x, y, production.mRatio);
                         }
@@ -172,7 +175,7 @@ public class ProductionView extends View {
 
                     @Override
                     public void onLongPress(MotionEvent event) {
-                        if (mIsScale) {
+                        if (isScale) {
                             return;
                         }
                         Log.d(TAG, "onLongPress: ");
@@ -183,13 +186,13 @@ public class ProductionView extends View {
                             int index = mProductionManager.indexOfProduction(production);
                             notifyItemRemove(index);
                             mProductionManager.remove(production);
-                            mNormalizedRect.setProduction(null);
+                            normalizedRect.setProduction(null);
                         } else {
                             if (!mProductionManager.isFull()) {
                                 changeDrawRect(x, y, DEFAULT_RATIO);
                                 Production newP = mProductionManager.addProduction(x, y,
-                                        mNormalizedRect.mRatio);
-                                mNormalizedRect.setProduction(newP);
+                                        normalizedRect.mRatio);
+                                normalizedRect.setProduction(newP);
                                 notifyItemSetChanged();
                                 if (mProductionListener != null) {
                                     mProductionListener.onChangeRect(x, y, false, DEFAULT_RATIO);
@@ -210,13 +213,13 @@ public class ProductionView extends View {
                     }
                 });
 
-        mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
+        scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
-                float scaleFactor = (float) (mNormalizedRect.mRatio * Math.pow(detector.getScaleFactor(), 3));
+                float scaleFactor = (float) (normalizedRect.mRatio * Math.pow(detector.getScaleFactor(), 3));
                 scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
-                mNormalizedRect.setRatio(scaleFactor);
-                Log.d(TAG, "onScale: mScale:" + mNormalizedRect.mRatio);
+                normalizedRect.setRatio(scaleFactor);
+                Log.d(TAG, "onScale: mScale:" + normalizedRect.mRatio);
                 invalidate();
                 return true;
             }
@@ -229,18 +232,18 @@ public class ProductionView extends View {
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
                 if (mProductionListener != null) {
-                    mProductionListener.onScale(mNormalizedRect.centerX(),
-                            mNormalizedRect.centerY(), mNormalizedRect.mRatio);
+                    mProductionListener.onScale(normalizedRect.centerX(),
+                            normalizedRect.centerY(), normalizedRect.mRatio);
                 }
             }
         });
     }
 
     public void setParentSize(float width, float height) {
-        mScreenWidth = width;
-        mScreenHeight = height;
-        mNormalizedRect = new NormalizedRect(mScreenWidth, mScreenHeight);
-        mNormalizedRect.set(0, 0, mScreenWidth, mScreenHeight, 1.0f);
+        borderWidth = width;
+        borderHeight = height;
+        normalizedRect = new NormalizedRect(borderWidth, borderHeight);
+        normalizedRect.set(0, 0, borderWidth, borderHeight, 1.0f);
     }
 
     private ProductionManager mProductionManager;
@@ -250,17 +253,17 @@ public class ProductionView extends View {
     }
 
     public void notifyItemRemove(int index) {
-        RectF rectF = mCenterRectFs.get(index);
+        NormalizedRect rectF = normalizedRects.get(index);
     }
 
     public void notifyItemSetChanged() {
-        ArrayList<Production> mProductions = mProductionManager.getProductions();
-        mCenterRectFs.clear();
-        for (int i = 0; i < mProductions.size(); i++) {
-            Production production = mProductions.get(i);
-            RectF rect = createCenterRect(production);
-            mCenterRectFs.add(rect);
-        }
+//        ArrayList<Production> mProductions = mProductionManager.getProductions();
+//        normalizedRects.clear();
+//        for (int i = 0; i < mProductions.size(); i++) {
+//            Production production = mProductions.get(i);
+//            RectF rect = createCenterRect(production);
+//            normalizedRects.add(rect);
+//        }
         invalidate();
     }
 
@@ -291,8 +294,6 @@ public class ProductionView extends View {
         return -1;
     }
 
-    private int selectedControllerCicle;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -304,67 +305,67 @@ public class ProductionView extends View {
         Log.d(TAG, "onTouchEvent: getPointerCount:" + event.getPointerCount());
 
         if (event.getPointerCount() > 1) {
-            mIsScale = true;
-            mScaleGestureDetector.onTouchEvent(event);
+            isScale = true;
+            scaleGestureDetector.onTouchEvent(event);
             if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN) {
-                mGestureDetector.onTouchEvent(event);
+                gestureDetector.onTouchEvent(event);
             }
-        } else if (event.getPointerCount() == 1 && !mIsScale) {
+        } else if (event.getPointerCount() == 1 && !isScale) {
             float x = event.getX();
             float y = event.getY();
-            Log.d(TAG, "mGestureDetector.onTouchEvent");
+            Log.d(TAG, "gestureDetector.onTouchEvent");
 
-            if (status == STATUS_READY) {
+            if (operateState == STATUS_READY) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     int selectCircle = isSeletedControllerCircle(x, y);
                     switch (selectCircle) {
                         case 1:
-                            x = mNormalizedRect.mRectF.left;
-                            y = mNormalizedRect.mRectF.top;
+                            x = normalizedRect.mRectF.left;
+                            y = normalizedRect.mRectF.top;
                             break;
                         case 2:
-                            x = mNormalizedRect.mRectF.right;
-                            y = mNormalizedRect.mRectF.top;
+                            x = normalizedRect.mRectF.right;
+                            y = normalizedRect.mRectF.top;
                             break;
                         case 3:
-                            x = mNormalizedRect.mRectF.left;
-                            y = mNormalizedRect.mRectF.bottom;
+                            x = normalizedRect.mRectF.left;
+                            y = normalizedRect.mRectF.bottom;
                             break;
                         case 4:
-                            x = mNormalizedRect.mRectF.right;
-                            y = mNormalizedRect.mRectF.bottom;
+                            x = normalizedRect.mRectF.right;
+                            y = normalizedRect.mRectF.bottom;
                             break;
                     }
                     Log.d(TAG, " 选择控制点;" + selectCircle);
                     if (selectCircle > 0) {// 选择控制点
                         selectedControllerCicle = selectCircle;// 记录选中控制点编号
-                        status = STATUS_SCALE;// 进入缩放状态
-                        mPaint.setColor(Color.BLUE);
-                    } else if (mNormalizedRect.mRectF.contains(x, y)) {// 选择缩放框内部
-                        status = STATUS_MOVE;// 进入移动状态
-                        mPaint.setColor(Color.BLUE);
+                        operateState = STATUS_SCALE;// 进入缩放状态
+                        paint.setColor(Color.BLUE);
+                    } else if (normalizedRect.mRectF.contains(x, y)) {// 选择缩放框内部
+                        operateState = STATUS_MOVE;// 进入移动状态
+                        paint.setColor(Color.BLUE);
                     }
                 }
 //                else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//                    if (status == STATUS_SCALE) {// 缩放控制
+//                    if (operateState == STATUS_SCALE) {// 缩放控制
 //                        Log.d(TAG, "缩放控制");
 //                        scaleCropController(x - oldx, y - oldy);
-//                    } else if (status == STATUS_MOVE) {// 移动控制
+//                    } else if (operateState == STATUS_MOVE) {// 移动控制
 //                        Log.d(TAG, "移动控制");
 //                        translateCrop(x - oldx, y - oldy);
 //                    }
 //                }
-            } else if (status == STATUS_IDLE) {
-                mGestureDetector.onTouchEvent(event);
+            } else if (operateState == STATUS_IDLE) {
+                gestureDetector.onTouchEvent(event);
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     onUp(x, y);
                 }
             }
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                if (status == STATUS_SCALE) {// 缩放控制
+                if (operateState == STATUS_SCALE) {// 缩放控制
                     Log.d(TAG, "缩放控制");
                     scaleCropController(x - oldx, y - oldy);
-                } else if (status == STATUS_MOVE) {// 移动控制
+                } else if (operateState == STATUS_MOVE) {// 移动控制
                     Log.d(TAG, "移动控制");
                     translateCrop(x - oldx, y - oldy);
                 }
@@ -375,13 +376,13 @@ public class ProductionView extends View {
             oldy = y;
         }
         if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
-            if (status == STATUS_SCALE || status == STATUS_MOVE) {
-                status = STATUS_READY;
-                mPaint.setColor(Color.WHITE);
+            if (operateState == STATUS_SCALE || operateState == STATUS_MOVE) {
+                operateState = STATUS_READY;
+                paint.setColor(Color.WHITE);
                 invalidate();
             }
             Log.d(TAG, "onTouchEvent: ACTION_UP");
-            mIsScale = false;
+            isScale = false;
         }
 
         return true;
@@ -397,64 +398,64 @@ public class ProductionView extends View {
 
             case 1:// 左上角控制点
                 if (realDx > 0) {
-                    realDx = Math.min(realDx, mNormalizedRect.mRectF.width() - 50);
+                    realDx = Math.min(realDx, normalizedRect.mRectF.width() - 50);
                 } else {
-                    realDx = Math.max(realDx, -mNormalizedRect.mRectF.left);
+                    realDx = Math.max(realDx, -normalizedRect.mRectF.left);
                 }
 
                 if (realDy > 0) {
-                    realDy = Math.min(realDy, mNormalizedRect.mRectF.height() - 50);
+                    realDy = Math.min(realDy, normalizedRect.mRectF.height() - 50);
                 } else {
-                    realDy = Math.max(realDy, -mNormalizedRect.mRectF.top);
+                    realDy = Math.max(realDy, -normalizedRect.mRectF.top);
                 }
 
-                mNormalizedRect.mRectF.left += realDx;
-                mNormalizedRect.mRectF.top += realDy;
+                normalizedRect.mRectF.left += realDx;
+                normalizedRect.mRectF.top += realDy;
                 break;
             case 2:// 右上角控制点
                 if (realDx < 0) {
-                    realDx = Math.max(realDx, 50 - mNormalizedRect.mRectF.width());
+                    realDx = Math.max(realDx, 50 - normalizedRect.mRectF.width());
                 } else {
-                    realDx = Math.min(realDx, mNormalizedRect.totalWidth - mNormalizedRect.mRectF.right);
+                    realDx = Math.min(realDx, normalizedRect.totalWidth - normalizedRect.mRectF.right);
                 }
                 if (realDy > 0) {
-                    realDy = Math.min(realDy, mNormalizedRect.mRectF.height() - 50);
+                    realDy = Math.min(realDy, normalizedRect.mRectF.height() - 50);
                 } else {
-                    realDy = Math.max(realDy, -mNormalizedRect.mRectF.top);
+                    realDy = Math.max(realDy, -normalizedRect.mRectF.top);
                 }
 
-                mNormalizedRect.mRectF.right += realDx;
-                mNormalizedRect.mRectF.top += realDy;
+                normalizedRect.mRectF.right += realDx;
+                normalizedRect.mRectF.top += realDy;
                 break;
             case 3:// 左下角控制点
                 if (realDx > 0) {
-                    realDx = Math.min(realDx, mNormalizedRect.mRectF.width() - 50);
+                    realDx = Math.min(realDx, normalizedRect.mRectF.width() - 50);
                 } else {
-                    realDx = Math.max(realDx, -mNormalizedRect.mRectF.left);
+                    realDx = Math.max(realDx, -normalizedRect.mRectF.left);
                 }
 
                 if (realDy < 0) {
-                    realDy = Math.max(realDy, 50 - mNormalizedRect.mRectF.height());
+                    realDy = Math.max(realDy, 50 - normalizedRect.mRectF.height());
                 } else {
-                    realDy = Math.min(realDy, mNormalizedRect.totalHeight - mNormalizedRect.mRectF.bottom);
+                    realDy = Math.min(realDy, normalizedRect.totalHeight - normalizedRect.mRectF.bottom);
                 }
 
-                mNormalizedRect.mRectF.left += realDx;
-                mNormalizedRect.mRectF.bottom += realDy;
+                normalizedRect.mRectF.left += realDx;
+                normalizedRect.mRectF.bottom += realDy;
                 break;
             case 4:// 右下角控制点
                 if (realDx < 0) {
-                    realDx = Math.max(realDx, 50 - mNormalizedRect.mRectF.width());
+                    realDx = Math.max(realDx, 50 - normalizedRect.mRectF.width());
                 } else {
-                    realDx = Math.min(realDx, mNormalizedRect.totalWidth - mNormalizedRect.mRectF.right);
+                    realDx = Math.min(realDx, normalizedRect.totalWidth - normalizedRect.mRectF.right);
                 }
                 if (realDy < 0) {
-                    realDy = Math.max(realDy, 50 - mNormalizedRect.mRectF.height());
+                    realDy = Math.max(realDy, 50 - normalizedRect.mRectF.height());
                 } else {
-                    realDy = Math.min(realDy, mNormalizedRect.totalHeight - mNormalizedRect.mRectF.bottom);
+                    realDy = Math.min(realDy, normalizedRect.totalHeight - normalizedRect.mRectF.bottom);
                 }
-                mNormalizedRect.mRectF.right += realDx;
-                mNormalizedRect.mRectF.bottom += realDy;
+                normalizedRect.mRectF.right += realDx;
+                normalizedRect.mRectF.bottom += realDy;
                 break;
         }// end switch
         resetCorner();
@@ -472,21 +473,21 @@ public class ProductionView extends View {
         float realDy = dy;
 
         if (dx < 0) {
-            realDx = Math.max(realDx, -mNormalizedRect.mRectF.left);
+            realDx = Math.max(realDx, -normalizedRect.mRectF.left);
         } else {
-            realDx = Math.min(realDx, mNormalizedRect.totalWidth - mNormalizedRect.mRectF.right);
+            realDx = Math.min(realDx, normalizedRect.totalWidth - normalizedRect.mRectF.right);
         }
 
         if (dy < 0) {
-            realDy = Math.max(realDy, -mNormalizedRect.mRectF.top);
+            realDy = Math.max(realDy, -normalizedRect.mRectF.top);
         } else {
-            realDy = Math.min(realDy, mNormalizedRect.totalHeight - mNormalizedRect.mRectF.bottom);
+            realDy = Math.min(realDy, normalizedRect.totalHeight - normalizedRect.mRectF.bottom);
         }
 
-        mNormalizedRect.mRectF.left += realDx;
-        mNormalizedRect.mRectF.right += realDx;
-        mNormalizedRect.mRectF.top += realDy;
-        mNormalizedRect.mRectF.bottom += realDy;
+        normalizedRect.mRectF.left += realDx;
+        normalizedRect.mRectF.right += realDx;
+        normalizedRect.mRectF.top += realDy;
+        normalizedRect.mRectF.bottom += realDy;
         resetCorner();
         invalidate();
     }
@@ -495,7 +496,7 @@ public class ProductionView extends View {
 
     private void onUp(float x, float y) {
         if (mProductionListener != null) {
-            mProductionListener.onChangeRect(x, y, true, mNormalizedRect.mRatio);
+            mProductionListener.onChangeRect(x, y, true, normalizedRect.mRatio);
         }
     }
 
@@ -519,62 +520,62 @@ public class ProductionView extends View {
 
     private void changeDrawRect(float centerX, float centerY, float scale) {
 
-        float width = mScreenWidth * scale;
-        float height = mScreenHeight * scale;
+        float width = borderWidth * scale;
+        float height = borderHeight * scale;
 
         centerX = Math.max(centerX, width / 2);
-        centerX = Math.min(centerX, mScreenWidth - width / 2);
+        centerX = Math.min(centerX, borderWidth - width / 2);
         centerY = Math.max(centerY, height / 2);
-        centerY = Math.min(centerY, mScreenHeight - height / 2);
+        centerY = Math.min(centerY, borderHeight - height / 2);
 
         float left = centerX - width / 2;
         float top = centerY - height / 2;
         float right = centerX + width / 2;
         float bottom = centerY + height / 2;
 
-        mNormalizedRect.set(left, top, right, bottom, scale);
+        normalizedRect.set(left, top, right, bottom, scale);
         resetCorner();
         invalidate();
     }
 
     public void moveDrawRect(float centerX, float centerY) {
 
-        float width = mNormalizedRect.width();
-        float height = mNormalizedRect.height();
+        float width = normalizedRect.width();
+        float height = normalizedRect.height();
 
         centerX = Math.max(centerX, width / 2);
-        centerX = Math.min(centerX, mScreenWidth - width / 2);
+        centerX = Math.min(centerX, borderWidth - width / 2);
         centerY = Math.max(centerY, height / 2);
-        centerY = Math.min(centerY, mScreenHeight - height / 2);
+        centerY = Math.min(centerY, borderHeight - height / 2);
 
-        mNormalizedRect.set(centerX - width / 2, centerY - height / 2,
-                centerX + width / 2, centerY + height / 2, mNormalizedRect.mRatio);
+        normalizedRect.set(centerX - width / 2, centerY - height / 2,
+                centerX + width / 2, centerY + height / 2, normalizedRect.mRatio);
         invalidate();
     }
 
     public void zoomIn() {
-        if (mNormalizedRect.mRatio == 1.0f) {
+        if (normalizedRect.mRatio == 1.0f) {
             return;
         }
-        float finalRatio = Math.min(MAX_SCALE, mNormalizedRect.mRatio * 1.1f);
-        mNormalizedRect.setRatio(finalRatio);
+        float finalRatio = Math.min(MAX_SCALE, normalizedRect.mRatio * 1.1f);
+        normalizedRect.setRatio(finalRatio);
         invalidate();
     }
 
     public void zoomOut() {
-        if (mNormalizedRect.mRatio == 1.0f) {
+        if (normalizedRect.mRatio == 1.0f) {
             return;
         }
-        float finalRatio = Math.max(MIN_SCALE, mNormalizedRect.mRatio * 0.9f);
-        mNormalizedRect.setRatio(finalRatio);
+        float finalRatio = Math.max(MIN_SCALE, normalizedRect.mRatio * 0.9f);
+        normalizedRect.setRatio(finalRatio);
         invalidate();
     }
 
-    boolean drawExtra;
+    boolean drawText;
     List<String> texts = new ArrayList<>();
 
     private void notDrawExtra() {
-        drawExtra = false;
+        drawText = false;
         texts.clear();
         postInvalidate();
     }
@@ -590,55 +591,55 @@ public class ProductionView extends View {
             notDrawExtra();
             return;
         }
-        mTextRectFS.clear();
+        textRectFS.clear();
         texts.clear();
-        if (mNormalizedRect.mRatio < 1.0f) {
+        if (normalizedRect.mRatio < 1.0f) {
             for (int i = 0; i < floats.size(); i++) {
                 DecimalFormat decimalFormat = new DecimalFormat(".000");
                 String p = decimalFormat.format(floats.get(i));
                 texts.add(p);
             }
 
-            rect7.set(0, mNormalizedRect.mRectF.bottom, mNormalizedRect.mRectF.left, mNormalizedRect.totalHeight);
+            rect7.set(0, normalizedRect.mRectF.bottom, normalizedRect.mRectF.left, normalizedRect.totalHeight);
             if (rect7.width() > 0 && rect7.height() > 0) {
-                mTextRectFS.add(rect7);
+                textRectFS.add(rect7);
             }
 
-            rect8.set(mNormalizedRect.mRectF.left, mNormalizedRect.mRectF.bottom, mNormalizedRect.mRectF.right, mNormalizedRect.totalHeight);
+            rect8.set(normalizedRect.mRectF.left, normalizedRect.mRectF.bottom, normalizedRect.mRectF.right, normalizedRect.totalHeight);
             if (rect8.width() > 0 && rect8.height() > 0) {
-                mTextRectFS.add(rect8);
+                textRectFS.add(rect8);
             }
 
-            rect9.set(mNormalizedRect.mRectF.right, mNormalizedRect.mRectF.bottom, mNormalizedRect.totalWidth, mNormalizedRect.totalHeight);
+            rect9.set(normalizedRect.mRectF.right, normalizedRect.mRectF.bottom, normalizedRect.totalWidth, normalizedRect.totalHeight);
             if (rect9.width() > 0 && rect9.height() > 0) {
-                mTextRectFS.add(rect9);
+                textRectFS.add(rect9);
             }
 
-            rect4.set(0, mNormalizedRect.mRectF.top, mNormalizedRect.mRectF.left, mNormalizedRect.mRectF.bottom);
+            rect4.set(0, normalizedRect.mRectF.top, normalizedRect.mRectF.left, normalizedRect.mRectF.bottom);
             if (rect4.width() > 0 && rect4.height() > 0) {
-                mTextRectFS.add(rect4);
+                textRectFS.add(rect4);
             }
 
-//            mTextRectFS.add(mNormalizedRect.mRectF);
+//            textRectFS.add(normalizedRect.mRectF);
 
-            rect6.set(mNormalizedRect.mRectF.right, mNormalizedRect.mRectF.top, mNormalizedRect.totalWidth, mNormalizedRect.mRectF.bottom);
+            rect6.set(normalizedRect.mRectF.right, normalizedRect.mRectF.top, normalizedRect.totalWidth, normalizedRect.mRectF.bottom);
             if (rect6.width() > 0 && rect6.height() > 0) {
-                mTextRectFS.add(rect6);
+                textRectFS.add(rect6);
             }
 
-            rect1.set(0, 0, mNormalizedRect.mRectF.left, mNormalizedRect.mRectF.top);
+            rect1.set(0, 0, normalizedRect.mRectF.left, normalizedRect.mRectF.top);
             if (rect1.width() > 0 && rect1.height() > 0) {
-                mTextRectFS.add(rect1);
+                textRectFS.add(rect1);
             }
 
-            rect2.set(mNormalizedRect.mRectF.left, 0, mNormalizedRect.mRectF.right, mNormalizedRect.mRectF.top);
+            rect2.set(normalizedRect.mRectF.left, 0, normalizedRect.mRectF.right, normalizedRect.mRectF.top);
             if (rect2.width() > 0 && rect2.height() > 0) {
-                mTextRectFS.add(rect2);
+                textRectFS.add(rect2);
             }
 
-            rect3.set(mNormalizedRect.mRectF.right, 0, mNormalizedRect.totalWidth, mNormalizedRect.mRectF.top);
+            rect3.set(normalizedRect.mRectF.right, 0, normalizedRect.totalWidth, normalizedRect.mRectF.top);
             if (rect3.width() > 0 && rect3.height() > 0) {
-                mTextRectFS.add(rect3);
+                textRectFS.add(rect3);
             }
         } else {
             float sum = 0;
@@ -648,12 +649,12 @@ public class ProductionView extends View {
             DecimalFormat decimalFormat = new DecimalFormat(".000");
             String p = decimalFormat.format(sum / floats.size());
             texts.add(p);
-            wholeRectF.set(0, 0, mNormalizedRect.totalWidth, mNormalizedRect.totalHeight);
-            mTextRectFS.add(wholeRectF);
+            wholeRectF.set(0, 0, normalizedRect.totalWidth, normalizedRect.totalHeight);
+            textRectFS.add(wholeRectF);
         }
 
-        Log.d(TAG, "size 是否相等：" + (mTextRectFS.size() == texts.size()));
-        drawExtra = true;
+        Log.d(TAG, "size 是否相等：" + (textRectFS.size() == texts.size()));
+        drawText = true;
         postInvalidate();
     }
 
@@ -661,23 +662,23 @@ public class ProductionView extends View {
 
         //设置触摸区域
         int touchRadius = 25;//触摸半径
-        mLeftTopTouchRect.set(mNormalizedRect.mRectF.left - touchRadius, mNormalizedRect.mRectF.top - touchRadius,
-                mNormalizedRect.mRectF.left + touchRadius, mNormalizedRect.mRectF.top + touchRadius);
-        mRightTopTouchRect.set(mNormalizedRect.mRectF.right - touchRadius, mNormalizedRect.mRectF.top - touchRadius,
-                mNormalizedRect.mRectF.right + touchRadius, mNormalizedRect.mRectF.top + touchRadius);
-        mLeftBottomTouchRect.set(mNormalizedRect.mRectF.left - touchRadius, mNormalizedRect.mRectF.bottom - touchRadius,
-                mNormalizedRect.mRectF.left + touchRadius, mNormalizedRect.mRectF.bottom + touchRadius);
-        mRightBottomTouchRect.set(mNormalizedRect.mRectF.right - touchRadius, mNormalizedRect.mRectF.bottom - touchRadius,
-                mNormalizedRect.mRectF.right + touchRadius, mNormalizedRect.mRectF.bottom + touchRadius);
+        mLeftTopTouchRect.set(normalizedRect.mRectF.left - touchRadius, normalizedRect.mRectF.top - touchRadius,
+                normalizedRect.mRectF.left + touchRadius, normalizedRect.mRectF.top + touchRadius);
+        mRightTopTouchRect.set(normalizedRect.mRectF.right - touchRadius, normalizedRect.mRectF.top - touchRadius,
+                normalizedRect.mRectF.right + touchRadius, normalizedRect.mRectF.top + touchRadius);
+        mLeftBottomTouchRect.set(normalizedRect.mRectF.left - touchRadius, normalizedRect.mRectF.bottom - touchRadius,
+                normalizedRect.mRectF.left + touchRadius, normalizedRect.mRectF.bottom + touchRadius);
+        mRightBottomTouchRect.set(normalizedRect.mRectF.right - touchRadius, normalizedRect.mRectF.bottom - touchRadius,
+                normalizedRect.mRectF.right + touchRadius, normalizedRect.mRectF.bottom + touchRadius);
     }
 
     public void reset() {
-        mNormalizedRect.set(0, 0, mScreenWidth, mScreenHeight, 1.0f);
+        normalizedRect.set(0, 0, borderWidth, borderHeight, 1.0f);
         mLeftTopTouchRect.set(0, 0, 0, 0);
         mRightTopTouchRect.set(0, 0, 0, 0);
         mLeftBottomTouchRect.set(0, 0, 0, 0);
         mRightBottomTouchRect.set(0, 0, 0, 0);
-        status = STATUS_IDLE;
+        operateState = STATUS_IDLE;
         postInvalidate();
     }
 }
