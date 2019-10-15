@@ -80,6 +80,9 @@ public class ProductionView extends View {
     private int selectedControllerCicle;
     private boolean useGestureDetector = false;
 
+    private float oldx, oldy;
+    private boolean antiTouch;
+
     public ProductionView(Context context) {
         this(context, null);
     }
@@ -191,42 +194,6 @@ public class ProductionView extends View {
                         }
                         return true;
                     }
-
-                    @Override
-                    public void onLongPress(MotionEvent event) {
-//                        if (isScale) {
-//                            return;
-//                        }
-//                        Log.d(TAG, "onLongPress: ");
-//                        final float x = event.getX();
-//                        final float y = event.getY();
-//                        Production production = mProductionManager.contains(x, y);
-//                        if (production != null) {
-//                            int index = mProductionManager.indexOfProduction(production);
-//                            notifyItemRemove(index);
-//                            mProductionManager.remove(production);
-//                            normalizedRect.setProduction(null);
-//                        } else {
-//                            if (!mProductionManager.isFull()) {
-//                                changeDrawRect(x, y, DEFAULT_RATIO);
-//                                Production newP = mProductionManager.addProduction(x, y,
-//                                        normalizedRect.mRatio);
-//                                normalizedRect.setProduction(newP);
-//                                notifyItemSetChanged();
-//                            }
-//                        }
-                    }
-
-                    @Override
-                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                        if (e2.getAction() == MotionEvent.ACTION_MOVE) {
-                            final float x = e2.getX();
-                            final float y = e2.getY();
-                            moveDrawRect(x, y);
-                        }
-
-                        return true;
-                    }
                 });
 
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
@@ -255,37 +222,6 @@ public class ProductionView extends View {
     public void setParentSize(float width, float height) {
         borderWidth = width;
         borderHeight = height;
-    }
-
-    private ProductionManager mProductionManager;
-
-    public void setProductionManager(ProductionManager productionManager) {
-        mProductionManager = productionManager;
-    }
-
-    public void notifyItemRemove(int index) {
-        NormalizedRect rectF = normalizedRects.get(index);
-    }
-
-    public void notifyItemSetChanged() {
-//        ArrayList<Production> mProductions = mProductionManager.getProductions();
-//        normalizedRects.clear();
-//        for (int i = 0; i < mProductions.size(); i++) {
-//            Production production = mProductions.get(i);
-//            RectF rect = createCenterRect(production);
-//            normalizedRects.add(rect);
-//        }
-        invalidate();
-    }
-
-    private RectF createCenterRect(Production production) {
-//        float left = production.mRawX - mCenterWidth / 2;
-//        float top = production.mRawY - mCenterWidth / 2;
-//        float right = production.mRawX + mCenterWidth / 2;
-//        float bottom = production.mRawY + mCenterWidth / 2;
-//
-//        RectF rect = new RectF(left, top, right, bottom);
-        return new RectF();
     }
 
     /**
@@ -509,10 +445,6 @@ public class ProductionView extends View {
         invalidate();
     }
 
-    private float oldx, oldy;
-
-    boolean antiTouch;
-
     public void antiTouch(boolean b) {
         antiTouch = b;
     }
@@ -534,21 +466,6 @@ public class ProductionView extends View {
 
         rect.set(left, top, right, bottom, scale);
         resetCorner();
-    }
-
-    public void moveDrawRect(float centerX, float centerY) {
-
-        float width = normalizedRect.width();
-        float height = normalizedRect.height();
-
-        centerX = Math.max(centerX, width / 2);
-        centerX = Math.min(centerX, borderWidth - width / 2);
-        centerY = Math.max(centerY, height / 2);
-        centerY = Math.min(centerY, borderHeight - height / 2);
-
-        normalizedRect.set(centerX - width / 2, centerY - height / 2,
-                centerX + width / 2, centerY + height / 2, normalizedRect.mRatio);
-        invalidate();
     }
 
     public void zoomIn() {
