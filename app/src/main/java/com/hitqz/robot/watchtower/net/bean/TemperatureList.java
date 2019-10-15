@@ -84,7 +84,7 @@ public class TemperatureList {
     private static float getTemperatureFromList(@NonNull List<RegionTemperature> list) {
         float sum = 0;
         for (int i = 0; i < list.size(); i++) {
-            sum = sum + list.get(i).averageTemperature;
+            sum = sum + list.get(i).maxTemperature;
         }
         return sum / list.size();
     }
