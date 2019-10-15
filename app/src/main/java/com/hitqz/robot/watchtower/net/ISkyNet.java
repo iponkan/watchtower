@@ -1,5 +1,6 @@
 package com.hitqz.robot.watchtower.net;
 
+import com.chaoliu.mock.annotation.MOCK;
 import com.hitqz.robot.watchtower.net.base.BaseRespond;
 import com.hitqz.robot.watchtower.net.bean.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
@@ -43,6 +44,7 @@ public interface ISkyNet {
     /**
      * 1.1.5.	当前是否处于监控模式
      */
+    @MOCK(value = "monitor_entity.json")
     @GET("/monitor/now")
     Observable<BaseRespond<MonitorEntity>> isMonitoring();
 

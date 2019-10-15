@@ -1,0 +1,27 @@
+{
+  "monitor": true,
+  "hasIgnoreRegion": true,
+  "ignoreRegion": null,
+  "ignoreRegionList": [
+    {
+      "leftDownPoint": {
+        "x": 0,
+        "y": 500
+      },
+      "rightTopPoint": {
+        "x": 500,
+        "y": 1000
+      }
+    },
+    {
+      "leftDownPoint": {
+        "x": 500,
+        "y": 500
+      },
+      "rightTopPoint": {
+        "x": 1000,
+        "y": 1000
+      }
+    }
+  ]
+}

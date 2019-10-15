@@ -42,6 +42,7 @@ import com.sonicers.commonlib.singleton.GsonUtil;
 import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.view.SteerView;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -95,7 +96,6 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     HCSdk hotHCSdk;
     HCSdk normalHCSdk;
-    ProductionManager productionManager;
     Handler handler = new Handler();
 
     ISkyNet skyNet;
@@ -244,11 +244,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             view.setLayoutParams(layoutParams);
         }
 
-        float centerWidth = getResources().getDimension(R.dimen.center_width);
-        productionManager = new ProductionManager(width, height, centerWidth);
-
         productionView.setParentSize(width, height);
-        productionView.setProductionManager(productionManager);
     }
 
     private void resetNormalCameraView(View normalCameraView) {
@@ -309,8 +305,13 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
             monitorEntity.setHasIgnoreRegion(false);
         } else {
             monitorEntity.setHasIgnoreRegion(true);
-            MonitorEntity.IgnoreRegionBean ignoreRegionBean = MonitorEntity.fromPoints(points);
-            monitorEntity.setIgnoreRegion(ignoreRegionBean);
+            if (points.length == 4 && points[2] != null) {//两个框
+                List<MonitorEntity.IgnoreRegionBean> list = MonitorEntity.toIgnoreRegionList(points);
+                monitorEntity.setIgnoreRegionList(list);
+            } else {//一个框
+                MonitorEntity.IgnoreRegionBean ignoreRegionBean = MonitorEntity.toIgnoreRegionBean(points);
+                monitorEntity.setIgnoreRegion(ignoreRegionBean);
+            }
         }
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.startMonitor(monitorEntity)
@@ -379,6 +380,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                         }
 
                         MonitorEntity.IgnoreRegionBean ignoreRegionBean = model.getIgnoreRegion();
+                        List<MonitorEntity.IgnoreRegionBean> ignoreRegionBeanList = model.getIgnoreRegionList();
                         if (ignoreRegionBean != null) {
                             MonitorEntity.IgnoreRegionBean.LeftDownPointBean leftDownPointBean = ignoreRegionBean.getLeftDownPoint();
                             MonitorEntity.IgnoreRegionBean.RightTopPointBean rightTopPointBean = ignoreRegionBean.getRightTopPoint();
@@ -387,6 +389,21 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                                 Point point1 = new Point(leftDownPointBean.getX(), leftDownPointBean.getY());
                                 Point point2 = new Point(rightTopPointBean.getX(), rightTopPointBean.getY());
                                 productionView.setPoints(new Point[]{point1, point2});
+                            }
+                        } else if (ignoreRegionBeanList != null && ignoreRegionBeanList.size() == 2) {
+                            MonitorEntity.IgnoreRegionBean element1 = ignoreRegionBeanList.get(0);
+                            MonitorEntity.IgnoreRegionBean element2 = ignoreRegionBeanList.get(1);
+                            MonitorEntity.IgnoreRegionBean.LeftDownPointBean bean1 = element1.getLeftDownPoint();
+                            MonitorEntity.IgnoreRegionBean.RightTopPointBean bean2 = element1.getRightTopPoint();
+                            MonitorEntity.IgnoreRegionBean.LeftDownPointBean bean3 = element2.getLeftDownPoint();
+                            MonitorEntity.IgnoreRegionBean.RightTopPointBean bean4 = element2.getRightTopPoint();
+
+                            if (bean1 != null && bean2 != null && bean3 != null && bean4 != null) {
+                                Point point1 = new Point(bean1.getX(), bean1.getY());
+                                Point point2 = new Point(bean2.getX(), bean2.getY());
+                                Point point3 = new Point(bean3.getX(), bean3.getY());
+                                Point point4 = new Point(bean4.getX(), bean4.getY());
+                                productionView.setPoints(new Point[]{point1, point2, point3, point4});
                             }
                         }
                     }

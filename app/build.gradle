@@ -46,7 +46,8 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-
+    debugImplementation 'com.github.yinlingchaoliu:retrofit-mock:1.0.1'
+    releaseImplementation 'com.github.yinlingchaoliu:retrofit-mock-no-op:1.0.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'//只能配置在app的build.gradle
 
 }

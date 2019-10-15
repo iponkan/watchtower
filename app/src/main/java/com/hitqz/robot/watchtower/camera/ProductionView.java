@@ -144,18 +144,50 @@ public class ProductionView extends View {
     }
 
     public Point[] getPoints() {
-        if (normalizedRect.mRatio == 1.0f) {
-            return null;
+//        if (drawRectState == STATE_NONE) {
+//            return null;
+//        }
+
+        if (drawRectState == STATE_ONE) {
+            Point[] points = new Point[2];
+            points[0] = new Point(normalizedRect.commonLeft(), normalizedRect.commonBottom());
+            points[1] = new Point(normalizedRect.commonRight(), normalizedRect.commonTop());
+            return points;
         }
 
-        Point[] points = new Point[2];
-        points[0] = new Point(normalizedRect.commonLeft(), normalizedRect.commonBottom());
-        points[1] = new Point(normalizedRect.commonRight(), normalizedRect.commonTop());
-        return points;
+        if (drawRectState == STATE_TWO) {
+            Point[] points = new Point[4];
+            NormalizedRect element0 = normalizedRects.get(0);
+            points[0] = new Point(element0.commonLeft(), element0.commonBottom());
+            points[1] = new Point(element0.commonRight(), element0.commonTop());
+
+            NormalizedRect element1 = normalizedRects.get(1);
+            if (element0.mRectF.equals(element1.mRectF)) {
+                points[2] = new Point(element1.commonLeft(), element1.commonBottom());
+                points[3] = new Point(element1.commonRight(), element1.commonTop());
+            }
+
+            return points;
+        }
+
+        return null;
     }
 
     public void setPoints(Point[] points) {
-        normalizedRect.setPoints(points);
+        if (points.length == 2) {
+            normalizedRect = new NormalizedRect(borderWidth, borderHeight);
+            normalizedRect.setPoints(points);
+            normalizedRects.add(normalizedRect);
+        } else if (points.length == 4) {
+            NormalizedRect rect1 = new NormalizedRect(borderWidth, borderHeight);
+            rect1.setPoints(new Point[]{points[0], points[1]});
+            normalizedRect = new NormalizedRect(borderWidth, borderHeight);
+            normalizedRect.setPoints(new Point[]{points[2], points[3]});
+            normalizedRects.add(rect1);
+            normalizedRects.add(normalizedRect);
+        }
+
+        resetCorner();
         postInvalidate();
     }
 
