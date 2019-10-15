@@ -103,6 +103,10 @@ public class ProductionView extends View {
             return;
         } else if (drawRectState == STATE_ONE) {
             canvas.drawRect(normalizedRect.mRectF, paint);
+        } else if (drawRectState == STATE_TWO) {
+            for (int i = 0; i < normalizedRects.size(); i++) {
+                canvas.drawRect(normalizedRects.get(i).mRectF, paint);
+            }
         }
 
         if (drawFocusText) {
@@ -159,46 +163,50 @@ public class ProductionView extends View {
 
                     @Override
                     public boolean onSingleTapUp(MotionEvent event) {
+                        Log.d(TAG, "onSingleTapUp");
                         final float x = event.getX();
                         final float y = event.getY();
-//                        Production production = mProductionManager.contains(x, y);
-//                        normalizedRect.setProduction(production);
                         if (normalizedRect == null) {
                             normalizedRect = new NormalizedRect(borderWidth, borderHeight);
-                            changeDrawRect(x, y, DEFAULT_RATIO);
+                            changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
+                            normalizedRects.add(normalizedRect);
+                            invalidate();
                             drawRectState = STATE_ONE;
                             operateState = STATUS_READY;
                         } else {
-                            if (normalizedRect.mRectF.contains(x, y)) {
-
-                            }
+                            Log.d(TAG, "onSingleTapUp add");
+                            normalizedRect = new NormalizedRect(borderWidth, borderHeight);
+                            changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
+                            normalizedRects.add(normalizedRect);
+                            invalidate();
+                            drawRectState = STATE_TWO;
                         }
                         return true;
                     }
 
                     @Override
                     public void onLongPress(MotionEvent event) {
-                        if (isScale) {
-                            return;
-                        }
-                        Log.d(TAG, "onLongPress: ");
-                        final float x = event.getX();
-                        final float y = event.getY();
-                        Production production = mProductionManager.contains(x, y);
-                        if (production != null) {
-                            int index = mProductionManager.indexOfProduction(production);
-                            notifyItemRemove(index);
-                            mProductionManager.remove(production);
-                            normalizedRect.setProduction(null);
-                        } else {
-                            if (!mProductionManager.isFull()) {
-                                changeDrawRect(x, y, DEFAULT_RATIO);
-                                Production newP = mProductionManager.addProduction(x, y,
-                                        normalizedRect.mRatio);
-                                normalizedRect.setProduction(newP);
-                                notifyItemSetChanged();
-                            }
-                        }
+//                        if (isScale) {
+//                            return;
+//                        }
+//                        Log.d(TAG, "onLongPress: ");
+//                        final float x = event.getX();
+//                        final float y = event.getY();
+//                        Production production = mProductionManager.contains(x, y);
+//                        if (production != null) {
+//                            int index = mProductionManager.indexOfProduction(production);
+//                            notifyItemRemove(index);
+//                            mProductionManager.remove(production);
+//                            normalizedRect.setProduction(null);
+//                        } else {
+//                            if (!mProductionManager.isFull()) {
+//                                changeDrawRect(x, y, DEFAULT_RATIO);
+//                                Production newP = mProductionManager.addProduction(x, y,
+//                                        normalizedRect.mRatio);
+//                                normalizedRect.setProduction(newP);
+//                                notifyItemSetChanged();
+//                            }
+//                        }
                     }
 
                     @Override
@@ -308,10 +316,12 @@ public class ProductionView extends View {
         } else if (event.getPointerCount() == 1 && !isScale) {
             float x = event.getX();
             float y = event.getY();
-            Log.d(TAG, "gestureDetector.onTouchEvent");
+            if (operateState == STATUS_IDLE) {
+                gestureDetector.onTouchEvent(event);
+            }
 
-            if (operateState == STATUS_READY) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (operateState == STATUS_READY) {
                     int selectCircle = isSeletedControllerCircle(x, y);
                     switch (selectCircle) {
                         case 1:
@@ -341,10 +351,10 @@ public class ProductionView extends View {
                         paint.setColor(Color.BLUE);
                     }
                 }
-            } else if (operateState == STATUS_IDLE) {
-                gestureDetector.onTouchEvent(event);
-            }
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                // 记录上一次动作点
+                oldx = x;
+                oldy = y;
+            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 if (operateState == STATUS_SCALE) {// 缩放控制
                     Log.d(TAG, "缩放控制");
                     scaleCropController(x - oldx, y - oldy);
@@ -352,20 +362,18 @@ public class ProductionView extends View {
                     Log.d(TAG, "移动控制");
                     translateCrop(x - oldx, y - oldy);
                 }
+                // 记录上一次动作点
+                oldx = x;
+                oldy = y;
+            } else if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
+                if (operateState == STATUS_SCALE || operateState == STATUS_MOVE) {
+                    operateState = STATUS_READY;
+                    paint.setColor(Color.WHITE);
+                    invalidate();
+                }
+                Log.d(TAG, "onTouchEvent: ACTION_UP");
+                isScale = false;
             }
-
-            // 记录上一次动作点
-            oldx = x;
-            oldy = y;
-        }
-        if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
-            if (operateState == STATUS_SCALE || operateState == STATUS_MOVE) {
-                operateState = STATUS_READY;
-                paint.setColor(Color.WHITE);
-                invalidate();
-            }
-            Log.d(TAG, "onTouchEvent: ACTION_UP");
-            isScale = false;
         }
 
         return true;
@@ -483,7 +491,7 @@ public class ProductionView extends View {
         antiTouch = b;
     }
 
-    private void changeDrawRect(float centerX, float centerY, float scale) {
+    private void changeDrawRect(NormalizedRect rect, float centerX, float centerY, float scale) {
 
         float width = borderWidth * scale;
         float height = borderHeight * scale;
@@ -498,9 +506,8 @@ public class ProductionView extends View {
         float right = centerX + width / 2;
         float bottom = centerY + height / 2;
 
-        normalizedRect.set(left, top, right, bottom, scale);
+        rect.set(left, top, right, bottom, scale);
         resetCorner();
-        invalidate();
     }
 
     public void moveDrawRect(float centerX, float centerY) {
