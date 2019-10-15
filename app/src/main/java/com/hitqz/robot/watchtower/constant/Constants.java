@@ -6,6 +6,7 @@ public class Constants {
     public static final String SHOWTEMPERATURE = "show_temperature";
     public static final String DEBUG = "debug";
     public static final String LIGHT_SWITCH = "lightSwitch";
+    public static final String BOX_SWITCH = "boxSwitch";
 
     /*0：停止
      *1：前进

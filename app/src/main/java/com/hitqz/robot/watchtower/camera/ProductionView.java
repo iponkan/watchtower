@@ -16,7 +16,9 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.hitqz.robot.watchtower.R;
+import com.hitqz.robot.watchtower.constant.Constants;
 import com.hitqz.robot.watchtower.net.bean.TemperatureList;
 import com.sonicers.commonlib.util.ToastUtil;
 
@@ -185,12 +187,14 @@ public class ProductionView extends View {
                             drawRectState = STATE_ONE;
                             operateState = STATUS_READY;
                         } else if (normalizedRects.size() == 1) {
-                            Log.d(TAG, "onSingleTapUp add");
-                            normalizedRect = new NormalizedRect(borderWidth, borderHeight);
-                            changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
-                            normalizedRects.add(normalizedRect);
-                            invalidate();
-                            drawRectState = STATE_TWO;
+                            if (SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.BOX_SWITCH, false)) {
+                                Log.d(TAG, "onSingleTapUp add");
+                                normalizedRect = new NormalizedRect(borderWidth, borderHeight);
+                                changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
+                                normalizedRects.add(normalizedRect);
+                                invalidate();
+                                drawRectState = STATE_TWO;
+                            }
                         }
                         return true;
                     }

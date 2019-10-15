@@ -40,6 +40,8 @@ public class DebugActivity extends BaseActivity {
     Button btnDebug;
     @BindView(R.id.btn_light_switch)
     Button btnLightSwitch;
+    @BindView(R.id.btn_multi_box)
+    Button btnMultiBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class DebugActivity extends BaseActivity {
 
         boolean aBoolean = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.LIGHT_SWITCH, false);
         btnLightSwitch.setText(aBoolean ? "不显示灯开关" : "显示灯开关");
+
+        boolean boxBoolean = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.BOX_SWITCH, false);
+        btnMultiBox.setText(boxBoolean ? "不支持多选框" : "支持多选框");
     }
 
     public static final String URL = "http://47.92.118.121:4000/files/uploads?folder=WatchTower";
@@ -131,5 +136,12 @@ public class DebugActivity extends BaseActivity {
         boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.LIGHT_SWITCH, false);
         SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.LIGHT_SWITCH, !now);
         btnLightSwitch.setText(!now ? "不显示灯开关" : "显示灯开关");
+    }
+
+    @OnClick(R.id.btn_multi_box)
+    public void onBoxSwitchClick() {
+        boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.BOX_SWITCH, false);
+        SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.BOX_SWITCH, !now);
+        btnMultiBox.setText(!now ? "不支持多选框" : "支持多选框");
     }
 }

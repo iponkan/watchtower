@@ -30,6 +30,13 @@
         android:layout_below="@id/btn_show_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="debug模式" />
+        android:text="显示灯开关" />
+
+    <Button
+        android:id="@+id/btn_multi_box"
+        android:layout_below="@id/btn_light_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="多选框" />
 
 </RelativeLayout>
