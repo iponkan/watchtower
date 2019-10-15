@@ -61,6 +61,8 @@ public class ProductionView extends View {
 
     RectF wholeRectF = new RectF();
 
+    boolean drawText;
+    List<String> texts = new ArrayList<>();
     List<RectF> textRectFS = new ArrayList<>();
 
     private int operateState = STATUS_IDLE;
@@ -312,6 +314,9 @@ public class ProductionView extends View {
         }
 
         Log.d(TAG, "onTouchEvent: getPointerCount:" + event.getPointerCount());
+        Log.d(TAG, "onTouchEvent: isScale:" + isScale);
+        Log.d(TAG, "onTouchEvent: drawRectState:" + drawRectState);
+        Log.d(TAG, "onTouchEvent: operateState:" + operateState);
 
         if (event.getPointerCount() > 1) {
             isScale = true;
@@ -324,6 +329,20 @@ public class ProductionView extends View {
             float y = event.getY();
 
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                if (drawRectState == STATE_TWO) {// 点击切换选框
+                    for (int i = 0; i < normalizedRects.size(); i++) {
+                        NormalizedRect elment = normalizedRects.get(i);
+                        if (elment.mRectF.contains(x, y)) {
+                            normalizedRect = elment;
+                            resetCorner();
+                        }
+                    }
+                    //移动倒最后
+                    normalizedRects.remove(normalizedRect);
+                    normalizedRects.add(normalizedRect);
+                    invalidate();
+                }
                 if (operateState == STATUS_READY) {
                     int selectCircle = isSeletedControllerCircle(x, y);
                     switch (selectCircle) {
@@ -348,10 +367,8 @@ public class ProductionView extends View {
                     if (selectCircle > 0) {// 选择控制点
                         selectedControllerCicle = selectCircle;// 记录选中控制点编号
                         operateState = STATUS_SCALE;// 进入缩放状态
-                        paint.setColor(Color.BLUE);
                     } else if (normalizedRect.mRectF.contains(x, y)) {// 选择缩放框内部
                         operateState = STATUS_MOVE;// 进入移动状态
-                        paint.setColor(Color.BLUE);
                     }
                 }
                 // 记录上一次动作点
@@ -369,18 +386,20 @@ public class ProductionView extends View {
                 // 记录上一次动作点
                 oldx = x;
                 oldy = y;
-            } else if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
-                if (operateState == STATUS_SCALE || operateState == STATUS_MOVE) {
-                    operateState = STATUS_READY;
-                    paint.setColor(Color.WHITE);
-                    invalidate();
-                }
-                Log.d(TAG, "onTouchEvent: ACTION_UP");
-                isScale = false;
             }
             if (operateState == STATUS_IDLE || useGestureDetector) {
                 gestureDetector.onTouchEvent(event);
             }
+        }
+
+        // UP 和 Cancel和手指数量无关
+        if (event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP) {
+            if (operateState == STATUS_SCALE || operateState == STATUS_MOVE) {
+                operateState = STATUS_READY;
+                invalidate();
+            }
+            Log.d(TAG, "onTouchEvent: ACTION_UP");
+            isScale = false;
         }
 
         return true;
@@ -549,9 +568,6 @@ public class ProductionView extends View {
         normalizedRect.setRatio(finalRatio);
         invalidate();
     }
-
-    boolean drawText;
-    List<String> texts = new ArrayList<>();
 
     private void notDrawExtra() {
         drawText = false;
