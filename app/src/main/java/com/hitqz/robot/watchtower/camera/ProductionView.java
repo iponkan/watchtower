@@ -585,12 +585,25 @@ public class ProductionView extends View {
     }
 
     public void reset() {
-        normalizedRect.set(0, 0, borderWidth, borderHeight, 1.0f);
-        mLeftTopTouchRect.set(0, 0, 0, 0);
-        mRightTopTouchRect.set(0, 0, 0, 0);
-        mLeftBottomTouchRect.set(0, 0, 0, 0);
-        mRightBottomTouchRect.set(0, 0, 0, 0);
-        operateState = STATUS_IDLE;
+        if (drawRectState == STATE_NONE) {
+            return;
+        } else if (drawRectState == STATE_ONE) {
+            normalizedRects.remove(normalizedRect);
+            normalizedRect = null;
+            mLeftTopTouchRect.set(0, 0, 0, 0);
+            mRightTopTouchRect.set(0, 0, 0, 0);
+            mLeftBottomTouchRect.set(0, 0, 0, 0);
+            mRightBottomTouchRect.set(0, 0, 0, 0);
+            operateState = STATUS_IDLE;
+            drawRectState = STATE_NONE;
+        } else if (drawRectState == STATE_TWO) {
+            normalizedRects.remove(normalizedRect);
+            normalizedRect = normalizedRects.get(0);
+            resetCorner();
+            operateState = STATUS_READY;
+            drawRectState = STATE_ONE;
+        }
+
         postInvalidate();
     }
 }
