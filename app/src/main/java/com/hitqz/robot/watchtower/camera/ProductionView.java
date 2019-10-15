@@ -76,6 +76,7 @@ public class ProductionView extends View {
     private RectF mRightBottomTouchRect = new RectF();
 
     private int selectedControllerCicle;
+    private boolean useGestureDetector = false;
 
     public ProductionView(Context context) {
         this(context, null);
@@ -102,9 +103,15 @@ public class ProductionView extends View {
         if (drawRectState == STATE_NONE) {
             return;
         } else if (drawRectState == STATE_ONE) {
+            paint.setColor(Color.WHITE);
             canvas.drawRect(normalizedRect.mRectF, paint);
         } else if (drawRectState == STATE_TWO) {
             for (int i = 0; i < normalizedRects.size(); i++) {
+                if (i == normalizedRects.size() - 1) {
+                    paint.setColor(getResources().getColor(R.color.fr_storage_photo));
+                } else {
+                    paint.setColor(Color.WHITE);
+                }
                 canvas.drawRect(normalizedRects.get(i).mRectF, paint);
             }
         }
@@ -149,7 +156,6 @@ public class ProductionView extends View {
         paint = new Paint();
         textPaint = new Paint();
         Resources resources = context.getResources();
-        paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(resources.getDimension(R.dimen.production_lw));
         textPaint.setColor(Color.WHITE);
@@ -166,14 +172,14 @@ public class ProductionView extends View {
                         Log.d(TAG, "onSingleTapUp");
                         final float x = event.getX();
                         final float y = event.getY();
-                        if (normalizedRect == null) {
+                        if (normalizedRects.size() == 0) {
                             normalizedRect = new NormalizedRect(borderWidth, borderHeight);
                             changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
                             normalizedRects.add(normalizedRect);
                             invalidate();
                             drawRectState = STATE_ONE;
                             operateState = STATUS_READY;
-                        } else {
+                        } else if (normalizedRects.size() == 1) {
                             Log.d(TAG, "onSingleTapUp add");
                             normalizedRect = new NormalizedRect(borderWidth, borderHeight);
                             changeDrawRect(normalizedRect, x, y, DEFAULT_RATIO);
@@ -316,9 +322,6 @@ public class ProductionView extends View {
         } else if (event.getPointerCount() == 1 && !isScale) {
             float x = event.getX();
             float y = event.getY();
-            if (operateState == STATUS_IDLE) {
-                gestureDetector.onTouchEvent(event);
-            }
 
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (operateState == STATUS_READY) {
@@ -354,6 +357,7 @@ public class ProductionView extends View {
                 // 记录上一次动作点
                 oldx = x;
                 oldy = y;
+                useGestureDetector = operateState == STATUS_READY;
             } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 if (operateState == STATUS_SCALE) {// 缩放控制
                     Log.d(TAG, "缩放控制");
@@ -373,6 +377,9 @@ public class ProductionView extends View {
                 }
                 Log.d(TAG, "onTouchEvent: ACTION_UP");
                 isScale = false;
+            }
+            if (operateState == STATUS_IDLE || useGestureDetector) {
+                gestureDetector.onTouchEvent(event);
             }
         }
 
