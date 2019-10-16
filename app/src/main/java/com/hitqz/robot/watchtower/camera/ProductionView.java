@@ -178,6 +178,8 @@ public class ProductionView extends View {
             normalizedRect = new NormalizedRect(borderWidth, borderHeight);
             normalizedRect.setPoints(points);
             normalizedRects.add(normalizedRect);
+            drawRectState = STATE_ONE;
+            operateState = STATUS_READY;
         } else if (points.length == 4) {
             NormalizedRect rect1 = new NormalizedRect(borderWidth, borderHeight);
             rect1.setPoints(new Point[]{points[0], points[1]});
@@ -185,6 +187,8 @@ public class ProductionView extends View {
             normalizedRect.setPoints(new Point[]{points[2], points[3]});
             normalizedRects.add(rect1);
             normalizedRects.add(normalizedRect);
+            drawRectState = STATE_TWO;
+            operateState = STATUS_READY;
         }
 
         resetCorner();
