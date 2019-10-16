@@ -10,7 +10,7 @@ public class LoginInfo {
     public static final String NORMAL_IP = "192.168.3.101";
     public static final String NORMAL_PORT = "8000";
     public static final String NORMAL_USER = "admin";
-    public static final String NORMAL_PSD = "hit123456";
+    public static final String NORMAL_PSD = "abcd1234";
 
     public String m_oIPAddr;
     public String m_oPort;
