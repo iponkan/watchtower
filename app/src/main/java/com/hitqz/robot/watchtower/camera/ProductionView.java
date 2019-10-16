@@ -162,7 +162,7 @@ public class ProductionView extends View {
             points[1] = new Point(element0.commonRight(), element0.commonTop());
 
             NormalizedRect element1 = normalizedRects.get(1);
-            if (element0.mRectF.equals(element1.mRectF)) {
+            if (!element0.mRectF.equals(element1.mRectF)) {
                 points[2] = new Point(element1.commonLeft(), element1.commonBottom());
                 points[3] = new Point(element1.commonRight(), element1.commonTop());
             }
