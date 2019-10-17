@@ -434,6 +434,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     private void onStartMonitor() {
         productionView.antiTouch(true);
+        steerCamera.antiTouch(true);
+        steerCar.antiTouch(true);
+
         ivStartMonitor.setImageResource(R.drawable.btn_end_active);
         isMonitoring = true;
         refreshTemperature(true);
@@ -441,6 +444,8 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
 
     private void onStopMonitor() {
         productionView.antiTouch(false);
+        steerCamera.antiTouch(false);
+        steerCar.antiTouch(false);
         ivStartMonitor.setImageResource(R.drawable.btn_start_active);
         isMonitoring = false;
         refreshTemperature(false);
