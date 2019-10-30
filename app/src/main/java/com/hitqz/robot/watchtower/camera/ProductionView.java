@@ -107,22 +107,6 @@ public class ProductionView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (drawRectState == STATE_NONE) {
-            return;
-        } else if (drawRectState == STATE_ONE) {
-            paint.setColor(Color.WHITE);
-            canvas.drawRect(normalizedRect.mRectF, paint);
-        } else if (drawRectState == STATE_TWO) {
-            for (int i = 0; i < normalizedRects.size(); i++) {
-                if (i == normalizedRects.size() - 1) {
-                    paint.setColor(getResources().getColor(R.color.fr_storage_photo));
-                } else {
-                    paint.setColor(Color.WHITE);
-                }
-                canvas.drawRect(normalizedRects.get(i).mRectF, paint);
-            }
-        }
-
         if (drawFocusText) {
             canvas.drawText("聚焦中", getWidth() / 2f - 55, getHeight() / 2f + 10, textPaint);
         }
@@ -139,6 +123,22 @@ public class ProductionView extends View {
                     Log.d(TAG, "draw temperature:" + temperature);
                     canvas.drawText(temperature, rectF.centerX(), rectF.centerY(), textPaint);
                 }
+            }
+        }
+
+        if (drawRectState == STATE_NONE) {
+            return;
+        } else if (drawRectState == STATE_ONE) {
+            paint.setColor(Color.WHITE);
+            canvas.drawRect(normalizedRect.mRectF, paint);
+        } else if (drawRectState == STATE_TWO) {
+            for (int i = 0; i < normalizedRects.size(); i++) {
+                if (i == normalizedRects.size() - 1) {
+                    paint.setColor(getResources().getColor(R.color.fr_storage_photo));
+                } else {
+                    paint.setColor(Color.WHITE);
+                }
+                canvas.drawRect(normalizedRects.get(i).mRectF, paint);
             }
         }
     }
