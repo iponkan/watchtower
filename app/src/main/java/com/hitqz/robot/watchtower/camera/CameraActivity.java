@@ -869,7 +869,7 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                         public void onFailure(String msg) {
                             Logger.t(TAG).e("regionTemperature fail：" + msg);
                         }
-                    }), 4000);
+                    }), 8000);
         }
     }
 

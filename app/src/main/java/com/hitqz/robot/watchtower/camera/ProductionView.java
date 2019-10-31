@@ -385,6 +385,9 @@ public class ProductionView extends View {
      * 操作控制点 控制缩放
      */
     private void scaleCropController(float dx, float dy) {
+        if (normalizedRect == null) {
+            return;
+        }
         float realDx = dx;
         float realDy = dy;
         switch (selectedControllerCicle) {
@@ -462,6 +465,9 @@ public class ProductionView extends View {
      * @param dy
      */
     private void translateCrop(float dx, float dy) {
+        if (normalizedRect == null) {
+            return;
+        }
         float realDx = dx;
         float realDy = dy;
 
@@ -545,7 +551,7 @@ public class ProductionView extends View {
         }
         textRectFS.clear();
         texts.clear();
-        if (normalizedRect.mRatio < 1.0f) {
+        if (drawRectState == STATE_ONE || drawRectState == STATE_TWO) {
             for (int i = 0; i < floats.size(); i++) {
                 DecimalFormat decimalFormat = new DecimalFormat(".000");
                 String p = decimalFormat.format(floats.get(i));
@@ -601,7 +607,7 @@ public class ProductionView extends View {
             DecimalFormat decimalFormat = new DecimalFormat(".000");
             String p = decimalFormat.format(sum / floats.size());
             texts.add(p);
-            wholeRectF.set(0, 0, normalizedRect.totalWidth, normalizedRect.totalHeight);
+            wholeRectF.set(0, 0, borderWidth, borderHeight);
             textRectFS.add(wholeRectF);
         }
 
@@ -611,6 +617,10 @@ public class ProductionView extends View {
     }
 
     private void resetCorner() {
+
+        if (normalizedRect == null) {
+            return;
+        }
 
         //设置触摸区域
         int touchRadius = 25;//触摸半径
