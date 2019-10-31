@@ -1,5 +1,6 @@
 package com.hitqz.robot.watchtower.debug;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +13,13 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.constant.Constants;
+import com.hitqz.robot.watchtower.net.ISkyNet;
+import com.hitqz.robot.watchtower.net.RetrofitManager;
+import com.hitqz.robot.watchtower.net.base.BaseObserver;
 import com.hitqz.robot.watchtower.util.PathUtil;
 import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.rx.RxSchedulers;
+import com.sonicers.commonlib.util.ToastUtil;
 import com.sonicers.commonlib.util.UploadUtil;
 import com.sonicers.commonlib.util.ZipUtils;
 
@@ -42,6 +47,8 @@ public class DebugActivity extends BaseActivity {
     Button btnLightSwitch;
     @BindView(R.id.btn_multi_box)
     Button btnMultiBox;
+    @BindView(R.id.btn_shutdown)
+    Button btnShutDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,8 @@ public class DebugActivity extends BaseActivity {
 
         boolean boxBoolean = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.BOX_SWITCH, false);
         btnMultiBox.setText(boxBoolean ? "不支持多选框" : "支持多选框");
+
+        skyNet = RetrofitManager.getInstance().create(ISkyNet.class);
     }
 
     public static final String URL = "http://47.92.118.121:4000/files/uploads?folder=WatchTower";
@@ -143,5 +152,25 @@ public class DebugActivity extends BaseActivity {
         boolean now = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.BOX_SWITCH, false);
         SPUtils.getInstance(Constants.SP_FILE_NAME).put(Constants.BOX_SWITCH, !now);
         btnMultiBox.setText(!now ? "不支持多选框" : "支持多选框");
+    }
+
+    private ISkyNet skyNet;
+
+    @SuppressLint("CheckResult")
+    @OnClick(R.id.btn_shutdown)
+    public void onShutDownClick() {
+        skyNet.shutdown()
+                .compose(RxSchedulers.io_main())
+                .subscribeWith(new BaseObserver<Boolean>(loadingDialog) {
+                    @Override
+                    public void onSuccess(Boolean model) {
+                        ToastUtil.showToastShort(DebugActivity.this, "关机 success:");
+                    }
+
+                    @Override
+                    public void onFailure(String msg) {
+                        ToastUtil.showToastShort(DebugActivity.this, "关机 fail：");
+                    }
+                });
     }
 }

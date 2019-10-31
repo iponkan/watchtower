@@ -167,4 +167,13 @@ public interface ISkyNet {
      */
     @GET("/cameraPlatform/light")
     Observable<BaseRespond<Boolean>> getCameraPlatformLight();
+
+    /**
+     * 关闭工控机
+     *
+     * @return false:失败
+     * true:成功
+     */
+    @GET("/system/shutdown")
+    Observable<BaseRespond<Boolean>> shutdown();
 }
