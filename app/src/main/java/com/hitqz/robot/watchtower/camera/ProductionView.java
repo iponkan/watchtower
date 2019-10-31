@@ -509,7 +509,7 @@ public class ProductionView extends View {
     }
 
     public void zoomIn() {
-        if (normalizedRect.mRatio == 1.0f) {
+        if (drawRectState == STATE_NONE) {
             return;
         }
         float finalRatio = Math.min(MAX_SCALE, normalizedRect.mRatio * 1.1f);
@@ -518,7 +518,7 @@ public class ProductionView extends View {
     }
 
     public void zoomOut() {
-        if (normalizedRect.mRatio == 1.0f) {
+        if (drawRectState == STATE_NONE) {
             return;
         }
         float finalRatio = Math.max(MIN_SCALE, normalizedRect.mRatio * 0.9f);
