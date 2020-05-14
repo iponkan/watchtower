@@ -34,6 +34,9 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * 动火记录窗口
+ */
 public class GalleryActivity extends BaseActivity implements CalendarView.OnDateChangeListener
         , View.OnClickListener {
 
@@ -88,6 +91,9 @@ public class GalleryActivity extends BaseActivity implements CalendarView.OnDate
         }
     }
 
+    /**
+     * 读取缓存的动火记录
+     */
     private void initDonghuaRecords() {
         Observable.create((ObservableOnSubscribe<List<DonghuoRecord>>) emitter -> {
             ArrayList<FileInfo> fileInfos = (ArrayList<FileInfo>) hcSdk.findFile(TimeStruct.farPast(), TimeStruct.today());

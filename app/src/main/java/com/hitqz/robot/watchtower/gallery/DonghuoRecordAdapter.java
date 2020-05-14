@@ -12,6 +12,9 @@ import com.hitqz.robot.watchtower.bean.DonghuoRecord;
 
 import java.util.List;
 
+/**
+ * 动火记录列表
+ */
 public class DonghuoRecordAdapter extends BaseAdapter {
 
     private List<DonghuoRecord> mData;

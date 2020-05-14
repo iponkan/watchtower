@@ -26,6 +26,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 选框绘制控件
+ */
 public class ProductionView extends View {
 
     public static final String TAG = ProductionView.class.getSimpleName();

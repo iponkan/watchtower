@@ -1,5 +1,8 @@
 package com.hitqz.robot.watchtower.camera;
 
+/**
+ * 选框信息
+ */
 public class Production {
     public float mX;
     public float mY;

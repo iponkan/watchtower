@@ -203,6 +203,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         startPreview();
     }
 
+    /**
+     * 开始预览
+     */
     private void startPreview() {
         if (resume && sdkInit) {
             if (hotHCSdk != null) {
@@ -214,6 +217,11 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    /**
+     * debug才显示
+     *
+     * @param model 忽略区域列表
+     */
     private void debugShow(RegionTemperatureList model) {
         handler.postDelayed(new Runnable() {
             @Override
@@ -224,6 +232,11 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }, 1000);
     }
 
+    /**
+     * 根据屏幕调整相机控件位置
+     *
+     * @param views 控件
+     */
     private void resetHotCameraView(View... views) {
 
         int leftMargin = SizeUtils.dp2px(10);
@@ -247,6 +260,11 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         productionView.setParentSize(width, height);
     }
 
+    /**
+     * 根据屏幕调整相机控件位置
+     *
+     * @param normalCameraView 控件
+     */
     private void resetNormalCameraView(View normalCameraView) {
 
         int leftMargin = SizeUtils.dp2px(10);
@@ -266,6 +284,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         normalCameraView.setLayoutParams(layoutParams);
     }
 
+    /**
+     * 放大选框
+     */
     @OnClick(R.id.iv_camera_plus)
     void rectPlus() {
         if (isMonitoring) {
@@ -275,6 +296,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    /**
+     * 缩小选框
+     */
     @OnClick(R.id.iv_camera_minus)
     void rectMinus() {
         if (isMonitoring) {
@@ -298,6 +322,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         resetAlarmLevel();
     }
 
+    /**
+     * 开始监火
+     */
     private void startMonitor() {
         MonitorEntity monitorEntity = new MonitorEntity();
         Point[] points = productionView.getPoints();
@@ -340,6 +367,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 停止监火
+     */
     private void stopMonitor() {
         ivStartMonitor.setImageResource(R.drawable.btn_wait_dis);
         skyNet.stopMonitor()
@@ -361,6 +391,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 获取监火状态
+     */
     private void isMonitoring() {
         skyNet.isMonitoring()
                 .compose(RxSchedulers.io_main())
@@ -416,6 +449,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 取消警报
+     */
     private void resetAlarmLevel() {
         skyNet.resetAlarmLevel()
                 .compose(RxSchedulers.io_main())
@@ -432,6 +468,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 开始监火回调
+     */
     private void onStartMonitor() {
         productionView.antiTouch(true);
         steerCamera.antiTouch(true);
@@ -442,6 +481,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         refreshTemperature(true);
     }
 
+    /**
+     * 停止监火回调
+     */
     private void onStopMonitor() {
         productionView.antiTouch(false);
         steerCamera.antiTouch(false);
@@ -451,6 +493,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         refreshTemperature(false);
     }
 
+    /**
+     * 获取各个硬件状态
+     */
     private void checkState() {
         skyNet.getRingState()
                 .compose(RxSchedulers.io_main())
@@ -646,6 +691,14 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    /**
+     * 相机方向调整
+     *
+     * @param direction * 1：上
+     *                  * 2：左
+     *                  * 3：下
+     *                  * 4：右
+     */
     @SuppressLint("CheckResult")
     private void cameraTurn(int direction) {
         cameraStop = false;
@@ -677,6 +730,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 停止调整相机方向
+     */
     private void cameraStop() {
         skyNet.setCameraPlatformDirection(Constants.CAMERA_STOP)
                 .compose(RxSchedulers.io_main())
@@ -693,6 +749,14 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 设置底盘方向
+     * 0：停止
+     * * 1：前进
+     * * 2：左转
+     * * 3：后退
+     * * 4：右转
+     */
     @SuppressLint("CheckResult")
     private void plateTurn(int direction) {
         plateStop = false;
@@ -724,6 +788,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 停止设置底盘方向
+     */
     private void plateStop() {
         skyNet.setBaseplateDirection(Constants.PLATE_STOP)
                 .compose(RxSchedulers.io_main())
@@ -770,6 +837,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    /**
+     * 向远处聚焦
+     */
     void cameraFar() {
         farStop = false;
         Observable.create(emitter -> {
@@ -806,6 +876,9 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 向近处聚焦
+     */
     void cameraNear() {
         nearStop = false;
         Observable.create(emitter -> {
@@ -842,6 +915,12 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
                 });
     }
 
+    /**
+     * 更新温度显示
+     *
+     * @param refresh true 开启
+     *                false 关闭
+     */
     private void refreshTemperature(boolean refresh) {
         boolean showTemperature = SPUtils.getInstance(Constants.SP_FILE_NAME).getBoolean(Constants.SHOWTEMPERATURE, false);
         if (!refresh || !showTemperature) {
@@ -880,6 +959,10 @@ public class CameraActivity extends BaseActivity implements HCSdkManager.Callbac
         }
     }
 
+    /**
+     * debug显示，显示各个块温度
+     * @param model RegionTemperatureList
+     */
     private void showModel(RegionTemperatureList model) {
         if (model != null) {
             llDebugLayout.setVisibility(View.VISIBLE);

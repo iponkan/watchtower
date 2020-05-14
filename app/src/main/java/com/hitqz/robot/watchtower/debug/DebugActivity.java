@@ -34,6 +34,9 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * debug面板
+ */
 public class DebugActivity extends BaseActivity {
 
     public static final String TAG = "DebugActivity";

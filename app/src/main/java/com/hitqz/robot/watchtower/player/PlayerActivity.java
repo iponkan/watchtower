@@ -14,13 +14,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
-import com.sonicers.commonlib.component.BaseActivity;
 import com.hitqz.robot.watchtower.HCSdk;
 import com.hitqz.robot.watchtower.HCSdkManager;
 import com.hitqz.robot.watchtower.R;
 import com.hitqz.robot.watchtower.bean.FileInfo;
 import com.hitqz.robot.watchtower.widget.CommonTitleBar;
 import com.orhanobut.logger.Logger;
+import com.sonicers.commonlib.component.BaseActivity;
 import com.sonicers.commonlib.widget.LoadingView;
 
 import butterknife.BindView;
@@ -28,6 +28,9 @@ import butterknife.ButterKnife;
 
 import static com.sonicers.commonlib.util.TimeUtil.formatTimeS;
 
+/**
+ * 视频播放界面
+ */
 public class PlayerActivity extends BaseActivity implements PlayerCallback, View.OnClickListener
         , SeekBar.OnSeekBarChangeListener {
 
@@ -57,7 +60,6 @@ public class PlayerActivity extends BaseActivity implements PlayerCallback, View
     HCSdk hcSdk;
     FileInfo fileInfo;
     int duration;
-
 
     public static void go2Player(Activity context, FileInfo fileInfo) {
         Intent intent = new Intent(context, PlayerActivity.class);
@@ -89,7 +91,6 @@ public class PlayerActivity extends BaseActivity implements PlayerCallback, View
     }
 
     private void resetView(View... views) {
-
 
         int width = ScreenUtils.getScreenWidth();
         int height = (int) (width / 16f * 9);
@@ -153,7 +154,6 @@ public class PlayerActivity extends BaseActivity implements PlayerCallback, View
                 progressHandler.removeMessages(UPDATE);
             }
         });
-
     }
 
     @Override
@@ -252,5 +252,4 @@ public class PlayerActivity extends BaseActivity implements PlayerCallback, View
         playerMask.setVisibility(View.GONE);
         loadingView.stop();
     }
-
 }

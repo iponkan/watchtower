@@ -70,6 +70,11 @@ public class DonghuoRecord implements Parcelable {
         }
     }
 
+    /**
+     * 从sp读取保存的动火记录
+     * @param str sp
+     * @return DonghuoRecord
+     */
     public static DonghuoRecord fromXml(String str) {
         if (TextUtils.isEmpty(str)) {
             return null;
@@ -83,6 +88,10 @@ public class DonghuoRecord implements Parcelable {
         return donghuoRecord;
     }
 
+    /**
+     * 新增动火记录
+     * @return 新增动火记录
+     */
     public static String newDonghuoRecordXml() {
         return System.currentTimeMillis() + "～" + TimeStruct.farFeature().toMillSeconds();
     }

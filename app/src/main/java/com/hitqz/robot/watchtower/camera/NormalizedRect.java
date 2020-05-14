@@ -3,6 +3,9 @@ package com.hitqz.robot.watchtower.camera;
 import android.graphics.Point;
 import android.graphics.RectF;
 
+/**
+ * 选框
+ */
 public class NormalizedRect {
 
     float totalWidth;

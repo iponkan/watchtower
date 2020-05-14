@@ -30,6 +30,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 视频列表窗口
+ */
 @SuppressLint("CheckResult")
 public class VideoListActivity extends BaseActivity
         implements AdapterView.OnItemClickListener {

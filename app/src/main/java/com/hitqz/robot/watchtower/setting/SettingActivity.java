@@ -9,11 +9,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.hitqz.robot.watchtower.R;
-import com.hitqz.robot.watchtower.net.bean.AlarmLevelSettingEntity;
 import com.hitqz.robot.watchtower.net.ISkyNet;
-import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
 import com.hitqz.robot.watchtower.net.RetrofitManager;
 import com.hitqz.robot.watchtower.net.base.BaseObserver;
+import com.hitqz.robot.watchtower.net.bean.AlarmLevelSettingEntity;
+import com.hitqz.robot.watchtower.net.bean.MonitorEntity;
 import com.hitqz.robot.watchtower.widget.AlertDialogFragment;
 import com.orhanobut.logger.Logger;
 import com.sonicers.commonlib.component.BaseActivity;
@@ -28,6 +28,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * 设置界面
+ */
 public class SettingActivity extends BaseActivity {
 
     @BindView(R.id.iv_confirm)

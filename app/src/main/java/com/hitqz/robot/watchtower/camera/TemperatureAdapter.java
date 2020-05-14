@@ -12,6 +12,9 @@ import com.hitqz.robot.watchtower.R;
 
 import java.util.List;
 
+/**
+ * 温度列表
+ */
 public class TemperatureAdapter extends BaseAdapter {
 
     private List<Float> mData;
